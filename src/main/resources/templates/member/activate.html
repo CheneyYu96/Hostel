@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>activate</title>
+</head>
+<body>
+<p th:text="'当前card ID ：' + ${id} " />
+<form th:action="@{/member/activate}" method="post" th:method="post">
+
+    <input type="text" name="bank" />银行账号
+    <input type="number" name="money" />金额
+
+
+    <input type="submit"/>
+</form>
+
+</body>
+</html>

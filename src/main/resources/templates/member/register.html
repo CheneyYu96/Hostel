@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>会员注册</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrapValidator.min.css"/>
+    <link rel="stylesheet" href="/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="/css/form-elements.css"/>
+    <link rel="stylesheet" href="/css/style.css"/>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/scripts.js"></script>
+    <script src="/js/jquery.backstretch.min.js"></script>
+    <script src="/js/bootstrapValidator.min.js"></script>
+
+</head>
+<body>
+<!--<form th:action="@{/member/register}" th:object="${member}" method="post" th:method="post">-->
+
+    <!--<input type="text" th:field="*{name}"/>-->
+    <!--<input type="text" th:field="*{password}"/>-->
+    <!--<input type="text" th:field="*{phoneNumber}"/>-->
+
+
+    <!--<input type="submit"/>-->
+<!--</form>-->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Inn+</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li class='active'><a href="#" >会员注册</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Top content -->
+<div class="top-content">
+
+    <div class="inner-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2 text">
+                    <div class="description">
+                        <p>
+                            <strong>注册Inn+会员</strong> , 快乐放心出行。
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-sm-offset-3 form-box">
+                    <div class="form-top">
+                        <div class="form-top-left">
+                            <h3>会员注册</h3>
+                        </div>
+
+                    </div>
+                    <div class="form-bottom">
+                        <form role="form" th:action="@{/member/register}" th:object="${member}" method="post" class="login-form">
+                            <div class="form-group">
+                                <input type="text" name="username" placeholder="登录名" th:field="*{name}" class="form-username form-control" id="form-username"/>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="password" name="password" placeholder="密码" th:field="*{password}" class="form-password form-control" id="form-password"/>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="password" name="passwordTwice" placeholder="再次输入密码"  class="form-password form-control" id="form-password-two"/>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="text" name="phone" placeholder="手机号" th:field="*{phoneNumber}" class="form-password form-control" id="form-phone"/>
+                            </div>
+                            <button type="submit" class="btn">注册</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<div class="footer ">
+    <div class="container">
+        <div class="col-sm-6 col-lg-6">
+            <h4></h4>
+            <p>欢迎加入，这里有你想要的.</p>
+        </div>
+        <div class="col-sm-6 col-lg-6">
+            <h3></h3>
+            <p>Copyright &copy;2017.</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
