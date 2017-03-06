@@ -78,35 +78,39 @@ public class MemberServiceBean implements MemberService {
 
     @Override
     @Transactional
-    public ResultInfo activate(MemberCard card, String bankId, int money) {
+    public ResultInfo activate(int cardId, String bankId, int money) {
 
         ResultInfo resultInfo = new ResultInfo(false);
-        if(money < 1000){
-            resultInfo.setInfo("金额小于1000");
+
+        List<BankCard> bankCardList = bankCardRepository.findByCardId(bankId);
+        if(bankCardList==null||bankCardList.size()==0){
+            resultInfo.setInfo("银行卡号不存在");
         }
         else {
+            MemberCard card = memberCardRepository.findOne(cardId);
 
-            List<BankCard> bankCardList = bankCardRepository.findByCardId(bankId);
-            if(bankCardList==null||bankCardList.size()==0){
-                resultInfo.setInfo("银行卡号不存在");
+            if(money + card.getBalance() < 1000){
+                resultInfo.setInfo("金额小于1000");
+                card.setActivated(false);
             }
             else {
-                card.setBalance(money);
-                card.setActivated(true);
-                card.setBankCard(bankId);
-                card.setActivateDate(LocalDate.now());
-                card.setConsumeAmount(0);
-                card.setCredit(0);
-
-                memberCardRepository.save(card);
                 resultInfo.setResult(true);
+                card.setActivated(true);
             }
+
+            card.setBalance(money + card.getBalance());
+            card.setBankCard(bankId);
+            card.setActivateDate(LocalDate.now());
+            card.setConsumeAmount(0);
+            card.setCredit(0);
+
+            memberCardRepository.save(card);
         }
         return resultInfo;
     }
 
     @Override
-    public ResultInfo payFee(MemberCard card, String bankId, int money) {
+    public ResultInfo payFee(int cardId, String bankId, int money) {
 
         ResultInfo resultInfo = new ResultInfo(true);
 
@@ -116,6 +120,7 @@ public class MemberServiceBean implements MemberService {
             resultInfo.setInfo("银行卡号不存在");
         }
 
+        MemberCard card = memberCardRepository.findOne(cardId);
         int origin = card.getBalance();
         card.setBalance(money+origin);
 

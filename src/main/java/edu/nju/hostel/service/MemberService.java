@@ -27,9 +27,9 @@ public interface MemberService {
 
     MemberCard register(String name, String password, String phoneNumber);
 
-    ResultInfo activate(MemberCard card, String bankId, int money);
+    ResultInfo activate(int cardId, String bankId, int money);
 
-    ResultInfo payFee(MemberCard card, String bankId, int money);
+    ResultInfo payFee(int cardId, String bankId, int money);
 
     ResultInfo isInQualification(MemberCard card);
 

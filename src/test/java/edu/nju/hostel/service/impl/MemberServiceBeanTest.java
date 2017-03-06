@@ -36,7 +36,7 @@ public class MemberServiceBeanTest{
     @Test
     public void register() throws Exception {
         MemberCard card = memberServiceBean.register("123","123456","12312312311");
-        ResultInfo resultInfo = memberServiceBean.activate(card,"12313231231",1213);
+        ResultInfo resultInfo = memberServiceBean.activate(card.getId(),"12313231231",1213);
         assert !resultInfo.isSuccess();
     }
 

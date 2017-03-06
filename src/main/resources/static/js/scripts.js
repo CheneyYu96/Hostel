@@ -87,7 +87,29 @@ jQuery(document).ready(function() {
                             message: '手机号长度为11位'
                         }
 					}
-				}
+				},
+                bank:{
+                    validators:{
+                        notEmpty: {
+                            message: '银行卡号不能为空'
+                        },
+                        stringLength: {
+                            min: 16,
+                            max: 16,
+                            message: '银行卡号长度为16位'
+                        }
+                    }
+                },
+                money:{
+                    validators:{
+                        notEmpty: {
+                            message: '金额不能为空'
+                        },
+                        numeric: {
+                            message: '发票金额只能输入数字'
+                        },
+                    }
+                }
 
             }
         });

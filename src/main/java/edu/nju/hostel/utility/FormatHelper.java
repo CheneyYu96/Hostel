@@ -28,4 +28,20 @@ public class FormatHelper {
         String realId =id.substring(index);
         return Integer.parseInt(realId);
     }
+
+    /**
+     * convert int to 7 bits String
+     * @param id
+     * @return
+     */
+    public static String Id2String(int id){
+        if(id>9999999){
+            return "too long";
+        }
+        String result =id+"";
+        for(int i = result.length();i < 7; i++){
+            result = "0"+result;
+        }
+        return result;
+    }
 }

@@ -3,6 +3,7 @@ package edu.nju.hostel.controller;
 import edu.nju.hostel.entity.Member;
 import edu.nju.hostel.entity.MemberCard;
 import edu.nju.hostel.service.MemberService;
+import edu.nju.hostel.utility.FormatHelper;
 import edu.nju.hostel.utility.ResultInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,7 +23,6 @@ public class MemberController {
     private final MemberService memberService;
     private final String MEMBER = "member/";
 
-    private Member member = new Member();
     private MemberCard card;
 
     @Autowired
@@ -37,24 +37,42 @@ public class MemberController {
     }
 
     @RequestMapping("/re")
-    public String toRegister(Model model){
-        model.addAttribute("member",member);
+    public String toRegister(){
         return MEMBER+"register";
     }
 
     @RequestMapping(value = "/register")
-    public String register(Model model){
+    public String register(Model model,String username, String password, String phone){
+        card = memberService.register(username,password,phone);
+        model.addAttribute("id", FormatHelper.Id2String(card.getId()));
+        model.addAttribute("first", true);
+        model.addAttribute("result", new ResultInfo(false));
 
-        card = memberService.register(member.getName(),member.getPassword(),member.getPhoneNumber());
-        model.addAttribute("id",card.getId());
         return MEMBER+"activate";
     }
 
     @RequestMapping(value = "/activate")
-    public String activate(String bank, int money, Model model){
-        ResultInfo resultInfo = memberService.activate(card,bank,money);
-        model.addAttribute("result",resultInfo);
-        return MEMBER+"result";
+    public String activate(String bank, Integer money, Model model){
+        ResultInfo resultInfo = memberService.activate(card.getId(),bank,money);
+        if(resultInfo.isSuccess()){
+            return MEMBER + "home";
+        }
+        else {
+            model.addAttribute("first", false);
+            model.addAttribute("id", FormatHelper.Id2String(card.getId()));
+            model.addAttribute("result", resultInfo);
+
+            return MEMBER + "activate";
+        }
+    }
+
+    @RequestMapping(value = "/home")
+    public String home(String username, String password){
+        Member member = memberService.verifyMember(username,password);
+        if(member!=null) {
+            return MEMBER + "home";
+        }
+        return MEMBER + "login";
     }
 
 }
