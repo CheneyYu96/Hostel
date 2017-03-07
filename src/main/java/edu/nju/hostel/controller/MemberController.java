@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
+
+import javax.servlet.http.HttpSession;
+import javax.websocket.Session;
 
 /**
  *
@@ -23,7 +27,6 @@ public class MemberController {
     private final MemberService memberService;
     private final String MEMBER = "member/";
 
-    private MemberCard card;
 
     @Autowired
     public MemberController(MemberService memberService) {
@@ -37,29 +40,31 @@ public class MemberController {
     }
 
     @RequestMapping("/re")
-    public String toRegister(){
-        return MEMBER+"register";
+    public String toRegister(Model model){
+        model.addAttribute("name","会员");
+        return "register";
     }
 
     @RequestMapping(value = "/register")
-    public String register(Model model,String username, String password, String phone){
-        card = memberService.register(username,password,phone);
+    public String register(HttpSession session, Model model, String username, String password, String phone){
+        MemberCard card = memberService.register(username,password,phone);
         model.addAttribute("id", FormatHelper.Id2String(card.getId()));
         model.addAttribute("first", true);
         model.addAttribute("result", new ResultInfo(false));
 
+        session.setAttribute("id",card.getId());
         return MEMBER+"activate";
     }
 
     @RequestMapping(value = "/activate")
-    public String activate(String bank, Integer money, Model model){
-        ResultInfo resultInfo = memberService.activate(card.getId(),bank,money);
+    public String activate(@SessionAttribute int id, String bank, Integer money, Model model){
+        ResultInfo resultInfo = memberService.activate(id,bank,money);
         if(resultInfo.isSuccess()){
             return MEMBER + "home";
         }
         else {
             model.addAttribute("first", false);
-            model.addAttribute("id", FormatHelper.Id2String(card.getId()));
+            model.addAttribute("id", FormatHelper.Id2String(id));
             model.addAttribute("result", resultInfo);
 
             return MEMBER + "activate";

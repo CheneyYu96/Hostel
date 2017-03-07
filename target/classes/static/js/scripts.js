@@ -53,6 +53,27 @@ jQuery(document).ready(function() {
                         }
                     }
                 },
+                hotelname: {
+                    message: '客栈名验证失败',
+                    validators: {
+                        notEmpty: {
+                            message: '客栈名不能为空'
+                        }
+                    }
+                },
+                id:{
+                    message: 'ID验证失败',
+                    validators: {
+                        notEmpty: {
+                            message: 'ID不能为空'
+                        },
+                        stringLength: {
+                            min: 7,
+                            max: 7,
+                            message: 'ID长度为7位'
+                        }
+                    }
+                },
                 password: {
                     validators: {
                         notEmpty: {

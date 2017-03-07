@@ -8,7 +8,6 @@ import edu.nju.hostel.entity.Member;
 import edu.nju.hostel.entity.MemberCard;
 import edu.nju.hostel.entity.Order;
 import edu.nju.hostel.service.MemberService;
-import edu.nju.hostel.utility.FormatHelper;
 import edu.nju.hostel.utility.ResultInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,7 +38,9 @@ public class MemberServiceBean implements MemberService {
 
     @Override
     public Member verifyMember(String name, String password) {
-
+        if(name == null|| password==null){
+            return null;
+        }
         List<Member> memberList = memberRepository.findByName(name);
 
         if(memberList!=null && memberList.size()>0){
@@ -156,22 +157,22 @@ public class MemberServiceBean implements MemberService {
     }
 
     @Override
-    public ResultInfo translateCredit(String cardId, int credit) {
+    public ResultInfo translateCredit(int cardId, int credit) {
         return null;
     }
 
     @Override
-    public ResultInfo checkRoom(String memberId, String roomId, LocalDate beginDate, LocalDate endDate) {
+    public ResultInfo checkRoom(int memberId, int roomId, LocalDate beginDate, LocalDate endDate) {
         return null;
     }
 
     @Override
-    public Order bookRoom(String memberId, String roomId, LocalDate beginDate, LocalDate endDate) {
+    public Order bookRoom(int memberId, int roomId, LocalDate beginDate, LocalDate endDate) {
         return null;
     }
 
     @Override
-    public ResultInfo cancelRoom(String orderId) {
+    public ResultInfo cancelRoom(int orderId) {
         return null;
     }
 }

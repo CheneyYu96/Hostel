@@ -3,6 +3,8 @@ package edu.nju.hostel.dao;
 import edu.nju.hostel.entity.Hotel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 /**
  *
  * @author yuminchen
@@ -10,4 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @version V1.0
  */
 public interface HotelRepository extends JpaRepository<Hotel, Integer>{
+
 }

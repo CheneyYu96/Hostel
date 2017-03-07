@@ -35,7 +35,7 @@ public interface MemberService {
 
     ResultInfo stopQualification(String memberId);
 
-    ResultInfo translateCredit(String cardId, int credit);
+    ResultInfo translateCredit(int cardId, int credit);
 
     /**
      * check room booking condition
@@ -46,11 +46,11 @@ public interface MemberService {
      * @param endDate
      * @return
      */
-    ResultInfo checkRoom(String memberId, String roomId, LocalDate beginDate, LocalDate endDate);
+    ResultInfo checkRoom(int memberId, int roomId, LocalDate beginDate, LocalDate endDate);
 
-    Order bookRoom(String memberId, String roomId, LocalDate beginDate, LocalDate endDate);
+    Order bookRoom(int memberId, int roomId, LocalDate beginDate, LocalDate endDate);
 
-    ResultInfo cancelRoom(String orderId);
+    ResultInfo cancelRoom(int orderId);
 
 
 

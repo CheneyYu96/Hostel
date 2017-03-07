@@ -20,4 +20,9 @@ public class ManagerController {
         model.addAttribute("name","经理");
         return "login";
     }
+
+    @RequestMapping("/home")
+    public String home(Model model){
+        return MANAGER + "home";
+    }
 }
