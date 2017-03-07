@@ -83,4 +83,14 @@ public class HotelController {
     public List<Room> getRooms(@SessionAttribute int id){
         return hotelService.getRooms(id);
     }
+
+    @RequestMapping("/stay")
+    public String stay(Model model){
+        return "stay";
+    }
+
+    @RequestMapping("/statistic")
+    public String statistic(Model model){
+        return "statistic";
+    }
 }

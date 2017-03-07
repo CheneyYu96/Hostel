@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>客栈信息</title>
+    <title>统计</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
@@ -25,13 +25,13 @@
         </div>
         <div>
             <ul class="nav navbar-nav">
-                <li class='active'><a href="#" >店面信息</a></li>
+                <li><a th:href="@{/hotel/home}" >店面信息</a></li>
             </ul>
             <ul class="nav navbar-nav">
                 <li><a th:href="@{/hotel/stay}" >住宿登记</a></li>
             </ul>
             <ul class="nav navbar-nav">
-                <li><a th:href="@{/hotel/statistic}">统计信息</a></li>
+                <li class='active'><a href="#">统计信息</a></li>
             </ul>
         </div>
     </div>
