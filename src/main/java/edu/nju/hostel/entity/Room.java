@@ -1,5 +1,6 @@
 package edu.nju.hostel.entity;
 
+import edu.nju.hostel.utility.HotelStatus;
 import edu.nju.hostel.utility.RoomType;
 
 import javax.persistence.*;
@@ -30,6 +31,10 @@ public class Room {
 
     @Column(name = "available")
     private Boolean isAvailable;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private HotelStatus status;
 
     @Column
     private int prize;
@@ -80,5 +85,23 @@ public class Room {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public HotelStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(HotelStatus status) {
+        this.status = status;
+    }
+
+    public Room() {
+    }
+
+    public Room(int id, RoomType type, String roomNumber, int prize) {
+        this.id = id;
+        this.type = type;
+        this.roomNumber = roomNumber;
+        this.prize = prize;
     }
 }

@@ -1,9 +1,12 @@
 package edu.nju.hostel.service;
 
 import edu.nju.hostel.entity.Hotel;
+import edu.nju.hostel.entity.Room;
 import edu.nju.hostel.utility.ResultInfo;
+import edu.nju.hostel.utility.RoomType;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  *
@@ -19,5 +22,14 @@ public interface HotelService {
 
     Hotel verifyHotel(String id, String password);
 
-    ResultInfo raisePlan(int roomId, LocalDate beginDate, LocalDate endDate, int discount);
+    ResultInfo raisePlan(int hotelId, RoomType type, LocalDate beginDate, LocalDate endDate, int discount);
+
+    ResultInfo modifyRoom(Room room);
+
+    ResultInfo addRoom(int hotelId, RoomType type, String roomNumber, int prize);
+
+    ResultInfo delRoom(int roomId);
+
+    List<Room> getRooms(int hotelId);
+
 }

@@ -3,9 +3,56 @@
 <head>
     <title>hotel</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrapValidator.min.css"/>
+    <link rel="stylesheet" href="/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="/css/form-elements.css"/>
+    <link rel="stylesheet" href="/css/style.css"/>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/scripts.js"></script>
+    <script src="/js/jquery.backstretch.min.js"></script>
+    <script src="/js/bootstrapValidator.min.js"></script>
+
 </head>
 <body>
-<p>hotel login success</p>
-<p th:text="'id:' + ${id}"/>
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Inn+</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li class='active'><a href="#" >店面信息</a></li>
+            </ul>
+            <ul class="nav navbar-nav">
+                <li><a th:href="@{/hotel/stay}" >住宿登记</a></li>
+            </ul>
+            <ul class="nav navbar-nav">
+                <li><a th:href="@{/hotel/statistic}">统计信息</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Top content -->
+<div class="top-content">
+    成功
+
+</div>
+
+<div class="footer ">
+    <div class="container">
+        <div class="col-sm-6 col-lg-6">
+            <h4></h4>
+            <p>欢迎加入，这里有你想要的.</p>
+        </div>
+        <div class="col-sm-6 col-lg-6">
+            <h3></h3>
+            <p>Copyright &copy;2017.</p>
+        </div>
+    </div>
+</div>
 </body>
 </html>

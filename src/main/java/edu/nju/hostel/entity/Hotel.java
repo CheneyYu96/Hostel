@@ -1,5 +1,7 @@
 package edu.nju.hostel.entity;
 
+import edu.nju.hostel.utility.HotelStatus;
+
 import javax.persistence.*;
 
 /**
@@ -23,6 +25,10 @@ public class Hotel {
 
     @Column(length = 32)
     private String address;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private HotelStatus status;
 
     public String getName() {
         return name;
@@ -54,6 +60,14 @@ public class Hotel {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public HotelStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(HotelStatus status) {
+        this.status = status;
     }
 }
 
