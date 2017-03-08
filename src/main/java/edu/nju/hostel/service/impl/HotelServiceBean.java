@@ -59,7 +59,7 @@ public class HotelServiceBean implements HotelService{
     @Override
     public Hotel verifyHotel(String id, String password) {
         Hotel hotel = hotelRepository.findOne(FormatHelper.String2Id(id));
-        if(password.equals(hotel.getPassword())){
+        if(hotel!=null&&password.equals(hotel.getPassword())){
             return hotel;
         }
         return null;

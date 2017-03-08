@@ -61,6 +61,20 @@
                     </div>
                 </div>
             </div>
+            <div th:if="${success!=null}">
+                <div id="myAlert" class="alert alert-warning row col-sm-6 col-sm-offset-3">
+                    <a href="#" class="close" data-dismiss="alert">&times;</a>
+                    <strong>登录失败，请重新登录。</strong>
+                </div>
+                <script type="text/javascript">
+                    $(function(){
+                        $(".close").click(function(){
+                            $(".alert").alert('close');
+                        });
+                    });
+                </script>
+
+            </div>
             <div class="row">
                 <div class="col-sm-6 col-sm-offset-3 form-box">
                     <div class="form-top">
@@ -128,16 +142,18 @@
 
 </div>
 
-<div class="footer ">
-    <div class="container">
-            <div class="col-sm-6 col-lg-6">
-                <h4></h4>
-                <p>欢迎加入，这里有你想要的.</p>
-            </div>
-            <div class="col-sm-6 col-lg-6">
-                 <h3></h3>
-                <p>Copyright &copy;2017.</p>
-            </div>
+<div th:fragment="copy">
+    <div  class="footer navbar-fixed-bottom" >
+        <div class="container">
+                <div class="col-sm-6 col-lg-6">
+                    <h4></h4>
+                    <p>欢迎加入，这里有你想要的.</p>
+                </div>
+                <div class="col-sm-6 col-lg-6">
+                     <h3></h3>
+                    <p>Copyright &copy;2017. Cheney</p>
+                </div>
+        </div>
     </div>
 </div>
 </body>

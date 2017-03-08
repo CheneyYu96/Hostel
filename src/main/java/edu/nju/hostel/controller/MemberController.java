@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.servlet.http.HttpSession;
-import javax.websocket.Session;
 
 /**
  *
@@ -52,19 +51,19 @@ public class MemberController {
         model.addAttribute("first", true);
         model.addAttribute("result", new ResultInfo(false));
 
-        session.setAttribute("id",card.getId());
+        session.setAttribute("cardId",card.getId());
         return MEMBER+"activate";
     }
 
     @RequestMapping(value = "/activate")
-    public String activate(@SessionAttribute int id, String bank, Integer money, Model model){
-        ResultInfo resultInfo = memberService.activate(id,bank,money);
+    public String activate(@SessionAttribute int cardId, String bank, Integer money, Model model){
+        ResultInfo resultInfo = memberService.activate(cardId,bank,money);
         if(resultInfo.isSuccess()){
             return MEMBER + "home";
         }
         else {
             model.addAttribute("first", false);
-            model.addAttribute("id", FormatHelper.Id2String(id));
+            model.addAttribute("id", FormatHelper.Id2String(cardId));
             model.addAttribute("result", resultInfo);
 
             return MEMBER + "activate";
@@ -72,12 +71,18 @@ public class MemberController {
     }
 
     @RequestMapping(value = "/home")
-    public String home(String username, String password){
-        Member member = memberService.verifyMember(username,password);
-        if(member!=null) {
-            return MEMBER + "home";
+    public String home(HttpSession session, String username, String password, Model model){
+        if(username==null || password==null){
+            model.addAttribute("name","会员");
+            return "login";
         }
-        return MEMBER + "login";
+        Member member = memberService.verifyMember(username,password);
+        if(member == null){
+            model.addAttribute("success", false);
+            return login(model);
+        }
+        session.setAttribute("memberId", member.getId());
+        return MEMBER + "home";
     }
 
 }

@@ -43,8 +43,16 @@ public class HotelController {
 
     @RequestMapping("/home")
     public String home(HttpSession session, String id, String password, Model model){
+        if(id == null || password == null){
+            return login(model);
+        }
         Hotel hotel = hotelService.verifyHotel(id,password);
-        session.setAttribute("id",hotel.getId());
+
+        if(hotel==null){
+            model.addAttribute("success", false);
+            return login(model);
+        }
+        session.setAttribute("hotelId",hotel.getId());
         return HOTEL+"home";
     }
 
@@ -57,11 +65,10 @@ public class HotelController {
     @RequestMapping("/register")
     public String register(HttpSession session, Model model, String hotelname, String password, String address){
         if(hotelname == null|| password == null || address==null){
-            model.addAttribute("name","客栈");
-            return "login";
+            return login(model);
         }
         Hotel hotel = hotelService.register(hotelname,password,address);
-        session.setAttribute("id",hotel.getId());
+        session.setAttribute("hotelId",hotel.getId());
         model.addAttribute("id", FormatHelper.Id2String(hotel.getId()));
         return HOTEL + "home";
     }
@@ -86,11 +93,11 @@ public class HotelController {
 
     @RequestMapping("/stay")
     public String stay(Model model){
-        return "stay";
+        return HOTEL+"stay";
     }
 
     @RequestMapping("/statistic")
     public String statistic(Model model){
-        return "statistic";
+        return HOTEL+"statistic";
     }
 }
