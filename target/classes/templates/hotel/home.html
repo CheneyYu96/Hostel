@@ -17,8 +17,8 @@
     <script src="/js/bootstrapValidator.min.js"></script>
 
 </head>
-<body>
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<body data-spy="scroll" data-target="#myScrollspy">
+<nav class="navbar navbar-inverse" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
             <a class="navbar-brand" href="#">Inn+</a>
@@ -38,15 +38,148 @@
 </nav>
 
 
-<!-- Top content -->
-<div class="top-content">
-    <div class="inner-bg">
-        <div class="container">
-            home
+<div class="container">
+    <div class="blank30"></div>
+    <div class="row">
+        <div class="col-xs-3" id="myScrollspy">
+            <ul class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="125">
+                <li class="active"><a href="#info">客栈信息</a></li>
+                <li><a href="#password">修改密码</a></li>
+                <li><a href="#room">房间信息</a></li>
 
+            </ul>
+        </div>
+        <div class="col-xs-9" id="lists">
+            <!--客栈信息-->
+            <h3 id="info">客栈信息</h3>
+            <div class="blank30"></div>
+            <div class="row">
+                <div class="col-sm-3 col-sm-offset-1">
+                    <h4><span class="label label-default">客栈名</span></h4>
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" th:value="${hotel.getName()}"/>
+                </div>
+            </div>
+            <div class="blank20"></div>
+            <div class="row">
+                <div class="col-sm-3 col-sm-offset-1">
+                    <h4><span class="label label-default">客栈地址</span></h4>
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" th:value="${hotel.getAddress()}"/>
+                </div>
+            </div>
+            <div class="blank20"></div>
+
+            <div class="row">
+                <div class="col-sm-3 col-sm-offset-1">
+                    <h4><span class="label label-default">客栈ID</span></h4>
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" th:value="${hotelId}" disabled="true"/>
+                </div>
+            </div>
+            <div class="blank20"></div>
+
+            <div class="row">
+                <div class="col-sm-3 col-sm-offset-1">
+                    <h4><span class="label label-default">客栈状态</span></h4>
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" th:value="${hotel.getStatus()}" disabled="true"/>
+                </div>
+            </div>
+            <div class="blank20"></div>
+
+            <div class="row">
+                <div class="col-sm-4 col-sm-offset-6">
+                    <button type="button" class="btn btn-primary">确认</button>
+                </div>
+            </div>
+
+            <div class="blank30"></div>
+            <hr/>
+
+            <!--修改密码-->
+            <h3 id="password">修改密码</h3>
+            <div class="blank30"></div>
+            <div class="row">
+                <div class="col-sm-3 col-sm-offset-1">
+                    <h4><span class="label label-default">请输入原始密码</span></h4>
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control"/>
+                </div>
+            </div>
+            <div class="blank20"></div>
+            <div class="row">
+                <div class="col-sm-3 col-sm-offset-1">
+                    <h4><span class="label label-default">请输入新密码</span></h4>
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control"/>
+                </div>
+            </div>
+            <div class="blank20"></div>
+
+            <div class="row">
+                <div class="col-sm-3 col-sm-offset-1">
+                    <h4><span class="label label-default">再次输入新密码</span></h4>
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control"/>
+                </div>
+            </div>
+            <div class="blank20"></div>
+
+            <div class="row">
+                <div class="col-sm-4 col-sm-offset-6">
+                    <button type="button" class="btn btn-primary">确认</button>
+                </div>
+            </div>
+            <div class="blank30"></div>
+            <hr/>
+
+            <!--房间信息-->
+            <h3 id="room">房间信息</h3>
+            <div class="blank30"></div>
+            <div class="table-responsive" style="padding-left: 10%;width: 90%">
+
+                <table class="table" style="border-radius: 5px">
+                    <thead>
+                    <tr>
+                        <th>房间号</th>
+                        <th>付款日期</th>
+                        <th>状态</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="active">
+                        <td>产品1</td>
+                        <td>23/11/2013</td>
+                        <td>待发货</td>
+                    </tr>
+                    <tr class="success">
+                        <td>产品2</td>
+                        <td>10/11/2013</td>
+                        <td>发货中</td>
+                    </tr>
+                    <tr  class="warning">
+                        <td>产品3</td>
+                        <td>20/10/2013</td>
+                        <td>待确认</td>
+                    </tr>
+                    <tr  class="danger">
+                        <td>产品4</td>
+                        <td>20/10/2013</td>
+                        <td>已退货</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-
 </div>
 
 <div th:include="login::copy"></div>

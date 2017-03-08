@@ -31,7 +31,7 @@
 <!--</body>-->
 
 <!--<body>-->
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-inverse" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
             <a class="navbar-brand" href="#">Inn+</a>
@@ -81,7 +81,6 @@
                         <div class="form-top-left">
                             <h3 th:text="${name} + '登录'"/>
                         </div>
-
                     </div>
                     <div class="form-bottom" th:if="${name.equals('经理')}">
                         <form role="form" th:action="@{/manager/home}" method="post" class="login-form">
@@ -143,7 +142,7 @@
 </div>
 
 <div th:fragment="copy">
-    <div  class="footer navbar-fixed-bottom" >
+    <div  class="footer" >
         <div class="container">
                 <div class="col-sm-6 col-lg-6">
                     <h4></h4>

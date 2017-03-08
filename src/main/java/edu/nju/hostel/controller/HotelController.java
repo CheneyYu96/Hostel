@@ -53,6 +53,8 @@ public class HotelController {
             return login(model);
         }
         session.setAttribute("hotelId",hotel.getId());
+        model.addAttribute("hotel", hotel);
+        model.addAttribute("hotelId", id);
         return HOTEL+"home";
     }
 
@@ -69,14 +71,14 @@ public class HotelController {
         }
         Hotel hotel = hotelService.register(hotelname,password,address);
         session.setAttribute("hotelId",hotel.getId());
-        model.addAttribute("id", FormatHelper.Id2String(hotel.getId()));
+        model.addAttribute("hotelId", FormatHelper.Id2String(hotel.getId()));
         return HOTEL + "home";
     }
 
     @RequestMapping("/addRoom")
     @ResponseBody
-    public ResultInfo addRoom(@SessionAttribute int id, RoomType type, String roomNumber, int prize){
-        return hotelService.addRoom(id, type, roomNumber, prize);
+    public ResultInfo addRoom(@SessionAttribute int hotelId, RoomType type, String roomNumber, int prize){
+        return hotelService.addRoom(hotelId, type, roomNumber, prize);
     }
 
     @RequestMapping("/modifyRoom")
@@ -87,8 +89,8 @@ public class HotelController {
 
     @RequestMapping("/getRooms")
     @ResponseBody
-    public List<Room> getRooms(@SessionAttribute int id){
-        return hotelService.getRooms(id);
+    public List<Room> getRooms(@SessionAttribute int hotelId){
+        return hotelService.getRooms(hotelId);
     }
 
     @RequestMapping("/stay")

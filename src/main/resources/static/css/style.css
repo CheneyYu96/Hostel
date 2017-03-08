@@ -171,6 +171,86 @@ img { max-width: 100%; }
 	background-color: #1a1a1a;
 }
 
+ul.nav-pills{
+	width: 200px;
+}
+ul.nav-pills.affix{
+	top: 30px; /* Set the top position of pinned element */
+}
+#lists ul li{
+	padding: 5px;
+}
+
+#lists h3{
+	color: white;
+}
+
+.table>thead>tr>th{
+	text-align: center;
+}
+
+.blank0 {
+	height: 0;
+	clear: both;
+	font-size: 0px;
+	overflow: hidden;
+}
+
+.blank1 {
+	height: 1px;
+	font-size: 0px;
+	overflow: hidden;
+}
+
+.blank2 {
+	height: 2px;
+	font-size: 0px;
+	overflow: hidden;
+}
+
+.blank4 {
+	height: 4px;
+	font-size: 0px;
+	overflow: hidden;
+}
+
+.blank5 {
+	height: 5px;
+	font-size: 0px;
+	overflow: hidden;
+}
+
+.blank10 {
+	height: 10px;
+	font-size: 0px;
+	overflow: hidden;
+}
+
+.blank15 {
+	height: 15px;
+	font-size: 0px;
+	overflow: hidden;
+}
+
+.blank20 {
+	height: 20px;
+	font-size: 0px;
+	overflow: hidden;
+}
+
+.blank30 {
+	height: 30px;
+	clear: both;
+	font-size: 0px;
+	overflow: hidden;
+}
+
+.blank40 {
+	height: 40px;
+	clear: both;
+	font-size: 0px;
+	overflow: hidden;
+}
 /***** Media queries *****/
 
 @media (min-width: 992px) and (max-width: 1199px) {}
