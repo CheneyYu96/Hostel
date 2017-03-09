@@ -7,12 +7,15 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrapValidator.min.css"/>
     <link rel="stylesheet" href="/css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="/css/form-elements.css"/>
+    <!--<link rel="stylesheet" href="/css/form-elements.css"/>-->
     <link rel="stylesheet" href="/css/style.css"/>
+    <link rel="stylesheet" href="/css/bootstrap-table.css"/>
 
     <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap-table.js"></script>
+    <script src="/js/bootstrap-table-zh-CN.js"></script>
     <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/scripts.js"></script>
+    <!--<script src="/js/scripts.js"></script>-->
     <script src="/js/jquery.backstretch.min.js"></script>
     <script src="/js/bootstrapValidator.min.js"></script>
 
@@ -39,7 +42,7 @@
 
 
 <div class="container">
-    <div class="blank30"></div>
+    <div class="blank20"></div>
     <div class="row">
         <div class="col-xs-3" id="myScrollspy">
             <ul class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="125">
@@ -52,7 +55,7 @@
         <div class="col-xs-9" id="lists">
             <!--客栈信息-->
             <h3 id="info">客栈信息</h3>
-            <div class="blank30"></div>
+            <div class="blank20"></div>
             <div class="row">
                 <div class="col-sm-3 col-sm-offset-1">
                     <h4><span class="label label-default">客栈名</span></h4>
@@ -103,7 +106,7 @@
 
             <!--修改密码-->
             <h3 id="password">修改密码</h3>
-            <div class="blank30"></div>
+            <div class="blank20"></div>
             <div class="row">
                 <div class="col-sm-3 col-sm-offset-1">
                     <h4><span class="label label-default">请输入原始密码</span></h4>
@@ -143,40 +146,122 @@
 
             <!--房间信息-->
             <h3 id="room">房间信息</h3>
-            <div class="blank30"></div>
             <div class="table-responsive" style="padding-left: 10%;width: 90%">
+                <table id="table"></table>
+                <script>
+                    var $table = $('#table');
+                    $table.bootstrapTable({
+                        url: '/hotel/getRooms',
+                        search: true,//是否搜索
+                        dataType: "json",//期待返回数据类型
+                        method: "post",//请求方式
+                        toolbar: '#toolbar', //工具按钮用哪个容器
+                        striped: true, //是否显示行间隔色
+                        cache: false, //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                        pagination: true, //是否显示分页（*）
+                        sortable: false, //是否启用排序
+                        sortOrder: "asc", //排序方式
+                        pageNumber:1, //初始化加载第一页，默认第一页
+                        pageSize: 10, //每页的记录行数（*）
+                        pageList: [10, 25, 50, 100], //可供选择的每页的行数（*）
+                        strictSearch: true,
+                        sidePagination: "client", //分页方式：client客户端分页，server服务端分页（*）
+                        showColumns: true, //是否显示所有的列
+                        showRefresh: true, //是否显示刷新按钮
+                        minimumCountColumns: 2, //最少允许的列数
+                        clickToSelect: true, //是否启用点击选中行
+                        uniqueId: "ID", //每一行的唯一标识，一般为主键列
+                        cardView: false, //是否显示详细视图
+                        detailView: false, //是否显示父子表
 
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>房间号</th>
-                        <th>付款日期</th>
-                        <th>状态</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr class="active">
-                        <td>产品1</td>
-                        <td>23/11/2013</td>
-                        <td>待发货</td>
-                    </tr>
-                    <tr class="success">
-                        <td>产品2</td>
-                        <td>10/11/2013</td>
-                        <td>发货中</td>
-                    </tr>
-                    <tr  class="warning">
-                        <td>产品3</td>
-                        <td>20/10/2013</td>
-                        <td>待确认</td>
-                    </tr>
-                    <tr  class="danger">
-                        <td>产品4</td>
-                        <td>20/10/2013</td>
-                        <td>已退货</td>
-                    </tr>
-                    </tbody>
-                </table>
+
+                        rowStyle: function (row, index) {
+                            //这里有5个取值代表5中颜色['active', 'success', 'info', 'warning', 'danger'];
+                            var strclass = "";
+                            if (row.status == "已批准") {
+                                strclass = 'success';//还有一个active
+                            }
+                            else if (row.status == "待审批") {
+                                strclass = 'warning';
+                            }
+
+                            return { classes: strclass }
+                        },
+
+                        columns: [
+                            {
+                                title: "全选",
+                                field: "select",
+                                checkbox: true
+                            },
+                            {
+                                field: 'id',
+                                title: 'ID'
+                            },
+                            {
+                                field: 'roomNumber',
+                                title: '房间号'
+                            },
+                            {
+                                field: 'type',
+                                title: '房间类型'
+                            },
+                            {
+                                field: 'prize',
+                                title: '价格'
+                            },
+                            {
+                                field: 'isAvailable',
+                                title: '是否可用'
+                            },
+                            {
+                                field: 'status',
+                                title: '审批状态'
+                            },
+                            {
+                                title: '操作',
+                                field: 'id',
+                                formatter:function(value,row,index){
+                                    var e = '<a href="#" mce_href="#" onclick="edit(\''+ row.id + '\')">编辑</a> ';
+                                    var d = '<a href="#" mce_href="#" onclick="del(\''+ row.id +'\')">删除</a> ';
+                                    return e+d;
+                                }
+                            }
+                        ]
+                    });
+                </script>
+
+                <!--<table class="table">-->
+                    <!--<thead>-->
+                    <!--<tr>-->
+                        <!--<th>房间号</th>-->
+                        <!--<th>付款日期</th>-->
+                        <!--<th>状态</th>-->
+                    <!--</tr>-->
+                    <!--</thead>-->
+                    <!--<tbody>-->
+                    <!--<tr class="active">-->
+                        <!--<td>产品1</td>-->
+                        <!--<td>23/11/2013</td>-->
+                        <!--<td>待发货</td>-->
+                    <!--</tr>-->
+                    <!--<tr class="success">-->
+                        <!--<td>产品2</td>-->
+                        <!--<td>10/11/2013</td>-->
+                        <!--<td>发货中</td>-->
+                    <!--</tr>-->
+                    <!--<tr  class="warning">-->
+                        <!--<td>产品3</td>-->
+                        <!--<td>20/10/2013</td>-->
+                        <!--<td>待确认</td>-->
+                    <!--</tr>-->
+                    <!--<tr  class="danger">-->
+                        <!--<td>产品4</td>-->
+                        <!--<td>20/10/2013</td>-->
+                        <!--<td>已退货</td>-->
+                    <!--</tr>-->
+                    <!--</tbody>-->
+                <!--</table>-->
             </div>
         </div>
     </div>

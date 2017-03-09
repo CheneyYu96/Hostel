@@ -15,15 +15,14 @@ import java.time.LocalDate;
 @Table(name = "my_order")
 public class Order {
     @Id
+    @GeneratedValue
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "mem_id")
-    private Member member;
+    @Column(name = "mem_id")
+    private int memberId;
 
-    @ManyToOne
-    @JoinColumn(name = "hot_id")
-    private Hotel hotel;
+    @Column(name = "hot_id")
+    private int hotelId;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -35,20 +34,20 @@ public class Order {
     @Column
     private int money;
 
-    public Member getMember() {
-        return member;
+    public int getMemberId() {
+        return memberId;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setMemberId(int memberId) {
+        this.memberId = memberId;
     }
 
-    public Hotel getHotel() {
-        return hotel;
+    public int getHotelId() {
+        return hotelId;
     }
 
-    public void setHotel(Hotel hotel) {
-        this.hotel = hotel;
+    public void setHotelId(int hotelId) {
+        this.hotelId = hotelId;
     }
 
     public OrderStatus getStatus() {
@@ -82,4 +81,5 @@ public class Order {
     public void setDate(LocalDate date) {
         this.date = date;
     }
+
 }

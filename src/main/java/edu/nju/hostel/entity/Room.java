@@ -16,11 +16,11 @@ import javax.persistence.*;
 public class Room {
 
     @Id
+    @GeneratedValue
     private int id;
 
-    @ManyToOne(cascade={CascadeType.ALL})
-    @JoinColumn(name="hot_id")
-    private Hotel hotel;
+    @Column(name="hot_id")
+    private int hotelId;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -39,12 +39,12 @@ public class Room {
     @Column
     private int prize;
 
-    public Hotel getHotel() {
-        return hotel;
+    public int getHotelId() {
+        return hotelId;
     }
 
-    public void setHotel(Hotel hotel) {
-        this.hotel = hotel;
+    public void setHotelId(int hotelId) {
+        this.hotelId = hotelId;
     }
 
     public RoomType getType() {

@@ -1,5 +1,8 @@
 package edu.nju.hostel.service.impl;
 
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import static org.junit.Assert.*;
 
 /**
@@ -8,6 +11,21 @@ import static org.junit.Assert.*;
  * @date 2017/3/6
  */
 public class HotelServiceBeanTest {
+
+
+    @Test
+    public void addRoom() throws Exception {
+
+    }
+
+    @Test
+    public void delRoom() throws Exception {
+
+    }
+
+    @Test
+    public void getRooms() throws Exception {
+    }
 
 
 }

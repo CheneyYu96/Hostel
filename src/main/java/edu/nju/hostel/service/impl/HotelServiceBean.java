@@ -92,7 +92,7 @@ public class HotelServiceBean implements HotelService{
             return resultInfo;
         }
 
-        room.setHotel(hotel);
+        room.setHotelId(hotelId);
         room.setAvailable(true);
         room.setPrize(prize);
         room.setRoomNumber(roomNumber);
@@ -117,7 +117,7 @@ public class HotelServiceBean implements HotelService{
 
     @Override
     public List<Room> getRooms(int hotelId) {
-        return roomRepository.findByHotel(hotelId);
+        return roomRepository.findByHotelId(hotelId);
     }
 
 }

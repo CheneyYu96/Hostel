@@ -15,11 +15,11 @@ import java.time.LocalDate;
 @Table(name = "plan")
 public class Plan {
     @Id
+    @GeneratedValue
     private int id;
 
-    @ManyToOne(cascade={CascadeType.ALL})
-    @JoinColumn(name="hot_id")
-    private Hotel hotel;
+    @Column(name="hot_id")
+    private int hotelId;
 
     @Column(name = "begin_date")
     private LocalDate beginDate;
@@ -34,12 +34,12 @@ public class Plan {
     @Column
     private int discount;
 
-    public Hotel getHotel() {
-        return hotel;
+    public int getHotelId() {
+        return hotelId;
     }
 
-    public void setHotel(Hotel hotel) {
-        this.hotel = hotel;
+    public void setHotelId(int hotelId) {
+        this.hotelId = hotelId;
     }
 
     public LocalDate getBeginDate() {

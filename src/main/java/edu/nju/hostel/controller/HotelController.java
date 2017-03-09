@@ -72,6 +72,7 @@ public class HotelController {
         Hotel hotel = hotelService.register(hotelname,password,address);
         session.setAttribute("hotelId",hotel.getId());
         model.addAttribute("hotelId", FormatHelper.Id2String(hotel.getId()));
+        model.addAttribute("hotel", hotel);
         return HOTEL + "home";
     }
 
