@@ -251,6 +251,17 @@ ul.nav-pills.affix{
 	font-size: 0px;
 	overflow: hidden;
 }
+
+
+#tip {
+	font-weight: bold;
+	position: absolute;
+	top: 50px;
+	left: 50%;
+	display: none;
+	z-index: 9999;
+}
+
 /***** Media queries *****/
 
 @media (min-width: 992px) and (max-width: 1199px) {}

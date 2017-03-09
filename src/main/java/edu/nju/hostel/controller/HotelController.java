@@ -85,6 +85,7 @@ public class HotelController {
     @RequestMapping("/modifyRoom")
     @ResponseBody
     public ResultInfo modifyRoom(int roomId, RoomType type, String roomNumber, int prize){
+//        System.err.println(roomId+"  "+type+"  "+roomNumber+"  "+prize);
         return hotelService.modifyRoom(new Room(roomId,type,roomNumber,prize));
     }
 

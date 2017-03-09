@@ -3,7 +3,6 @@
  */
 function initTable() {
 
-    var $table = $('#table');
     $table.bootstrapTable({
         url: '/hotel/getRooms',
         search: true,//是否搜索
@@ -77,9 +76,13 @@ function initTable() {
 }
 
 $(document).ready(function () {
+    $table = $('#table');
     //调用函数，初始化表格
     initTable();
-    $("#addRecord").bind("click",addRoom);
+    $("#addRoom").bind("click",addRoom);
+    $("#modifyRoom").bind("click",modifyRoom);
+    $("#btn_edit").bind("click",editValue);
+    $("#deleteRoom").bind("click",delRoom);
 
 });
 
@@ -94,11 +97,91 @@ function addRoom() {
             "prize":$("#prize").val()
         },
         success:function(result){
-            console.log(result);
-            initTable();
+            // console.log('tip: '+$("#tip").text());
+            showSuccess("添加成功");
+            $table.bootstrapTable('refresh', {url: '/hotel/getRooms'});
+
         },error:function(result){
-            console.log("失败"+result);
+            showFailure("添加失败");
         }
 
     });
+}
+
+function modifyRoom() {
+    var selections = $table.bootstrapTable('getSelections');
+    console.log("id" + selections[0].id);
+    console.log($("#prize").val());
+    $.ajax({
+        url: '/hotel/modifyRoom',
+        dataType: "json",
+        method: "post",//请求方式
+        data:{
+            "roomId":selections[0].id,
+            "type":$("#typeEdit").val(),
+            "roomNumber":$("#roomNumberEdit").val(),
+            "prize":$("#prizeEdit").val()
+        },
+        success:function(result){
+            // console.log('tip: '+$("#tip").text());
+            showSuccess("修改成功");
+            $table.bootstrapTable('refresh', {url: '/hotel/getRooms'});
+
+        },error:function(result){
+            showFailure("修改失败");
+        }
+
+    });
+}
+
+function delRoom(){
+    var selections = $table.bootstrapTable('getSelections');
+    for(var i = 0; i<selections.length;i++){
+        $.ajax({
+            url: '/hotel/delRoom',
+            dataType: "json",
+            method: "post",//请求方式
+            data:{
+                "roomId":selections[i].id
+            },
+            success:function(result){
+                // console.log(result);
+                $table.bootstrapTable('refresh', {url: '/hotel/getRooms'});
+            },error:function(result){
+            }
+        })
+    }
+
+}
+
+function editValue() {
+    var selections = $table.bootstrapTable('getSelections');
+    if(selections.length != 1){
+        // $("#closeModal").click();
+        showInfo("请选择一行");
+    }
+    else {
+        var content = selections[0];
+        $("#roomNumberEdit").val(content.roomNumber);
+        $("#prizeEdit").val(content.prize);
+        $("#typeEdit").val(content.type);
+        $("#edit").modal('show');
+    }
+}
+
+function showInfo(msg) {
+    showTip(msg, 'info');
+}
+function showSuccess(msg) {
+    showTip(msg, 'success');
+}
+function showFailure(msg) {
+    showTip(msg, 'danger');
+}
+
+
+function showTip(tip, type) {
+    var $tip = $('#tip');
+    $tip.attr('class', 'alert alert-' + type).text(tip).css('margin-left', - $tip.outerWidth() / 2);
+    $tip.fadeIn(500).delay(1000).fadeOut(500);
 }

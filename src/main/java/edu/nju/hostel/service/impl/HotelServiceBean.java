@@ -72,7 +72,13 @@ public class HotelServiceBean implements HotelService{
 
     @Override
     public ResultInfo modifyRoom(Room room) {
-        Room result = roomRepository.save(room);
+
+        Room room1 = roomRepository.findOne(room.getId());
+        room1.setPrize(room.getPrize());
+        room1.setRoomNumber(room.getRoomNumber());
+        room1.setType(room.getType());
+
+        Room result = roomRepository.save(room1);
         if(result!=null){
             return new ResultInfo(true);
         }
