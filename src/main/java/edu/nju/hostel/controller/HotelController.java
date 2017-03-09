@@ -78,14 +78,20 @@ public class HotelController {
 
     @RequestMapping("/addRoom")
     @ResponseBody
-    public ResultInfo addRoom(@SessionAttribute int hotelId, RoomType type, String roomNumber, int prize){
-        return hotelService.addRoom(hotelId, type, roomNumber, prize);
+    public ResultInfo addRoom(@SessionAttribute int hotelId, String type, String roomNumber, int prize){
+        return hotelService.addRoom(hotelId, RoomType.valueOf(type), roomNumber, prize);
     }
 
     @RequestMapping("/modifyRoom")
     @ResponseBody
     public ResultInfo modifyRoom(int roomId, RoomType type, String roomNumber, int prize){
         return hotelService.modifyRoom(new Room(roomId,type,roomNumber,prize));
+    }
+
+    @RequestMapping("/delRoom")
+    @ResponseBody
+    public ResultInfo delRoom(int roomId){
+        return hotelService.delRoom(roomId);
     }
 
     @RequestMapping("/getRooms")

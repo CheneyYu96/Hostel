@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/css/bootstrap-table.css"/>
 
     <script src="/js/jquery.min.js"></script>
+    <script src="/js/hotel-table.js"></script>
     <script src="/js/bootstrap-table.js"></script>
     <script src="/js/bootstrap-table-zh-CN.js"></script>
     <script src="/js/bootstrap.min.js"></script>
@@ -147,121 +148,53 @@
             <!--房间信息-->
             <h3 id="room">房间信息</h3>
             <div class="table-responsive" style="padding-left: 10%;width: 90%">
+                <div id="toolbar" class="btn-group">
+                    <button id="btn_add" type="button" class="btn btn-default" data-toggle="modal" data-target="#add">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+                    </button>
+                    <button id="btn_edit" type="button" class="btn btn-default" data-toggle="modal" data-target="#edit">
+                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+                    </button>
+                    <button id="btn_delete" type="button" class="btn btn-default" data-toggle="modal" data-target="#delete">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                    </button>
+                </div>
+
+                <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    ×
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">添加记录</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form role="form" action="javascript:void(0)">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="roomNumber" placeholder="请输入房间号"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="type" placeholder="请选择房间类型"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="prize" placeholder="请输入价格"/>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="addRecord">提交</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <table id="table"></table>
                 <script>
-                    var $table = $('#table');
-                    $table.bootstrapTable({
-                        url: '/hotel/getRooms',
-                        search: true,//是否搜索
-                        dataType: "json",//期待返回数据类型
-                        method: "post",//请求方式
-                        toolbar: '#toolbar', //工具按钮用哪个容器
-                        striped: true, //是否显示行间隔色
-                        cache: false, //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
-                        pagination: true, //是否显示分页（*）
-                        sortable: false, //是否启用排序
-                        sortOrder: "asc", //排序方式
-                        pageNumber:1, //初始化加载第一页，默认第一页
-                        pageSize: 10, //每页的记录行数（*）
-                        pageList: [10, 25, 50, 100], //可供选择的每页的行数（*）
-                        strictSearch: true,
-                        sidePagination: "client", //分页方式：client客户端分页，server服务端分页（*）
-                        showColumns: true, //是否显示所有的列
-                        showRefresh: true, //是否显示刷新按钮
-                        minimumCountColumns: 2, //最少允许的列数
-                        clickToSelect: true, //是否启用点击选中行
-                        uniqueId: "ID", //每一行的唯一标识，一般为主键列
-                        cardView: false, //是否显示详细视图
-                        detailView: false, //是否显示父子表
 
 
-                        rowStyle: function (row, index) {
-                            //这里有5个取值代表5中颜色['active', 'success', 'info', 'warning', 'danger'];
-                            var strclass = "";
-                            if (row.status == "已批准") {
-                                strclass = 'success';//还有一个active
-                            }
-                            else if (row.status == "待审批") {
-                                strclass = 'warning';
-                            }
-
-                            return { classes: strclass }
-                        },
-
-                        columns: [
-                            {
-                                title: "全选",
-                                field: "select",
-                                checkbox: true
-                            },
-                            {
-                                field: 'id',
-                                title: 'ID'
-                            },
-                            {
-                                field: 'roomNumber',
-                                title: '房间号'
-                            },
-                            {
-                                field: 'type',
-                                title: '房间类型'
-                            },
-                            {
-                                field: 'prize',
-                                title: '价格'
-                            },
-                            {
-                                field: 'isAvailable',
-                                title: '是否可用'
-                            },
-                            {
-                                field: 'status',
-                                title: '审批状态'
-                            },
-                            {
-                                title: '操作',
-                                field: 'id',
-                                formatter:function(value,row,index){
-                                    var e = '<a href="#" mce_href="#" onclick="edit(\''+ row.id + '\')">编辑</a> ';
-                                    var d = '<a href="#" mce_href="#" onclick="del(\''+ row.id +'\')">删除</a> ';
-                                    return e+d;
-                                }
-                            }
-                        ]
-                    });
                 </script>
-
-                <!--<table class="table">-->
-                    <!--<thead>-->
-                    <!--<tr>-->
-                        <!--<th>房间号</th>-->
-                        <!--<th>付款日期</th>-->
-                        <!--<th>状态</th>-->
-                    <!--</tr>-->
-                    <!--</thead>-->
-                    <!--<tbody>-->
-                    <!--<tr class="active">-->
-                        <!--<td>产品1</td>-->
-                        <!--<td>23/11/2013</td>-->
-                        <!--<td>待发货</td>-->
-                    <!--</tr>-->
-                    <!--<tr class="success">-->
-                        <!--<td>产品2</td>-->
-                        <!--<td>10/11/2013</td>-->
-                        <!--<td>发货中</td>-->
-                    <!--</tr>-->
-                    <!--<tr  class="warning">-->
-                        <!--<td>产品3</td>-->
-                        <!--<td>20/10/2013</td>-->
-                        <!--<td>待确认</td>-->
-                    <!--</tr>-->
-                    <!--<tr  class="danger">-->
-                        <!--<td>产品4</td>-->
-                        <!--<td>20/10/2013</td>-->
-                        <!--<td>已退货</td>-->
-                    <!--</tr>-->
-                    <!--</tbody>-->
-                <!--</table>-->
             </div>
         </div>
     </div>
