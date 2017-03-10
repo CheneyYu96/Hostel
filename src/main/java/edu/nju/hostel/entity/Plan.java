@@ -18,6 +18,12 @@ public class Plan {
     @GeneratedValue
     private int id;
 
+    @Column
+    private String name;
+
+    @Column
+    private String des;
+
     @Column(name="hot_id")
     private int hotelId;
 
@@ -80,5 +86,34 @@ public class Plan {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDes() {
+        return des;
+    }
+
+    public void setDes(String des) {
+        this.des = des;
+    }
+
+    public Plan() {
+    }
+
+    public Plan(String name, String des, int hotelId, LocalDate beginDate, LocalDate endDate, RoomType type, int discount) {
+        this.name = name;
+        this.des = des;
+        this.hotelId = hotelId;
+        this.beginDate = beginDate;
+        this.endDate = endDate;
+        this.type = type;
+        this.discount = discount;
     }
 }

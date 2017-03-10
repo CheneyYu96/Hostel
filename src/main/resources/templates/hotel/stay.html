@@ -49,59 +49,9 @@
             </ul>
         </div>
         <div class="col-xs-9" id="lists">
-            <!-已制定计划-->
+
+            <!--已制定计划-->
             <h3 id="exist">已制定计划</h3>
-            <div class="blank20"></div>
-            <div class="row">
-                <div class="col-sm-3 col-sm-offset-1">
-                    <h4><span class="label label-default">客栈名</span></h4>
-                </div>
-                <div class="col-sm-5">
-                    <input type="text" class="form-control" th:value="${hotel.getName()}" id="hotelName"/>
-                </div>
-            </div>
-            <div class="blank20"></div>
-            <div class="row">
-                <div class="col-sm-3 col-sm-offset-1">
-                    <h4><span class="label label-default">客栈地址</span></h4>
-                </div>
-                <div class="col-sm-5">
-                    <input type="text" class="form-control" th:value="${hotel.getAddress()}" id="address"/>
-                </div>
-            </div>
-            <div class="blank20"></div>
-
-            <div class="row">
-                <div class="col-sm-3 col-sm-offset-1">
-                    <h4><span class="label label-default">客栈ID</span></h4>
-                </div>
-                <div class="col-sm-5">
-                    <input type="text" class="form-control" th:value="${hotelId}" disabled="true"/>
-                </div>
-            </div>
-            <div class="blank20"></div>
-
-            <div class="row">
-                <div class="col-sm-3 col-sm-offset-1">
-                    <h4><span class="label label-default">客栈状态</span></h4>
-                </div>
-                <div class="col-sm-5">
-                    <input type="text" class="form-control" th:value="${hotel.getStatus()}" disabled="true"/>
-                </div>
-            </div>
-            <div class="blank20"></div>
-
-            <div class="row">
-                <div class="col-sm-4 col-sm-offset-6">
-                    <button type="button" class="btn btn-primary" id="editInfo">确认</button>
-                </div>
-            </div>
-
-            <div class="blank30"></div>
-            <hr/>
-
-            <!--制定计划-->
-            <h3 id="make">制定计划</h3>
             <div class="table-responsive" style="padding-left: 10%;width: 90%">
                 <div id="toolbar" class="btn-group">
                     <button id="btn_add" type="button" class="btn btn-default" data-toggle="modal" data-target="#add">
@@ -207,46 +157,6 @@
                 <div id="tip"></div>
                 <table id="table"></table>
 
-                <div class="blank30"></div>
-                <hr/>
-
-                <!--修改密码-->
-                <h3 id="password">修改密码</h3>
-                <div class="blank20"></div>
-                <div class="row">
-                    <div class="col-sm-3 col-sm-offset-1">
-                        <h4><span class="label label-default">请输入原始密码</span></h4>
-                    </div>
-                    <div class="col-sm-5">
-                        <input type="text" class="form-control"/>
-                    </div>
-                </div>
-                <div class="blank20"></div>
-                <div class="row">
-                    <div class="col-sm-3 col-sm-offset-1">
-                        <h4><span class="label label-default">请输入新密码</span></h4>
-                    </div>
-                    <div class="col-sm-5">
-                        <input type="text" class="form-control"/>
-                    </div>
-                </div>
-                <div class="blank20"></div>
-
-                <div class="row">
-                    <div class="col-sm-3 col-sm-offset-1">
-                        <h4><span class="label label-default">再次输入新密码</span></h4>
-                    </div>
-                    <div class="col-sm-5">
-                        <input type="text" class="form-control"/>
-                    </div>
-                </div>
-                <div class="blank20"></div>
-
-                <div class="row">
-                    <div class="col-sm-4 col-sm-offset-6">
-                        <button type="button" class="btn btn-primary">确认</button>
-                    </div>
-                </div>
                 <div class="blank30"></div>
 
             </div>

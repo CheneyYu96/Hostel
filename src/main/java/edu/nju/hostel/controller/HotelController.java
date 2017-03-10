@@ -1,6 +1,8 @@
 package edu.nju.hostel.controller;
 
+import com.sun.org.apache.regexp.internal.RE;
 import edu.nju.hostel.entity.Hotel;
+import edu.nju.hostel.entity.Plan;
 import edu.nju.hostel.entity.Room;
 import edu.nju.hostel.service.HotelService;
 import edu.nju.hostel.utility.FormatHelper;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -43,7 +46,7 @@ public class HotelController {
 
     @RequestMapping("/home")
     public String home(HttpSession session, String id, String password, Model model){
-        Hotel hotel = null;
+        Hotel hotel;
 
         if(session.getAttribute("hotelId")==null){
             if(id == null || password == null){
@@ -84,12 +87,18 @@ public class HotelController {
     }
 
     @RequestMapping("/stay")
-    public String stay(Model model){
+    public String stay(HttpSession session, Model model){
+        if(session.getAttribute("hotelId")==null){
+            return login(model);
+        }
         return HOTEL+"stay";
     }
 
     @RequestMapping("/statistic")
-    public String statistic(Model model){
+    public String statistic(HttpSession session, Model model){
+        if(session.getAttribute("hotelId")==null){
+            return login(model);
+        }
         return HOTEL+"statistic";
     }
 
@@ -122,6 +131,18 @@ public class HotelController {
     @ResponseBody
     public ResultInfo editInfo(@SessionAttribute int hotelId, String name, String address){
         return hotelService.modifyInfo(new Hotel(hotelId, name,address));
+    }
+
+    @RequestMapping("/getPlan")
+    @ResponseBody
+    public List<Plan> getPlan(@SessionAttribute int hotelId){
+        return hotelService.getPlan(hotelId);
+    }
+
+    @RequestMapping("/addPlan")
+    @ResponseBody
+    public ResultInfo addPlan(@SessionAttribute int hotelId, String name, String des, RoomType type, LocalDate begin, LocalDate end, int discount){
+        return hotelService.raisePlan(hotelId,name,des,type,begin,end,discount);
     }
 
 
