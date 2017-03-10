@@ -43,18 +43,25 @@ public class HotelController {
 
     @RequestMapping("/home")
     public String home(HttpSession session, String id, String password, Model model){
-        if(id == null || password == null){
-            return login(model);
-        }
-        Hotel hotel = hotelService.verifyHotel(id,password);
+        Hotel hotel = null;
 
-        if(hotel==null){
-            model.addAttribute("success", false);
-            return login(model);
+        if(session.getAttribute("hotelId")==null){
+            if(id == null || password == null){
+                return login(model);
+            }
+            hotel = hotelService.verifyHotel(id,password);
+            if(hotel==null){
+                model.addAttribute("success", false);
+                return login(model);
+            }
+            session.setAttribute("hotelId",hotel.getId());
         }
-        session.setAttribute("hotelId",hotel.getId());
+        else {
+            hotel = hotelService.getInfo((Integer)session.getAttribute("hotelId"));
+        }
+
         model.addAttribute("hotel", hotel);
-        model.addAttribute("hotelId", id);
+        model.addAttribute("hotelId", FormatHelper.Id2String(hotel.getId()));
         return HOTEL+"home";
     }
 
@@ -76,6 +83,17 @@ public class HotelController {
         return HOTEL + "home";
     }
 
+    @RequestMapping("/stay")
+    public String stay(Model model){
+        return HOTEL+"stay";
+    }
+
+    @RequestMapping("/statistic")
+    public String statistic(Model model){
+        return HOTEL+"statistic";
+    }
+
+
     @RequestMapping("/addRoom")
     @ResponseBody
     public ResultInfo addRoom(@SessionAttribute int hotelId, String type, String roomNumber, int prize){
@@ -85,7 +103,6 @@ public class HotelController {
     @RequestMapping("/modifyRoom")
     @ResponseBody
     public ResultInfo modifyRoom(int roomId, RoomType type, String roomNumber, int prize){
-//        System.err.println(roomId+"  "+type+"  "+roomNumber+"  "+prize);
         return hotelService.modifyRoom(new Room(roomId,type,roomNumber,prize));
     }
 
@@ -101,13 +118,11 @@ public class HotelController {
         return hotelService.getRooms(hotelId);
     }
 
-    @RequestMapping("/stay")
-    public String stay(Model model){
-        return HOTEL+"stay";
+    @RequestMapping("/editInfo")
+    @ResponseBody
+    public ResultInfo editInfo(@SessionAttribute int hotelId, String name, String address){
+        return hotelService.modifyInfo(new Hotel(hotelId, name,address));
     }
 
-    @RequestMapping("/statistic")
-    public String statistic(Model model){
-        return HOTEL+"statistic";
-    }
+
 }

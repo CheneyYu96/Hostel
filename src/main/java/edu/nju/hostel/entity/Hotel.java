@@ -73,6 +73,15 @@ public class Hotel {
     public void setStatus(HotelStatus status) {
         this.status = status;
     }
+
+    public Hotel() {
+    }
+
+    public Hotel(int id, String name, String address) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+    }
 }
 
 

@@ -256,7 +256,7 @@ ul.nav-pills.affix{
 #tip {
 	font-weight: bold;
 	position: absolute;
-	top: 50px;
+	top: 33%;
 	left: 50%;
 	display: none;
 	z-index: 9999;

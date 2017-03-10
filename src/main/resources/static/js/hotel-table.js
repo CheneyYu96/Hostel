@@ -64,8 +64,14 @@ function initTable() {
                 title: '价格'
             },
             {
-                field: 'isAvailable',
-                title: '是否可用'
+                field: 'available',
+                title: '是否可用',
+                formatter:function(value,row,index){
+                    if(value){
+                        return "是";
+                    }
+                    return "否";
+                }
             },
             {
                 field: 'status',
@@ -75,14 +81,63 @@ function initTable() {
     });
 }
 
+function editInfo() {
+    $.ajax({
+        url: '/hotel/editInfo',
+        dataType: "json",
+        method: "post",//请求方式
+        data:{
+            "name":$("#hotelName").val(),
+            "address":$("#address").val()
+        },
+        success:function(result){
+            console.log(result);
+            if(result.success){
+                showSuccess("修改成功");
+            }
+            else {
+                showFailure("修改失败");
+            }
+
+        },error:function(result){
+            showFailure("修改失败");
+        }
+
+    });
+}
+
 $(document).ready(function () {
+
+    $("#editInfo").bind("click",editInfo);
+
     $table = $('#table');
     //调用函数，初始化表格
     initTable();
     $("#addRoom").bind("click",addRoom);
+
     $("#modifyRoom").bind("click",modifyRoom);
     $("#btn_edit").bind("click",editValue);
+
+    $("#btn_delete").bind("click",delValue);
     $("#deleteRoom").bind("click",delRoom);
+
+    $("#add").keydown(function() {
+        if (event.keyCode == "13"){
+            $('#addRoom').click();
+        }
+    });
+
+    $("#edit").keydown(function() {
+        if (event.keyCode == "13"){
+            $('#modifyRoom').click();
+        }
+    });
+
+    $("#delete").keydown(function() {
+        if (event.keyCode == "13"){
+            $('#deleteRoom').click();
+        }
+    });
 
 });
 
@@ -97,9 +152,14 @@ function addRoom() {
             "prize":$("#prize").val()
         },
         success:function(result){
-            // console.log('tip: '+$("#tip").text());
-            showSuccess("添加成功");
-            $table.bootstrapTable('refresh', {url: '/hotel/getRooms'});
+            console.log(result);
+            if(result.success){
+                showSuccess("添加成功");
+                $table.bootstrapTable('refresh', {url: '/hotel/getRooms'});
+            }
+            else {
+                showFailure("添加失败, " + result.info);
+            }
 
         },error:function(result){
             showFailure("添加失败");
@@ -124,8 +184,14 @@ function modifyRoom() {
         },
         success:function(result){
             // console.log('tip: '+$("#tip").text());
-            showSuccess("修改成功");
-            $table.bootstrapTable('refresh', {url: '/hotel/getRooms'});
+
+            if(result.success){
+                showSuccess("修改成功");
+                $table.bootstrapTable('refresh', {url: '/hotel/getRooms'});
+            }
+            else {
+                showFailure("修改失败, "+result.info);
+            }
 
         },error:function(result){
             showFailure("修改失败");
@@ -136,7 +202,8 @@ function modifyRoom() {
 
 function delRoom(){
     var selections = $table.bootstrapTable('getSelections');
-    for(var i = 0; i<selections.length;i++){
+    var isSuccess = true;
+    for(var i = 0; i<selections.length&&isSuccess;i++){
         $.ajax({
             url: '/hotel/delRoom',
             dataType: "json",
@@ -147,9 +214,16 @@ function delRoom(){
             success:function(result){
                 // console.log(result);
                 $table.bootstrapTable('refresh', {url: '/hotel/getRooms'});
+                if(!result.success) {
+                    isSuccess=false;
+                }
+
             },error:function(result){
             }
         })
+    }
+    if(isSuccess){
+        showSuccess("删除成功");
     }
 
 }
@@ -169,19 +243,12 @@ function editValue() {
     }
 }
 
-function showInfo(msg) {
-    showTip(msg, 'info');
-}
-function showSuccess(msg) {
-    showTip(msg, 'success');
-}
-function showFailure(msg) {
-    showTip(msg, 'danger');
-}
-
-
-function showTip(tip, type) {
-    var $tip = $('#tip');
-    $tip.attr('class', 'alert alert-' + type).text(tip).css('margin-left', - $tip.outerWidth() / 2);
-    $tip.fadeIn(500).delay(1000).fadeOut(500);
+function delValue() {
+    var selections = $table.bootstrapTable('getSelections');
+    if(selections.length==0){
+        showInfo("请选择要删除的行");
+    }
+    else {
+        $("#delete").modal('show');
+    }
 }

@@ -48,8 +48,18 @@ public class HotelServiceBean implements HotelService{
     }
 
     @Override
+    public Hotel getInfo(int hotelId) {
+        return hotelRepository.findOne(hotelId);
+    }
+
+    @Override
     public ResultInfo modifyInfo(Hotel hotel) {
-        Hotel result = hotelRepository.save(hotel);
+        Hotel hotel1 = hotelRepository.findOne(hotel.getId());
+        hotel1.setName(hotel.getName());
+        hotel1.setAddress(hotel.getAddress());
+        hotel1.setStatus(HotelStatus.待审批);
+
+        Hotel result = hotelRepository.save(hotel1);
         if(result!=null){
             return new ResultInfo(true);
         }
@@ -114,11 +124,7 @@ public class HotelServiceBean implements HotelService{
     @Override
     public ResultInfo delRoom(int roomId) {
        roomRepository.delete(roomId);
-
-       if(roomRepository.getOne(roomId)==null){
-           return new ResultInfo(true);
-       }
-       return new ResultInfo(false);
+       return new ResultInfo(true);
     }
 
     @Override

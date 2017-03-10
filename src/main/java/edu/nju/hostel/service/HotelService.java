@@ -18,6 +18,8 @@ public interface HotelService {
 
     Hotel register(String name, String password, String address);
 
+    Hotel getInfo(int hotelId);
+
     ResultInfo modifyInfo(Hotel hotel);
 
     Hotel verifyHotel(String id, String password);
