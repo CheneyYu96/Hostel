@@ -8,13 +8,18 @@ import edu.nju.hostel.service.HotelService;
 import edu.nju.hostel.utility.FormatHelper;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.utility.RoomType;
+import edu.nju.hostel.vo.RoomInPlan;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.List;
@@ -145,5 +150,10 @@ public class HotelController {
         return hotelService.raisePlan(hotelId,name,des,type,begin,end,discount);
     }
 
+    @RequestMapping(value = "/getRelateRoom")
+    @ResponseBody
+    public List<RoomInPlan> getRelateRoom(@SessionAttribute int hotelId, RoomType type, int discount){
+        return hotelService.getRelateRooms(hotelId,type,discount);
+    }
 
 }
