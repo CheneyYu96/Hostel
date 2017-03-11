@@ -53,4 +53,12 @@ public class InRecordName {
     public void setMemberId(int memberId) {
         this.memberId = memberId;
     }
+
+    public InRecordName(String name, int memberId) {
+        this.name = name;
+        this.memberId = memberId;
+    }
+
+    public InRecordName() {
+    }
 }

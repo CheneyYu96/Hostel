@@ -3,6 +3,8 @@ package edu.nju.hostel.service;
 import edu.nju.hostel.entity.*;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.utility.RoomType;
+import edu.nju.hostel.vo.InRecordWithName;
+import edu.nju.hostel.vo.OutRecordWithInfo;
 import edu.nju.hostel.vo.RoomInPlan;
 
 import java.time.LocalDate;
@@ -40,11 +42,11 @@ public interface HotelService {
 
     ResultInfo delPlan(int planId);
 
-    List<InRecord> getInRecord(int hotelId);
+    List<InRecordWithName> getInRecord(int hotelId);
 
     ResultInfo addInRecord(List<InRecordName> nameList, int hotel, String roomNumber, RoomType type, LocalDate begin, LocalDate end, int pay, boolean payByCard, int orderId);
 
-    List<OutRecord> getOutRecord(int hotelId);
+    List<OutRecordWithInfo> getOutRecord(int hotelId);
 
     ResultInfo addOutRecord(int hotelId, int inRecordId, LocalDate date);
 

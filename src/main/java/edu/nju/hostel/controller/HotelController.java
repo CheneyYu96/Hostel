@@ -2,6 +2,7 @@ package edu.nju.hostel.controller;
 
 import com.sun.org.apache.regexp.internal.RE;
 import edu.nju.hostel.entity.Hotel;
+import edu.nju.hostel.entity.InRecordName;
 import edu.nju.hostel.entity.Plan;
 import edu.nju.hostel.entity.Room;
 import edu.nju.hostel.service.HotelService;
@@ -9,6 +10,8 @@ import edu.nju.hostel.utility.DateUtil;
 import edu.nju.hostel.utility.FormatHelper;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.utility.RoomType;
+import edu.nju.hostel.vo.InRecordWithName;
+import edu.nju.hostel.vo.OutRecordWithInfo;
 import edu.nju.hostel.vo.RoomInPlan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
@@ -23,7 +26,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -170,6 +176,35 @@ public class HotelController {
     @ResponseBody
     public List<RoomInPlan> getRelateRoom(@SessionAttribute int hotelId, RoomType type, int discount){
         return hotelService.getRelateRooms(hotelId,type,discount);
+    }
+
+    @RequestMapping(value = "/getInRecord")
+    @ResponseBody
+    public List<InRecordWithName> getInRecord(@SessionAttribute int hotelId){
+        return hotelService.getInRecord(hotelId);
+    }
+
+    @RequestMapping(value = "/addInRecord")
+    @ResponseBody
+    public ResultInfo addInRecord(@SessionAttribute int hotelId, Map<String, String> nameMap,String roomNumber, RoomType type, LocalDate begin, LocalDate end, int pay, boolean payByCard, int orderId){
+        List<InRecordName> list = nameMap
+                .keySet()
+                .stream()
+                .map( o -> new InRecordName(o,Integer.parseInt(nameMap.get(o))))
+                .collect(Collectors.toList());
+        return hotelService.addInRecord(list,hotelId,roomNumber,type,begin,end,pay,payByCard,orderId);
+    }
+
+    @RequestMapping(value = "/getOutRecord")
+    @ResponseBody
+    public List<OutRecordWithInfo> getOutRecord(@SessionAttribute int hotelId){
+        return hotelService.getOutRecord(hotelId);
+    }
+
+    @RequestMapping(value = "/addOutRecord")
+    @ResponseBody
+    public ResultInfo addOutRecord(@SessionAttribute int hotelId, int inRecordId, LocalDate date){
+        return hotelService.addOutRecord(hotelId,inRecordId,date);
     }
 
 }

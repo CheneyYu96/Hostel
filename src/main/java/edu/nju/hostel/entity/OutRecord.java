@@ -55,4 +55,13 @@ public class OutRecord {
     public void setHotelId(int hotelId) {
         this.hotelId = hotelId;
     }
+
+    public OutRecord() {
+    }
+
+    public OutRecord(int hotelId, int inRecordId, LocalDate date) {
+        this.hotelId = hotelId;
+        this.inRecordId = inRecordId;
+        this.date = date;
+    }
 }

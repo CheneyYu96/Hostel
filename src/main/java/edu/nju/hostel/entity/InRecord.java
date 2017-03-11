@@ -109,4 +109,18 @@ public class InRecord {
     public void setOrderId(int orderId) {
         this.orderId = orderId;
     }
+
+    public InRecord() {
+    }
+
+    public InRecord(int hotelId, String roomNumber, RoomType type, LocalDate begin, LocalDate end, int pay, Boolean payByCard, int orderId) {
+        this.hotelId = hotelId;
+        this.roomNumber = roomNumber;
+        this.type = type;
+        this.begin = begin;
+        this.end = end;
+        this.pay = pay;
+        this.payByCard = payByCard;
+        this.orderId = orderId;
+    }
 }

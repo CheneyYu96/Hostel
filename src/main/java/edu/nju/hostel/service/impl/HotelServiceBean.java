@@ -1,15 +1,16 @@
 package edu.nju.hostel.service.impl;
 
-import edu.nju.hostel.dao.HotelRepository;
-import edu.nju.hostel.dao.PlanRepository;
-import edu.nju.hostel.dao.RoomRepository;
+import edu.nju.hostel.dao.*;
 import edu.nju.hostel.entity.*;
 import edu.nju.hostel.service.HotelService;
 import edu.nju.hostel.utility.FormatHelper;
 import edu.nju.hostel.utility.HotelStatus;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.utility.RoomType;
+import edu.nju.hostel.vo.InRecordWithName;
+import edu.nju.hostel.vo.OutRecordWithInfo;
 import edu.nju.hostel.vo.RoomInPlan;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,12 +31,18 @@ public class HotelServiceBean implements HotelService{
     private final HotelRepository hotelRepository;
     private final RoomRepository roomRepository;
     private final PlanRepository planRepository;
+    private final InRecordRepository inRecordRepository;
+    private final OutRecordRepository outRecordRepository;
+    private final RecordNameRepository recordNameRepository;
 
     @Autowired
-    public HotelServiceBean(HotelRepository hotelRepository, RoomRepository roomRepository, PlanRepository planRepository) {
+    public HotelServiceBean(HotelRepository hotelRepository, RoomRepository roomRepository, PlanRepository planRepository, InRecordRepository inRecordRepository, OutRecordRepository outRecordRepository, RecordNameRepository recordNameRepository) {
         this.hotelRepository = hotelRepository;
         this.roomRepository = roomRepository;
         this.planRepository = planRepository;
+        this.inRecordRepository = inRecordRepository;
+        this.outRecordRepository = outRecordRepository;
+        this.recordNameRepository = recordNameRepository;
     }
 
     @Override
@@ -168,23 +175,69 @@ public class HotelServiceBean implements HotelService{
     }
 
     @Override
-    public List<InRecord> getInRecord(int hotelId) {
-        return null;
+    public List<InRecordWithName> getInRecord(int hotelId) {
+
+        return inRecordRepository
+                .findByHotelId(hotelId)
+                .stream()
+                .map( inRecord ->
+                        {
+                            List<String> nameList = recordNameRepository
+                                    .findByInRecordId(inRecord.getId())
+                                    .stream()
+                                    .map(o -> o.getName())
+                                    .collect(Collectors.toList());
+                            InRecordWithName inRecordWithName = new InRecordWithName();
+                            BeanUtils.copyProperties(inRecord,inRecordWithName);
+                            inRecordWithName.nameList = nameList;
+
+                            return inRecordWithName;
+                        }
+                )
+                .collect(Collectors.toList());
     }
 
     @Override
     public ResultInfo addInRecord(List<InRecordName> nameList, int hotel, String roomNumber, RoomType type, LocalDate begin, LocalDate end, int pay, boolean payByCard, int orderId) {
-        return null;
+        InRecord inRecord = inRecordRepository.save(new InRecord(hotel,roomNumber,type,begin,end,pay,payByCard,orderId));
+
+        if(inRecord!=null) {
+            nameList.forEach(inRecordName ->
+                    {
+                        inRecordName.setInRecordId(inRecord.getId());
+                        recordNameRepository.save(inRecordName);
+                    }
+            );
+            return new ResultInfo(true);
+        }
+
+        return new ResultInfo(false);
     }
 
     @Override
-    public List<OutRecord> getOutRecord(int hotelId) {
-        return null;
+    public List<OutRecordWithInfo> getOutRecord(int hotelId) {
+        return outRecordRepository
+                .findByHotelId(hotelId)
+                .stream()
+                .map( outRecord ->
+                        {
+                            InRecord inRecord = inRecordRepository.findOne(outRecord.getInRecordId());
+                            OutRecordWithInfo info = new OutRecordWithInfo();
+                            BeanUtils.copyProperties(outRecord,info);
+                            BeanUtils.copyProperties(inRecord,info,"id");
+                            return info;
+                        }
+                )
+                .collect(Collectors.toList());
     }
 
     @Override
     public ResultInfo addOutRecord(int hotelId, int inRecordId, LocalDate date) {
-        return null;
+        OutRecord record = outRecordRepository.save(new OutRecord(hotelId,inRecordId, date));
+        if(record!=null){
+            return new ResultInfo(true);
+        }
+        return new ResultInfo(false);
     }
 
 }
