@@ -1,28 +1,24 @@
 package edu.nju.hostel.entity;
 
-import edu.nju.hostel.utility.OrderStatus;
 import edu.nju.hostel.utility.RoomType;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
- *
  * @author yuminchen
- * @date 2017/3/3
  * @version V1.0
+ * @date 2017/3/11
  */
 @Entity
-@Table(name = "my_order")
-public class Order {
+@Table(name = "in_record")
+public class InRecord {
     @Id
     @GeneratedValue
     private int id;
 
-    @Column(name = "mem_id")
-    private int memberId;
-
-    @Column(name = "hot_id")
+    @Column(name = "hotel_id")
     private int hotelId;
 
     @Column(name = "room_number")
@@ -30,18 +26,17 @@ public class Order {
 
     private RoomType type;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private OrderStatus status;
-
-    @Column
     private LocalDate begin;
 
-    @Column
     private LocalDate end;
 
-    @Column
-    private int money;
+    private int pay;
+
+    @Column(name = "is_card")
+    private Boolean payByCard;
+
+    @Column(name = "order_id")
+    private int orderId;
 
     public int getId() {
         return id;
@@ -49,14 +44,6 @@ public class Order {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(int memberId) {
-        this.memberId = memberId;
     }
 
     public int getHotelId() {
@@ -83,14 +70,6 @@ public class Order {
         this.type = type;
     }
 
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
-
     public LocalDate getBegin() {
         return begin;
     }
@@ -107,11 +86,27 @@ public class Order {
         this.end = end;
     }
 
-    public int getMoney() {
-        return money;
+    public int getPay() {
+        return pay;
     }
 
-    public void setMoney(int money) {
-        this.money = money;
+    public void setPay(int pay) {
+        this.pay = pay;
+    }
+
+    public Boolean getPayByCard() {
+        return payByCard;
+    }
+
+    public void setPayByCard(Boolean payByCard) {
+        this.payByCard = payByCard;
+    }
+
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 }

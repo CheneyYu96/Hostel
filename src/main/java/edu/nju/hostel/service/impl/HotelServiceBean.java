@@ -135,7 +135,6 @@ public class HotelServiceBean implements HotelService{
 
     @Override
     public ResultInfo raisePlan(int hotelId, String name, String des, RoomType type, LocalDate beginDate, LocalDate endDate, int discount) {
-
         Plan plan = new Plan(name,des,hotelId,beginDate,endDate,type,discount);
         Plan result = planRepository.save(plan);
         if(result!=null){
@@ -162,6 +161,12 @@ public class HotelServiceBean implements HotelService{
     @Override
     public List<Plan> getPlan(int hotelId) {
         return planRepository.findByHotelId(hotelId);
+    }
+
+    @Override
+    public ResultInfo delPlan(int planId) {
+        planRepository.delete(planId);
+        return new ResultInfo(true);
     }
 
 }

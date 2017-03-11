@@ -5,6 +5,7 @@ import edu.nju.hostel.entity.Hotel;
 import edu.nju.hostel.entity.Plan;
 import edu.nju.hostel.entity.Room;
 import edu.nju.hostel.service.HotelService;
+import edu.nju.hostel.utility.DateUtil;
 import edu.nju.hostel.utility.FormatHelper;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.utility.RoomType;
@@ -91,6 +92,14 @@ public class HotelController {
         return HOTEL + "home";
     }
 
+    @RequestMapping("/plan")
+    public String plan(HttpSession session, Model model){
+        if(session.getAttribute("hotelId")==null){
+            return login(model);
+        }
+        return HOTEL+"plan";
+    }
+
     @RequestMapping("/stay")
     public String stay(HttpSession session, Model model){
         if(session.getAttribute("hotelId")==null){
@@ -146,9 +155,16 @@ public class HotelController {
 
     @RequestMapping("/addPlan")
     @ResponseBody
-    public ResultInfo addPlan(@SessionAttribute int hotelId, String name, String des, RoomType type, LocalDate begin, LocalDate end, int discount){
-        return hotelService.raisePlan(hotelId,name,des,type,begin,end,discount);
+    public ResultInfo addPlan(@SessionAttribute int hotelId, String name, String des, RoomType type, String begin, String end, int discount){
+        return hotelService.raisePlan(hotelId,name,des,type, DateUtil.parse(begin),DateUtil.parse(end),discount);
     }
+
+    @RequestMapping("/delPlan")
+    @ResponseBody
+    public ResultInfo delPlan(int planId){
+        return hotelService.delPlan(planId);
+    }
+
 
     @RequestMapping(value = "/getRelateRoom")
     @ResponseBody

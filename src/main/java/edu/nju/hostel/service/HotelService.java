@@ -40,6 +40,7 @@ public interface HotelService {
 
     List<Plan> getPlan(int hotelId);
 
+    ResultInfo delPlan(int planId);
 
 
 }

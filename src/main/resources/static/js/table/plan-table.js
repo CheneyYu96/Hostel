@@ -31,6 +31,11 @@ function initTable() {
         columns: [
 
             {
+                title: "全选",
+                field: "select",
+                checkbox: true
+            },
+            {
                 field: 'id',
                 title: 'ID'
             },
@@ -44,11 +49,13 @@ function initTable() {
             },
             {
                 field: 'beginDate',
-                title: '开始日期'
+                title: '开始日期',
+                formatter:formatDate
             },
             {
                 field: 'endDate',
-                title: '结束日期'
+                title: '结束日期',
+                formatter:formatDate
             },
             {
                 field: 'type',
@@ -56,7 +63,10 @@ function initTable() {
             },
             {
                 field: 'discount',
-                title: '折扣'
+                title: '折扣',
+                formatter:function(value,row,index){
+                    return value+'%';
+                }
             }
         ]
     });
@@ -137,15 +147,6 @@ function showRoomParam() {
 
 $(document).ready(function () {
 
-    // 设置日期
-    $('#datetimepicker1').datetimepicker({
-        format: 'YYYY-MM-DD',
-        locale: moment.locale('zh-cn')
-    });
-    $('#datetimepicker2').datetimepicker({
-        format: 'YYYY-MM-DD',
-        locale: moment.locale('zh-cn')
-    });
 
     $table = $('#table');
     $addRoomTable = $('#addRoomTable');
@@ -158,22 +159,26 @@ $(document).ready(function () {
 
     $("#btn_show").bind("click",showPlan);
 
-    // $("#btn_delete").bind("click",delValue);
-    // $("#deleteRoom").bind("click",delRoom);
+    $("#btn_delete").bind("click",delValue);
+    $("#deletePlan").bind("click",delPlan);
 
-    $("#add").keydown(function() {
+    $("#delete").keydown(function() {
         if (event.keyCode == "13"){
-            $('#addPlan').click();
+            $('#deleteRoom').click();
         }
     });
 
-    // $("#delete").keydown(function() {
-    //     if (event.keyCode == "13"){
-    //         $('#deleteRoom').click();
-    //     }
-    // });
-
 });
+function clearAdd() {
+  $("#name").val("");
+  $("#des").val("");
+  $("#type").val("");
+  $("#datetimepicker1").val("");
+  $("#datetimepicker2").val("");
+  $("#discount").val("");
+  $addRoomTable.bootstrapTable('destroy');
+
+}
 
 function addPlan() {
     $.ajax({
@@ -193,6 +198,7 @@ function addPlan() {
             if(result.success){
                 showSuccess("添加成功");
                 $table.bootstrapTable('refresh', {url: '/hotel/getPlan'});
+                clearAdd();
             }
             else {
                 showFailure("添加失败, " + result.info);
@@ -205,6 +211,9 @@ function addPlan() {
     });
 }
 
+function formatDate(value) {
+    return value.year+'/'+value.monthValue+'/'+value.dayOfMonth;
+}
 function showPlan() {
     var selections = $table.bootstrapTable('getSelections');
     if(selections.length != 1){
@@ -213,10 +222,11 @@ function showPlan() {
         return;
     }
     var content = selections[0];
+
     $("#nameShow").val(content.name);
     $("#desShow").val(content.des);
-    $("#datetimebegin").val(content.beginDate);
-    $("#datetimeend").val(content.endDate);
+    $("#datetimebegin").val(formatDate(content.beginDate));
+    $("#datetimeend").val(formatDate(content.endDate));
     $("#typeShow").val(content.type);
     $("#discountShow").val(content.discount);
     roomTable($showRoomTable,showRoomParam);
@@ -239,4 +249,32 @@ function delValue() {
     else {
         $("#delete").modal('show');
     }
+}
+
+function delPlan(){
+    var selections = $table.bootstrapTable('getSelections');
+    var isSuccess = true;
+    for(var i = 0; i<selections.length&&isSuccess;i++){
+        $.ajax({
+            url: '/hotel/delPlan',
+            dataType: "json",
+            method: "post",//请求方式
+            data:{
+                "planId":selections[i].id
+            },
+            success:function(result){
+                // console.log(result);
+                $table.bootstrapTable('refresh', {url: '/hotel/getPlan'});
+                if(!result.success) {
+                    isSuccess=false;
+                }
+
+            },error:function(result){
+            }
+        })
+    }
+    if(isSuccess){
+        showSuccess("删除成功");
+    }
+
 }

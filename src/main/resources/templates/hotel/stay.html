@@ -17,7 +17,6 @@
     <script src="/js/bootstrap-table.js"></script>
     <script src="/js/bootstrap-table-zh-CN.js"></script>
     <script src="/js/common.js"></script>
-    <script src="/js/plan-table.js"></script>
     <script src="/js/jquery.backstretch.min.js"></script>
     <script src="/js/bootstrap-datetimepicker.js"></script>
     <script src="/js/moment-with-locales.min.js"></script>
@@ -34,7 +33,10 @@
                 <li><a th:href="@{/hotel/home}" >店面信息</a></li>
             </ul>
             <ul class="nav navbar-nav">
-                <li class='active'><a href="#" >住宿登记</a></li>
+                <li><a th:href="@{/hotel/plan}" >发布计划</a></li>
+            </ul>
+            <ul class="nav navbar-nav">
+                <li class='active'><a href="#">住宿登记</a></li>
             </ul>
             <ul class="nav navbar-nav">
                 <li><a th:href="@{/hotel/statistic}">统计信息</a></li>
@@ -49,69 +51,42 @@
     <div class="row">
         <div class="col-xs-3" id="myScrollspy">
             <ul class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="125">
-                <li class="active"><a href="#exist">已制定计划</a></li>
-                <li><a href="#make">制定计划</a></li>
+                <li class="active"><a href="#in">入店登记</a></li>
+                <li><a href="#out">离店登记</a></li>
 
             </ul>
         </div>
         <div class="col-xs-9" id="lists">
 
-            <!--已制定计划-->
-            <h3 id="exist">已制定计划</h3>
+            <!--入店登记-->
+            <h3 id="in">入店登记</h3>
             <div class="table-responsive" style="padding-left: 10%;width: 90%">
                 <div id="toolbar" class="btn-group">
-                    <button id="btn_show" type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>查看详情
+                    <button id="btn_add" type="button" class="btn btn-default" data-toggle="modal" data-target="#add">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
                     </button>
-                    <!--<button id="btn_add" type="button" class="btn btn-default"  data-toggle="modal" data-target="#add">-->
-                        <!--<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>增加计划-->
-                    <!--</button>-->
+
+                    <button id="btn_delete" type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                    </button>
                 </div>
 
-                <div class="modal fade" id="show" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                                     ×
                                 </button>
-                                <h4 class="modal-title" id="myModalLabel">计划详情</h4>
+                                <h4 class="modal-title" id="myModalLabel">添加房间</h4>
                             </div>
                             <div class="modal-body">
                                 <form role="form" action="javascript:void(0)">
                                     <div class="form-group">
-                                        <h4><span class="label label-default">计划名</span></h4>
-                                        <input type="text" class="form-control" id="nameShow"/>
+                                        <input type="text" class="form-control" id="roomNumber" placeholder="请输入房间号"/>
                                     </div>
-
                                     <div class="form-group">
-                                        <h4><span class="label label-default">计划描述</span></h4>
-                                        <input type="text" class="form-control" id="desShow"/>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class='input-group date' id='datetimebegin'>
-                                            <h4><span class="label label-default">开始日期</span></h4>
-                                            <input type='text' class="form-control" />
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class='input-group date' id='datetimeend'>
-                                            <h4><span class="label label-default">结束日期</span></h4>
-                                            <input type='text' class="form-control" />
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <h4><span class="label label-default">计划房间类型</span></h4>
-                                        <select class="form-control" id="typeShow">
+                                        <select class="form-control" id="type">
                                             <option>单床房</option>
                                             <option>双床房</option>
                                             <option>大床房</option>
@@ -119,99 +94,43 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <h4><span class="label label-default">折扣</span></h4>
-                                        <input type="text" class="form-control" id="discountShow"/>
-                                        <span class="input-group-addon">%</span>
+                                        <input type="text" class="form-control" id="prize" placeholder="请输入价格"/>
                                     </div>
                                 </form>
-                                <div class="blank10"></div>
-                                <h4><span class="label label-default">折扣房间</span></h4>
-                                <table id="showRoomTable"></table>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="addRoom">提交</button>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!--<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-hidden="true">-->
-                    <!--<div class="modal-dialog">-->
-                        <!--<div class="modal-content">-->
-                            <!--<div class="modal-header">-->
-                                <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">-->
-                                    <!--×-->
-                                <!--</button>-->
-                                <!--<h4 class="modal-title">添加计划</h4>-->
-                            <!--</div>-->
-                            <!--<div class="modal-body">-->
-                                <!--<form role="form" action="javascript:void(0)">-->
-                                    <!--<div class="form-group">-->
-                                        <!--<h4><span class="label label-default">计划名</span></h4>-->
-                                        <!--<input type="text" class="form-control" id="name"/>-->
-                                    <!--</div>-->
-
-                                    <!--<div class="form-group">-->
-                                        <!--<h4><span class="label label-default">计划描述</span></h4>-->
-                                        <!--<input type="text" class="form-control" id="des"/>-->
-                                    <!--</div>-->
-
-                                    <!--<div class="form-group">-->
-                                        <!--<div class='input-group date' id='datetimepicker1' style="z-index: 9999">-->
-                                            <!--<h4><span class="label label-default">开始日期</span></h4>-->
-                                            <!--<input type='text' class="form-control" />-->
-                                            <!--<span class="input-group-addon">-->
-                                                <!--<span class="glyphicon glyphicon-calendar"></span>-->
-                                            <!--</span>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-
-                                    <!--<div class="form-group">-->
-                                        <!--<div class='input-group date' id='datetimepicker2'>-->
-                                            <!--<h4><span class="label label-default">结束日期</span></h4>-->
-                                            <!--<input type='text' class="form-control" />-->
-                                            <!--<span class="input-group-addon">-->
-                                                <!--<span class="glyphicon glyphicon-calendar"></span>-->
-                                            <!--</span>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-
-                                    <!--<div class="form-group">-->
-                                        <!--<h4><span class="label label-default">计划房间类型</span></h4>-->
-                                        <!--<select class="form-control" id="type" onchange="changeRoom()">-->
-                                            <!--<option>单床房</option>-->
-                                            <!--<option>双床房</option>-->
-                                            <!--<option>大床房</option>-->
-                                            <!--<option>套间</option>-->
-                                        <!--</select>-->
-                                    <!--</div>-->
-                                    <!--<div class="form-group">-->
-                                        <!--<div class='input-group'>-->
-                                            <!--<h4><span class="label label-default">折扣（输入小于100的正整数）</span></h4>-->
-                                            <!--<input type="text" class="form-control" id="discount"/>-->
-                                            <!--<span class="input-group-addon">%</span>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                <!--</form>-->
-                                <!--<div class="blank10"></div>-->
-                                <!--<h4><span class="label label-default">折扣房间</span></h4>-->
-                                <!--<table id="addRoomTable"></table>-->
-                            <!--</div>-->
-                            <!--<div class="modal-footer">-->
-                                <!--<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>-->
-                                <!--<button type="button" class="btn btn-primary" data-dismiss="modal" id="addPlan">提交</button>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-
+                <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    ×
+                                </button>
+                                <h4 class="modal-title">删除计划</h4>
+                            </div>
+                            <div class="modal-body">
+                                确认要删除吗？
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="deletePlan">确认</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div id="tip"></div>
             </div>
             <table id="table"></table>
             <div class="blank30"></div>
 
             <hr/>
-            <h3 id="make">制定计划</h3>
+            <h3 id="out">离店登记</h3>
             <div class="blank20"></div>
             <div class="row">
                 <div class="col-sm-3 col-sm-offset-1">
@@ -238,12 +157,19 @@
                     <h4><span class="label label-default">开始日期</span></h4>
                 </div>
                 <div class="col-sm-5">
-                    <div class='input-group date' id='datetimepicker1'>
-                        <input type='text' class="form-control" />
+
+                    <div class='input-group'>
+                        <input type='date' class="form-control" id="datetimepicker1"/>
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
                     </div>
+                    <!--<div class='input-group date' id='datetimepicker1'>-->
+                    <!--<input type='text' class="form-control" />-->
+                    <!--<span class="input-group-addon">-->
+                    <!--<span class="glyphicon glyphicon-calendar"></span>-->
+                    <!--</span>-->
+                    <!--</div>-->
                 </div>
             </div>
             <div class="blank10"></div>
@@ -253,12 +179,18 @@
                     <h4><span class="label label-default">结束日期</span></h4>
                 </div>
                 <div class="col-sm-5">
-                    <div class='input-group date' id='datetimepicker2'>
-                        <input type='text' class="form-control" />
+                    <div class='input-group'>
+                        <input type='date' class="form-control" id="datetimepicker2"/>
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
                     </div>
+                    <!--<div class='input-group date' id='datetimepicker2'>-->
+                    <!--<input type='text' class="form-control" />-->
+                    <!--<span class="input-group-addon">-->
+                    <!--<span class="glyphicon glyphicon-calendar"></span>-->
+                    <!--</span>-->
+                    <!--</div>-->
                 </div>
             </div>
             <div class="blank10"></div>
@@ -293,8 +225,17 @@
             <div class="blank10"></div>
             <h4><span class="label label-default">折扣房间</span></h4>
             <table id="addRoomTable"></table>
+            <div class="blank10"></div>
+
+            <div class="row">
+                <div class="col-sm-4 col-sm-offset-6">
+                    <button type="button" class="btn btn-primary" id="addPlan">确认</button>
+                </div>
+            </div>
             <div class="blank30"></div>
+
         </div>
+
     </div>
 </div>
 
