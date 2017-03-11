@@ -50,4 +50,6 @@ public interface HotelService {
 
     ResultInfo addOutRecord(int hotelId, int inRecordId, LocalDate date);
 
+    ResultInfo addRecordByOrder(List<InRecordName> nameList,int hotelId, int orderId);
+
 }

@@ -195,6 +195,18 @@ public class HotelController {
         return hotelService.addInRecord(list,hotelId,roomNumber,type,begin,end,pay,payByCard,orderId);
     }
 
+    @RequestMapping(value = "/addRecordByOrder")
+    @ResponseBody
+    public ResultInfo addRecordByOrder(@SessionAttribute int hotelId, Map<String, String> nameMap, int orderId){
+        List<InRecordName> list = nameMap
+                .keySet()
+                .stream()
+                .map( o -> new InRecordName(o,Integer.parseInt(nameMap.get(o))))
+                .collect(Collectors.toList());
+
+        return hotelService.addRecordByOrder(list,hotelId,orderId);
+    }
+
     @RequestMapping(value = "/getOutRecord")
     @ResponseBody
     public List<OutRecordWithInfo> getOutRecord(@SessionAttribute int hotelId){
@@ -206,5 +218,6 @@ public class HotelController {
     public ResultInfo addOutRecord(@SessionAttribute int hotelId, int inRecordId, LocalDate date){
         return hotelService.addOutRecord(hotelId,inRecordId,date);
     }
+
 
 }

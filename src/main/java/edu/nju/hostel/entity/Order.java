@@ -41,7 +41,7 @@ public class Order {
     private LocalDate end;
 
     @Column
-    private int money;
+    private int pay;
 
     public int getId() {
         return id;
@@ -107,11 +107,11 @@ public class Order {
         this.end = end;
     }
 
-    public int getMoney() {
-        return money;
+    public int getPay() {
+        return pay;
     }
 
-    public void setMoney(int money) {
-        this.money = money;
+    public void setPay(int pay) {
+        this.pay = pay;
     }
 }

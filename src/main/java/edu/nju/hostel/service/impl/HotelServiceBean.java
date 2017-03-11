@@ -10,6 +10,7 @@ import edu.nju.hostel.utility.RoomType;
 import edu.nju.hostel.vo.InRecordWithName;
 import edu.nju.hostel.vo.OutRecordWithInfo;
 import edu.nju.hostel.vo.RoomInPlan;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,15 +35,17 @@ public class HotelServiceBean implements HotelService{
     private final InRecordRepository inRecordRepository;
     private final OutRecordRepository outRecordRepository;
     private final RecordNameRepository recordNameRepository;
+    private final OrderRepository orderRepository;
 
     @Autowired
-    public HotelServiceBean(HotelRepository hotelRepository, RoomRepository roomRepository, PlanRepository planRepository, InRecordRepository inRecordRepository, OutRecordRepository outRecordRepository, RecordNameRepository recordNameRepository) {
+    public HotelServiceBean(HotelRepository hotelRepository, RoomRepository roomRepository, PlanRepository planRepository, InRecordRepository inRecordRepository, OutRecordRepository outRecordRepository, RecordNameRepository recordNameRepository, OrderRepository orderRepository) {
         this.hotelRepository = hotelRepository;
         this.roomRepository = roomRepository;
         this.planRepository = planRepository;
         this.inRecordRepository = inRecordRepository;
         this.outRecordRepository = outRecordRepository;
         this.recordNameRepository = recordNameRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Override
@@ -238,6 +241,29 @@ public class HotelServiceBean implements HotelService{
             return new ResultInfo(true);
         }
         return new ResultInfo(false);
+    }
+
+    @Override
+    public ResultInfo addRecordByOrder(List<InRecordName> nameList, int hotelId, int orderId) {
+
+        Order order = orderRepository.findOne(orderId);
+        if(order==null){
+            return new ResultInfo(false,"该订单号不存在");
+        }
+        if(hotelId!=order.getHotelId()){
+            return new ResultInfo(false,"订单不在本客栈预定");
+        }
+        return addInRecord(
+                nameList,
+                order.getHotelId(),
+                order.getRoomNumber(),
+                order.getType(),
+                order.getBegin(),
+                order.getEnd(),
+                order.getPay(),
+                false,
+                orderId
+        );
     }
 
 }

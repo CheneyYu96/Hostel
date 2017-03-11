@@ -16,6 +16,11 @@ public class ResultInfo {
         this.result = result;
     }
 
+    public ResultInfo(boolean result, String info) {
+        this.result = result;
+        this.info = info;
+    }
+
     public void setInfo(String info) {
         this.info = info;
     }
