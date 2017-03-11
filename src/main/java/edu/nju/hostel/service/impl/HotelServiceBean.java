@@ -10,7 +10,7 @@ import edu.nju.hostel.utility.RoomType;
 import edu.nju.hostel.vo.InRecordWithName;
 import edu.nju.hostel.vo.OutRecordWithInfo;
 import edu.nju.hostel.vo.RoomInPlan;
-import org.aspectj.weaver.ast.Or;
+import edu.nju.hostel.vo.RoomPrize;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -167,6 +167,25 @@ public class HotelServiceBean implements HotelService{
     }
 
     @Override
+    public RoomPrize getRoomPrizeInPlan(int hotelId, RoomType type, String roomNumber, LocalDate begin, LocalDate end) {
+        Room room = roomRepository.findByHotelAndNumber(hotelId,roomNumber);
+        if(room==null){
+            return new RoomPrize("房间号不存在");
+        }
+        RoomPrize roomPrize = new RoomPrize(roomNumber,room.getPrize());
+        List<Plan> planList = getPlan(hotelId)
+                .stream()
+                .filter( plan1 -> plan1.getType()==type )
+                .filter( plan1 -> plan1.getBeginDate().isBefore(begin)&&plan1.getEndDate().isAfter(end))
+                .collect(Collectors.toList());
+
+        if(planList!=null||planList.size()>0){
+            roomPrize.planDiscount = planList.get(0).getDiscount();
+        }
+        return roomPrize;
+    }
+
+    @Override
     public List<Plan> getPlan(int hotelId) {
         return planRepository.findByHotelId(hotelId);
     }
@@ -201,8 +220,9 @@ public class HotelServiceBean implements HotelService{
     }
 
     @Override
-    public ResultInfo addInRecord(List<InRecordName> nameList, int hotel, String roomNumber, RoomType type, LocalDate begin, LocalDate end, int pay, boolean payByCard, int orderId) {
-        InRecord inRecord = inRecordRepository.save(new InRecord(hotel,roomNumber,type,begin,end,pay,payByCard,orderId));
+    public ResultInfo addInRecord(List<InRecordName> nameList, int hotel, String roomNumber, RoomType type, LocalDate begin, LocalDate end, int pay, boolean payByCard, int orderId,int cardId) {
+
+        InRecord inRecord = inRecordRepository.save(new InRecord(hotel,roomNumber,type,begin,end,pay,payByCard,orderId,cardId));
 
         if(inRecord!=null) {
             nameList.forEach(inRecordName ->
@@ -262,7 +282,8 @@ public class HotelServiceBean implements HotelService{
                 order.getEnd(),
                 order.getPay(),
                 false,
-                orderId
+                orderId,
+                0
         );
     }
 

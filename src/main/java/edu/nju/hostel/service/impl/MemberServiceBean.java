@@ -54,6 +54,16 @@ public class MemberServiceBean implements MemberService {
     }
 
     @Override
+    public Member findMember(int memberId) {
+        return memberRepository.findOne(memberId);
+    }
+
+    @Override
+    public MemberCard findCard(int cardId) {
+        return memberCardRepository.findOne(cardId);
+    }
+
+    @Override
     public ResultInfo modifyInfo(Member member) {
         Member member1 = memberRepository.save(member);
         if(member1.getId()==member.getId()){
@@ -174,5 +184,22 @@ public class MemberServiceBean implements MemberService {
     @Override
     public ResultInfo cancelRoom(int orderId) {
         return null;
+    }
+
+    @Override
+    public ResultInfo payByCard(int cardId, int pay) {
+        MemberCard card = memberCardRepository.findOne(cardId);
+        if(card!=null){
+            if(card.getBalance()<pay){
+                return new ResultInfo(false,"余额不足");
+            }
+            card.setBalance(card.getBalance()-pay);
+            card.setConsumeAmount(card.getConsumeAmount()+pay);
+            card.setCredit(card.getCredit()+pay);
+            return new ResultInfo(true);
+        }
+        else {
+            return new ResultInfo(false,"卡号不存在");
+        }
     }
 }

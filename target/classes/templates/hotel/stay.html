@@ -88,13 +88,13 @@
                                     </div>
                                     <div class="col-sm-5" id="guest">
                                         <div class="row" id="guest_row1">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-5">
                                                 <select class="form-control" id="isMember1" onchange="memberChange(1)">
                                                     <option>会员</option>
                                                     <option>非会员</option>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-8">
+                                            <div class="col-sm-7">
                                                 <input type="text" class="form-control" id="guest1" placeholder="会员ID"/>
                                             </div>
                                         </div>
@@ -137,8 +137,97 @@
 
 
                                 <div id="otherLine">
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">房间号</span></h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="roomNumber"/>
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
+
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">房间类型</span></h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="type">
+                                                <option>单床房</option>
+                                                <option>双床房</option>
+                                                <option>大床房</option>
+                                                <option>套间</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
+
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">开始日期</span></h4>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <div class='input-group'>
+                                                <input type='date' class="form-control" id="begin"/>
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
+
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">结束日期</span></h4>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <div class='input-group'>
+                                                <input type='date' class="form-control" id="end"/>
+                                                <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
+
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">价格</span></h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="prize" readonly="readonly"/>
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
+
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">是否会员卡结账</span></h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="isCardPay" onchange="isCardPayChange()">
+                                                <option>是</option>
+                                                <option>否</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
+
+                                    <div class="row" id="cardLine">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">卡号</span></h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="cardId"/>
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
 
                                 </div>
+
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -195,18 +284,11 @@
                             <div class="modal-body">
                                 <form role="form" action="javascript:void(0)">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" id="roomNumber" placeholder="请输入房间号"/>
                                     </div>
                                     <div class="form-group">
-                                        <select class="form-control" id="type">
-                                            <option>单床房</option>
-                                            <option>双床房</option>
-                                            <option>大床房</option>
-                                            <option>套间</option>
-                                        </select>
+
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" id="prize" placeholder="请输入价格"/>
                                     </div>
                                 </form>
                             </div>

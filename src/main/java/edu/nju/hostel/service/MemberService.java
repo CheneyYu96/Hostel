@@ -23,6 +23,10 @@ public interface MemberService {
      */
     Member verifyMember(String name, String password);
 
+    Member findMember(int memberId);
+
+    MemberCard findCard(int cardId);
+
     ResultInfo modifyInfo(Member member);
 
     MemberCard register(String name, String password, String phoneNumber);
@@ -52,7 +56,7 @@ public interface MemberService {
 
     ResultInfo cancelRoom(int orderId);
 
-
+    ResultInfo payByCard(int cardId, int pay);
 
 
 }

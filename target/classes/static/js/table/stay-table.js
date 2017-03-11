@@ -14,6 +14,11 @@ function isOrderChange() {
     $("#otherLine").toggle();
 }
 
+function isCardPayChange() {
+    $("#cardLine").toggle();
+}
+
+
 function memberChange(index) {
     if($("#isMember"+index).val()=='会员'){
         $("#guest"+index).attr('placeholder','会员ID');
@@ -25,7 +30,7 @@ function memberChange(index) {
 
 function add_guest() {
     $guestNumber++;
-    var html = "<div class='row' id='guest_row"+$guestNumber+"'> <div class='blank5'></div> <div class='col-sm-4'> <select class='form-control' id='isMember"+$guestNumber+"' onchange='memberChange("+$guestNumber+")'> <option>会员</option> <option>非会员</option> </select> </div> <div class='col-sm-8'> <input type='text' class='form-control' id='guest"+$guestNumber+"' placeholder='会员ID'/> </div></div>";
+    var html = "<div class='row' id='guest_row"+$guestNumber+"'> <div class='blank5'></div> <div class='col-sm-5'> <select class='form-control' id='isMember"+$guestNumber+"' onchange='memberChange("+$guestNumber+")'> <option>会员</option> <option>非会员</option> </select> </div> <div class='col-sm-7'> <input type='text' class='form-control' id='guest"+$guestNumber+"' placeholder='会员ID'/> </div></div>";
     $("#guest").append(html);
 }
 

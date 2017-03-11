@@ -11,7 +11,7 @@ public enum MemberLevel {
         this.amount = amount;
     }
 
-    MemberLevel getLevel(int amount){
+    public MemberLevel getLevel(int amount){
         if(amount >= 3000){
             return 顶级;
         }
@@ -20,5 +20,16 @@ public enum MemberLevel {
         }
         return 普通;
     }
+
+    public static int getDiscount(int amount){
+        if(amount >= 3000){
+            return 70;
+        }
+        if(amount >= 1000){
+            return 80;
+        }
+        return 90;
+    }
+
 
 }

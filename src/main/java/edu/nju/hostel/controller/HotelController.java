@@ -1,18 +1,14 @@
 package edu.nju.hostel.controller;
 
 import com.sun.org.apache.regexp.internal.RE;
-import edu.nju.hostel.entity.Hotel;
-import edu.nju.hostel.entity.InRecordName;
-import edu.nju.hostel.entity.Plan;
-import edu.nju.hostel.entity.Room;
+import edu.nju.hostel.entity.*;
 import edu.nju.hostel.service.HotelService;
-import edu.nju.hostel.utility.DateUtil;
-import edu.nju.hostel.utility.FormatHelper;
-import edu.nju.hostel.utility.ResultInfo;
-import edu.nju.hostel.utility.RoomType;
+import edu.nju.hostel.service.MemberService;
+import edu.nju.hostel.utility.*;
 import edu.nju.hostel.vo.InRecordWithName;
 import edu.nju.hostel.vo.OutRecordWithInfo;
 import edu.nju.hostel.vo.RoomInPlan;
+import edu.nju.hostel.vo.RoomPrize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
@@ -29,6 +25,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -43,11 +40,13 @@ import java.util.stream.Collectors;
 public class HotelController {
 
     private final HotelService hotelService;
+    private final MemberService memberService;
     private final String HOTEL = "hotel/";
 
     @Autowired
-    public HotelController(HotelService hotelService) {
+    public HotelController(HotelService hotelService, MemberService memberService) {
         this.hotelService = hotelService;
+        this.memberService = memberService;
     }
 
     @RequestMapping("/login")
@@ -186,25 +185,19 @@ public class HotelController {
 
     @RequestMapping(value = "/addInRecord")
     @ResponseBody
-    public ResultInfo addInRecord(@SessionAttribute int hotelId, Map<String, String> nameMap,String roomNumber, RoomType type, LocalDate begin, LocalDate end, int pay, boolean payByCard, int orderId){
-        List<InRecordName> list = nameMap
-                .keySet()
-                .stream()
-                .map( o -> new InRecordName(o,Integer.parseInt(nameMap.get(o))))
-                .collect(Collectors.toList());
-        return hotelService.addInRecord(list,hotelId,roomNumber,type,begin,end,pay,payByCard,orderId);
+    public ResultInfo addInRecord(@SessionAttribute int hotelId, Map<String, String> nameMap,String roomNumber, RoomType type, LocalDate begin, LocalDate end, int pay, boolean payByCard,String cardId){
+        int card = FormatHelper.String2Id(cardId);
+        if(card>0){
+            memberService.payByCard(card,pay);
+        }
+        return hotelService.addInRecord(guestInfoMap2List(nameMap),hotelId,roomNumber,type,begin,end,pay,payByCard,0,card);
     }
 
     @RequestMapping(value = "/addRecordByOrder")
     @ResponseBody
     public ResultInfo addRecordByOrder(@SessionAttribute int hotelId, Map<String, String> nameMap, int orderId){
-        List<InRecordName> list = nameMap
-                .keySet()
-                .stream()
-                .map( o -> new InRecordName(o,Integer.parseInt(nameMap.get(o))))
-                .collect(Collectors.toList());
 
-        return hotelService.addRecordByOrder(list,hotelId,orderId);
+        return hotelService.addRecordByOrder(guestInfoMap2List(nameMap),hotelId,orderId);
     }
 
     @RequestMapping(value = "/getOutRecord")
@@ -219,5 +212,44 @@ public class HotelController {
         return hotelService.addOutRecord(hotelId,inRecordId,date);
     }
 
+    @RequestMapping(value = "/getPrize")
+    @ResponseBody
+    public RoomPrize getPrize(@SessionAttribute int hotelId, RoomType type, String roomNumber, LocalDate begin, LocalDate end, String cardId){
+        RoomPrize roomPrize = hotelService.getRoomPrizeInPlan(hotelId,type,roomNumber,begin,end);
+
+        roomPrize.nowPrize = roomPrize.originPrize*roomPrize.planDiscount/100;
+
+        if(cardId!=null && !cardId.equals("")) {
+            MemberCard card = memberService.findCard(FormatHelper.String2Id(cardId));
+            if (card == null) {
+                roomPrize.errorInfo = "卡号不存在";
+            } else {
+                roomPrize.memberDiscount = MemberLevel.getDiscount(card.getConsumeAmount());
+                roomPrize.nowPrize = roomPrize.originPrize * roomPrize.memberDiscount / 100;
+            }
+        }
+        return roomPrize;
+    }
+
+    /**
+     *  if the value of key is 1, the key is member id,
+     *  else the key is name
+     * @param map
+     * @return
+     */
+    private List<InRecordName> guestInfoMap2List(Map<String, String> map){
+        return map
+                .keySet()
+                .stream()
+                .map( o ->
+                {
+                    if("1".equals(map.get(o))){
+                        int memberId = Integer.parseInt(o);
+                        return new InRecordName(memberService.findMember(memberId).getName(),memberId);
+                    }
+                    return new InRecordName(o,0);
+                })
+                .collect(Collectors.toList());
+    }
 
 }

@@ -1,5 +1,11 @@
 package edu.nju.hostel.utility;
 
+import edu.nju.hostel.entity.InRecordName;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  *
  * @author yuminchen
@@ -14,7 +20,7 @@ public class FormatHelper {
      * @return
      */
     public static int String2Id(String id){
-        if(id.length()!=7){
+        if(id==null||id.length()!=7){
             return -1;
         }
 
@@ -44,4 +50,5 @@ public class FormatHelper {
         }
         return result;
     }
+
 }

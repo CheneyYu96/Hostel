@@ -38,6 +38,9 @@ public class InRecord {
     @Column(name = "order_id")
     private int orderId;
 
+    @Column(name = "card_id")
+    private int cardId;
+
     public int getId() {
         return id;
     }
@@ -110,10 +113,18 @@ public class InRecord {
         this.orderId = orderId;
     }
 
+    public int getCardId() {
+        return cardId;
+    }
+
+    public void setCardId(int cardId) {
+        this.cardId = cardId;
+    }
+
     public InRecord() {
     }
 
-    public InRecord(int hotelId, String roomNumber, RoomType type, LocalDate begin, LocalDate end, int pay, Boolean payByCard, int orderId) {
+    public InRecord(int hotelId, String roomNumber, RoomType type, LocalDate begin, LocalDate end, int pay, Boolean payByCard, int orderId, int cardId) {
         this.hotelId = hotelId;
         this.roomNumber = roomNumber;
         this.type = type;
@@ -122,5 +133,6 @@ public class InRecord {
         this.pay = pay;
         this.payByCard = payByCard;
         this.orderId = orderId;
+        this.cardId = cardId;
     }
 }
