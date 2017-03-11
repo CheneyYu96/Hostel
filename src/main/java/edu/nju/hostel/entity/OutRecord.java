@@ -16,6 +16,9 @@ public class OutRecord {
     @GeneratedValue
     private int id;
 
+    @Column(name = "hotel_id")
+    private int hotelId;
+
     @Column(name = "in_record_id")
     private int inRecordId;
 
@@ -43,5 +46,13 @@ public class OutRecord {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public int getHotelId() {
+        return hotelId;
+    }
+
+    public void setHotelId(int hotelId) {
+        this.hotelId = hotelId;
     }
 }

@@ -3,9 +3,7 @@ package edu.nju.hostel.service.impl;
 import edu.nju.hostel.dao.HotelRepository;
 import edu.nju.hostel.dao.PlanRepository;
 import edu.nju.hostel.dao.RoomRepository;
-import edu.nju.hostel.entity.Hotel;
-import edu.nju.hostel.entity.Plan;
-import edu.nju.hostel.entity.Room;
+import edu.nju.hostel.entity.*;
 import edu.nju.hostel.service.HotelService;
 import edu.nju.hostel.utility.FormatHelper;
 import edu.nju.hostel.utility.HotelStatus;
@@ -167,6 +165,26 @@ public class HotelServiceBean implements HotelService{
     public ResultInfo delPlan(int planId) {
         planRepository.delete(planId);
         return new ResultInfo(true);
+    }
+
+    @Override
+    public List<InRecord> getInRecord(int hotelId) {
+        return null;
+    }
+
+    @Override
+    public ResultInfo addInRecord(List<InRecordName> nameList, int hotel, String roomNumber, RoomType type, LocalDate begin, LocalDate end, int pay, boolean payByCard, int orderId) {
+        return null;
+    }
+
+    @Override
+    public List<OutRecord> getOutRecord(int hotelId) {
+        return null;
+    }
+
+    @Override
+    public ResultInfo addOutRecord(int hotelId, int inRecordId, LocalDate date) {
+        return null;
     }
 
 }

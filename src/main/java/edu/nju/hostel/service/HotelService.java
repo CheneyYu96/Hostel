@@ -1,8 +1,6 @@
 package edu.nju.hostel.service;
 
-import edu.nju.hostel.entity.Hotel;
-import edu.nju.hostel.entity.Plan;
-import edu.nju.hostel.entity.Room;
+import edu.nju.hostel.entity.*;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.utility.RoomType;
 import edu.nju.hostel.vo.RoomInPlan;
@@ -42,5 +40,12 @@ public interface HotelService {
 
     ResultInfo delPlan(int planId);
 
+    List<InRecord> getInRecord(int hotelId);
+
+    ResultInfo addInRecord(List<InRecordName> nameList, int hotel, String roomNumber, RoomType type, LocalDate begin, LocalDate end, int pay, boolean payByCard, int orderId);
+
+    List<OutRecord> getOutRecord(int hotelId);
+
+    ResultInfo addOutRecord(int hotelId, int inRecordId, LocalDate date);
 
 }
