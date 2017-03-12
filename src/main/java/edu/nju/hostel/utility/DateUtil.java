@@ -54,4 +54,18 @@ public class DateUtil {
         return DateUtil.parse(dateString) != null;
     }
 
+    public static int endMinusBegin(LocalDate begin, LocalDate end){
+        if(end.isBefore(begin)||end.isEqual(begin)){
+            return -1;
+        }
+        int result = 0;
+        LocalDate tmp = LocalDate.of(end.getYear(),end.getMonth(),end.getDayOfMonth());
+
+        for(; !tmp.isEqual(begin);result++){
+            tmp = tmp.minusDays(1);
+        }
+
+        return result;
+
+    }
 }

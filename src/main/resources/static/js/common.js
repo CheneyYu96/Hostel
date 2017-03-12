@@ -18,3 +18,7 @@ function showTip(tip, type) {
     $tip.attr('class', 'alert alert-' + type).text(tip).css('margin-left', - $tip.outerWidth()/2);
     $tip.fadeIn(500).delay(1000).fadeOut(500);
 }
+
+function formatDate(value) {
+    return value.year+'/'+value.monthValue+'/'+value.dayOfMonth;
+}

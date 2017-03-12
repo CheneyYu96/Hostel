@@ -128,7 +128,7 @@ function roomTable(tablevar, query) {
 addRoomParam = function (params){
     var temp = {
         type: $("#type").val(),
-        discount: $("#discount").val(),
+        discount: $("#discount").val()
     };
 
     return temp;
@@ -211,9 +211,7 @@ function addPlan() {
     });
 }
 
-function formatDate(value) {
-    return value.year+'/'+value.monthValue+'/'+value.dayOfMonth;
-}
+
 function showPlan() {
     var selections = $table.bootstrapTable('getSelections');
     if(selections.length != 1){

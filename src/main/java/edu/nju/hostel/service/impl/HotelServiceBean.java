@@ -3,10 +3,7 @@ package edu.nju.hostel.service.impl;
 import edu.nju.hostel.dao.*;
 import edu.nju.hostel.entity.*;
 import edu.nju.hostel.service.HotelService;
-import edu.nju.hostel.utility.FormatHelper;
-import edu.nju.hostel.utility.HotelStatus;
-import edu.nju.hostel.utility.ResultInfo;
-import edu.nju.hostel.utility.RoomType;
+import edu.nju.hostel.utility.*;
 import edu.nju.hostel.vo.InRecordWithName;
 import edu.nju.hostel.vo.OutRecordWithInfo;
 import edu.nju.hostel.vo.RoomInPlan;
@@ -167,19 +164,23 @@ public class HotelServiceBean implements HotelService{
     }
 
     @Override
-    public RoomPrize getRoomPrizeInPlan(int hotelId, RoomType type, String roomNumber, LocalDate begin, LocalDate end) {
+    public RoomPrize getRoomPrizeInPlan(int hotelId, String roomNumber, LocalDate begin, LocalDate end) {
         Room room = roomRepository.findByHotelAndNumber(hotelId,roomNumber);
         if(room==null){
             return new RoomPrize("房间号不存在");
         }
-        RoomPrize roomPrize = new RoomPrize(roomNumber,room.getPrize());
+        int dayLength = DateUtil.endMinusBegin(begin,end);
+        if(dayLength<0){
+            return new RoomPrize("日期间隔小于1天");
+        }
+        RoomPrize roomPrize = new RoomPrize(roomNumber,room.getPrize()*dayLength,room.getType());
         List<Plan> planList = getPlan(hotelId)
                 .stream()
-                .filter( plan1 -> plan1.getType()==type )
+                .filter( plan1 -> plan1.getType()==room.getType() )
                 .filter( plan1 -> plan1.getBeginDate().isBefore(begin)&&plan1.getEndDate().isAfter(end))
                 .collect(Collectors.toList());
 
-        if(planList!=null||planList.size()>0){
+        if(planList!=null&&planList.size()>0){
             roomPrize.planDiscount = planList.get(0).getDiscount();
         }
         return roomPrize;

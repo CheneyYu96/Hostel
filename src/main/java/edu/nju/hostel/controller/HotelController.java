@@ -185,12 +185,16 @@ public class HotelController {
 
     @RequestMapping(value = "/addInRecord")
     @ResponseBody
-    public ResultInfo addInRecord(@SessionAttribute int hotelId, Map<String, String> nameMap,String roomNumber, RoomType type, LocalDate begin, LocalDate end, int pay, boolean payByCard,String cardId){
+    public ResultInfo addInRecord(@SessionAttribute int hotelId, Map<String, String> nameMap,String roomNumber, RoomType type, String begin, String end, int pay, boolean payByCard,String cardId){
         int card = FormatHelper.String2Id(cardId);
+        ResultInfo resultInfo = new ResultInfo(true);
         if(card>0){
-            memberService.payByCard(card,pay);
+            resultInfo = memberService.payByCard(card,pay);
         }
-        return hotelService.addInRecord(guestInfoMap2List(nameMap),hotelId,roomNumber,type,begin,end,pay,payByCard,0,card);
+        if(!resultInfo.isSuccess()){
+            return resultInfo;
+        }
+        return hotelService.addInRecord(guestInfoMap2List(nameMap),hotelId,roomNumber,type,DateUtil.parse(begin),DateUtil.parse(end),pay,payByCard,0,card);
     }
 
     @RequestMapping(value = "/addRecordByOrder")
@@ -208,24 +212,25 @@ public class HotelController {
 
     @RequestMapping(value = "/addOutRecord")
     @ResponseBody
-    public ResultInfo addOutRecord(@SessionAttribute int hotelId, int inRecordId, LocalDate date){
-        return hotelService.addOutRecord(hotelId,inRecordId,date);
+    public ResultInfo addOutRecord(@SessionAttribute int hotelId, int inRecordId, String date){
+        return hotelService.addOutRecord(hotelId,inRecordId,DateUtil.parse(date));
     }
 
     @RequestMapping(value = "/getPrize")
     @ResponseBody
-    public RoomPrize getPrize(@SessionAttribute int hotelId, RoomType type, String roomNumber, LocalDate begin, LocalDate end, String cardId){
-        RoomPrize roomPrize = hotelService.getRoomPrizeInPlan(hotelId,type,roomNumber,begin,end);
+    public RoomPrize getPrize(@SessionAttribute int hotelId, String roomNumber, String begin, String end, String cardId){
+
+        RoomPrize roomPrize = hotelService.getRoomPrizeInPlan(hotelId,roomNumber,DateUtil.parse(begin),DateUtil.parse(end));
 
         roomPrize.nowPrize = roomPrize.originPrize*roomPrize.planDiscount/100;
 
-        if(cardId!=null && !cardId.equals("")) {
+        if(cardId!=null && cardId.length()==7) {
             MemberCard card = memberService.findCard(FormatHelper.String2Id(cardId));
             if (card == null) {
                 roomPrize.errorInfo = "卡号不存在";
             } else {
                 roomPrize.memberDiscount = MemberLevel.getDiscount(card.getConsumeAmount());
-                roomPrize.nowPrize = roomPrize.originPrize * roomPrize.memberDiscount / 100;
+                roomPrize.nowPrize = roomPrize.originPrize * roomPrize.memberDiscount * roomPrize.planDiscount/ 10000;
             }
         }
         return roomPrize;

@@ -39,7 +39,7 @@ public interface HotelService {
 
     List<RoomInPlan> getRelateRooms(int hotelId, RoomType type, int discount);
 
-    RoomPrize getRoomPrizeInPlan(int hotelId, RoomType type, String roomNumber, LocalDate begin, LocalDate end);
+    RoomPrize getRoomPrizeInPlan(int hotelId, String roomNumber, LocalDate begin, LocalDate end);
 
     List<Plan> getPlan(int hotelId);
 
