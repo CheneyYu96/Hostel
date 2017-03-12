@@ -232,6 +232,9 @@ public class HotelServiceBean implements HotelService{
                         recordNameRepository.save(inRecordName);
                     }
             );
+            Room room = roomRepository.findByHotelAndNumber(hotel,roomNumber);
+            room.setAvailable(false);
+            roomRepository.save(room);
             return new ResultInfo(true);
         }
 
@@ -259,6 +262,15 @@ public class HotelServiceBean implements HotelService{
     public ResultInfo addOutRecord(int hotelId, int inRecordId, LocalDate date) {
         OutRecord record = outRecordRepository.save(new OutRecord(hotelId,inRecordId, date));
         if(record!=null){
+
+            InRecord inRecord = inRecordRepository.findOne(inRecordId);
+            if(inRecord==null){
+                return new ResultInfo(false,"入住单号不存在");
+            }
+            Room room = roomRepository.findByHotelAndNumber(inRecord.getHotelId(),inRecord.getRoomNumber());
+            room.setAvailable(true);
+            roomRepository.save(room);
+
             return new ResultInfo(true);
         }
         return new ResultInfo(false);

@@ -20,5 +20,8 @@ function showTip(tip, type) {
 }
 
 function formatDate(value) {
+    if(value == null){
+        return null;
+    }
     return value.year+'/'+value.monthValue+'/'+value.dayOfMonth;
 }

@@ -40,14 +40,14 @@ function initInTable() {
             },
             {
                 field: 'nameList',
-                title: '客户名',
-                formatter:function(value,row,index){
-                    var result = "";
-                   for (var i = 0; i<value.length; i++){
-                       result = result + " " + value[i];
-                   }
-                   return result;
-                }
+                title: '客户名'
+                // formatter:function(value,row,index){
+                //     var result = "";
+                //    for (var i = 0; i<value.length; i++){
+                //        result = result + " " + value[i];
+                //    }
+                //    return result;
+                // }
             },
             {
                 field: 'roomNumber',
@@ -74,7 +74,7 @@ function initInTable() {
             },
             {
                 field: 'payByCard',
-                title: '是否会员卡支付',
+                title: '卡支付',
                 formatter:function(value,row,index){
                     if(value){
                         return "是";
@@ -161,33 +161,37 @@ $(document).ready(function () {
 
     $guestNumber = 1;
     $prize = 0;
+    $type = "";
 });
 
-function addIn() {
-    var map = {};
+function add_in() {
+    var infoList = "";
     for(var i = 1; i<=$guestNumber;i++){
-        if($("#isMember"+i)=="会员"){
-            map[$("#guest"+i)]="1";
+        var value = $("#guest"+i).val();
+        if($("#isMember"+i).val()=="会员"){
+            infoList = infoList + "1:" + value;
         }
         else {
-            map[$("#guest"+i)]="0";
-
+            infoList = infoList + "0:" + value;
         }
+        infoList = infoList + ";";
     }
     if($("#isOrder")=="是"){
         $.ajax({
             url: '/hotel/addRecordByOrder',
             dataType: "json",
             method: "post",//请求方式
+            // contentType : "application/x-www-form-urlencoded",
             data:{
                 "orderId":$("#orderId").val(),
-                "nameMap":map
+                "nameMap":infoList
             },
             success:function(result){
                 console.log(result);
                 if(result.success){
                     showSuccess("添加成功");
                     $table_in.bootstrapTable('refresh', {url: '/hotel/getInRecord'});
+                    clear_in();
                 }
                 else {
                     showFailure("添加失败, " + result.info);
@@ -203,22 +207,24 @@ function addIn() {
             url: '/hotel/addInRecord',
             dataType: "json",
             method: "post",//请求方式
+            // contentType:'application/json;charset=UTF-8',
+            // contentType : "application/x-www-form-urlencoded",
             data:{
-                "nameMap":map,
-
+                "nameMap":infoList,
                 "roomNumber":$("#roomNumber").val(),
                 "cardId":$("#cardId").val(),
-                "type":$("#type").val(),
+                "type":$type,
                 "begin":$("#begin").val(),
                 "end":$("#end").val(),
                 "pay":$prize,
                 "payByCard":convert2Bool($("#isCardPay").val())
             },
+
             success:function(result){
-                console.log(result);
                 if(result.success){
                     showSuccess("添加成功");
                     $table_in.bootstrapTable('refresh', {url: '/hotel/getInRecord'});
+                    clear_in();
                 }
                 else {
                     showFailure("添加失败, " + result.info);
@@ -232,6 +238,22 @@ function addIn() {
     }
 
 }
+
+function clear_in() {
+    $("#roomNumber").val("");
+    $("#cardId").val("");
+    $("#type").val("");
+    $("#begin").val("");
+    $("#end").val("");
+    $("#prize").val("");
+    $("#isCardPay").val("");
+    $("#orderId").val("");
+    for(var i = 1; i < $guestNumber; i++){
+        minus_guest();
+    }
+    $("#guest1").val("");
+}
+
 function isOrderChange() {
     $("#orderLine").toggle();
     $("#otherLine").toggle();
@@ -272,7 +294,6 @@ function showPrize() {
     if( $('#roomNumber').val().length<3 || $("#begin").val().length<3 || $("#end").val().length<3){
         return
     }
-    console.log($('#cardId').val());
     $.ajax({
         url: '/hotel/getPrize',
         dataType: "json",
@@ -292,6 +313,7 @@ function showPrize() {
                 $("#prize").val("原价"+result.originPrize+"，折后"+result.nowPrize);
                 $("#type").val(result.type);
                 $prize = result.nowPrize;
+                $type = result.type;
             }
 
         },error:function(result){

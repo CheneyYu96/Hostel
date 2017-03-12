@@ -5,18 +5,12 @@ import edu.nju.hostel.entity.*;
 import edu.nju.hostel.service.HotelService;
 import edu.nju.hostel.service.MemberService;
 import edu.nju.hostel.utility.*;
-import edu.nju.hostel.vo.InRecordWithName;
-import edu.nju.hostel.vo.OutRecordWithInfo;
-import edu.nju.hostel.vo.RoomInPlan;
-import edu.nju.hostel.vo.RoomPrize;
+import edu.nju.hostel.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -185,7 +179,7 @@ public class HotelController {
 
     @RequestMapping(value = "/addInRecord")
     @ResponseBody
-    public ResultInfo addInRecord(@SessionAttribute int hotelId, Map<String, String> nameMap,String roomNumber, RoomType type, String begin, String end, int pay, boolean payByCard,String cardId){
+    public ResultInfo addInRecord(@SessionAttribute int hotelId, String nameMap, String roomNumber, RoomType type, String begin, String end, int pay, boolean payByCard, String cardId){
         int card = FormatHelper.String2Id(cardId);
         ResultInfo resultInfo = new ResultInfo(true);
         if(card>0){
@@ -199,7 +193,7 @@ public class HotelController {
 
     @RequestMapping(value = "/addRecordByOrder")
     @ResponseBody
-    public ResultInfo addRecordByOrder(@SessionAttribute int hotelId, Map<String, String> nameMap, int orderId){
+    public ResultInfo addRecordByOrder(@SessionAttribute int hotelId,String nameMap, int orderId){
 
         return hotelService.addRecordByOrder(guestInfoMap2List(nameMap),hotelId,orderId);
     }
@@ -239,22 +233,28 @@ public class HotelController {
     /**
      *  if the value of key is 1, the key is member id,
      *  else the key is name
-     * @param map
-     * @return
      */
-    private List<InRecordName> guestInfoMap2List(Map<String, String> map){
-        return map
-                .keySet()
-                .stream()
-                .map( o ->
-                {
-                    if("1".equals(map.get(o))){
-                        int memberId = Integer.parseInt(o);
-                        return new InRecordName(memberService.findMember(memberId).getName(),memberId);
-                    }
-                    return new InRecordName(o,0);
-                })
-                .collect(Collectors.toList());
+    private List<InRecordName> guestInfoMap2List(String infoList){
+
+        String[] singleInfo = infoList.split(";");
+        List<InRecordName> inRecordNameList = new ArrayList<>();
+        for (String info : singleInfo) {
+            String[] nameSpl = info.split(":");
+            if(nameSpl.length!=2){
+                continue;
+            }
+            if(nameSpl[0].equals("1")){
+                int memberId = FormatHelper.String2Id(nameSpl[1]);
+                if(memberId>0){
+                    String name = memberService.findMember(memberId).getName();
+                    inRecordNameList.add(new InRecordName(name,memberId));
+                }
+            }
+            else if(nameSpl[0].equals("0")){
+                inRecordNameList.add(new InRecordName(nameSpl[1],0));
+            }
+        }
+        return inRecordNameList;
     }
 
 }
