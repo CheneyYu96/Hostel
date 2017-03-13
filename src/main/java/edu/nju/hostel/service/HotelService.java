@@ -3,10 +3,8 @@ package edu.nju.hostel.service;
 import edu.nju.hostel.entity.*;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.utility.RoomType;
-import edu.nju.hostel.vo.InRecordWithName;
-import edu.nju.hostel.vo.OutRecordWithInfo;
-import edu.nju.hostel.vo.RoomInPlan;
-import edu.nju.hostel.vo.RoomPrize;
+import edu.nju.hostel.utility.StatisticType;
+import edu.nju.hostel.vo.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -55,4 +53,11 @@ public interface HotelService {
 
     ResultInfo addRecordByOrder(List<InRecordName> nameList,int hotelId, int orderId);
 
+    List<LiveIn> getBookLine(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
+
+    List<LiveIn> getBookPie(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
+
+    List<LiveIn> getInLine(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
+
+    List<LiveIn> getInPie(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
 }

@@ -4,10 +4,7 @@ import edu.nju.hostel.dao.*;
 import edu.nju.hostel.entity.*;
 import edu.nju.hostel.service.HotelService;
 import edu.nju.hostel.utility.*;
-import edu.nju.hostel.vo.InRecordWithName;
-import edu.nju.hostel.vo.OutRecordWithInfo;
-import edu.nju.hostel.vo.RoomInPlan;
-import edu.nju.hostel.vo.RoomPrize;
+import edu.nju.hostel.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -301,5 +298,26 @@ public class HotelServiceBean implements HotelService{
                 0
         );
     }
+
+    @Override
+    public List<LiveIn> getBookLine(int hotelId, StatisticType method, LocalDate begin, LocalDate end) {
+        return null;
+    }
+
+    @Override
+    public List<LiveIn> getBookPie(int hotelId, StatisticType method, LocalDate begin, LocalDate end) {
+        return null;
+    }
+
+    @Override
+    public List<LiveIn> getInLine(int hotelId, StatisticType method, LocalDate begin, LocalDate end) {
+        return null;
+    }
+
+    @Override
+    public List<LiveIn> getInPie(int hotelId, StatisticType method, LocalDate begin, LocalDate end) {
+        return null;
+    }
+
 
 }

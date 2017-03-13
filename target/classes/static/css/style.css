@@ -185,6 +185,10 @@ ul.nav-pills.affix{
 	color: #1a1a1a;
 }
 
+#lists h5{
+	color: #1a1a1a;
+}
+
 .table>thead>tr>th{
 	text-align: center;
 }
