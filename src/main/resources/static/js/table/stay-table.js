@@ -134,7 +134,7 @@ function initOutTable() {
             },
             {
                 field: 'date',
-                title: '开始日期',
+                title: '离店日期',
                 formatter:formatDate
             }
         ]
@@ -153,6 +153,7 @@ $(document).ready(function () {
     $("#addGuest").bind("click", add_guest);
     $("#minusGuest").bind("click", minus_guest);
     $("#addIn").bind("click", add_in);
+    $("#addOut").bind("click", add_out);
     $('#roomNumber').bind('input propertychange', showPrize);
     $('#begin').bind('input propertychange', showPrize);
     $('#end').bind('input propertychange', showPrize);
@@ -163,6 +164,33 @@ $(document).ready(function () {
     $prize = 0;
     $type = "";
 });
+
+function add_out() {
+    $.ajax({
+        url: '/hotel/addOutRecord',
+        dataType: "json",
+        method: "post",//请求方式
+        // contentType : "application/x-www-form-urlencoded",
+        data:{
+            "inRecordId":$("#inRecordId").val(),
+            "date":$("#date").val()
+        },
+        success:function(result){
+            console.log(result);
+            if(result.success){
+                showSuccess("添加成功");
+                $table_out.bootstrapTable('refresh', {url: '/hotel/getOutRecord'});
+                clear_in();
+            }
+            else {
+                showFailure("添加失败, " + result.info);
+            }
+
+        },error:function(result){
+            showFailure("添加失败");
+        }
+    });
+}
 
 function add_in() {
     var infoList = "";
@@ -246,7 +274,7 @@ function clear_in() {
     $("#begin").val("");
     $("#end").val("");
     $("#prize").val("");
-    $("#isCardPay").val("");
+    $("#isCardPay").val("是");
     $("#orderId").val("");
     for(var i = 1; i < $guestNumber; i++){
         minus_guest();

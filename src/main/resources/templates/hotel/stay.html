@@ -27,7 +27,7 @@
 <nav class="navbar navbar-inverse" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Inn+</a>
+            <a class="navbar-brand" th:href="@{/hotel/login}">Inn+</a>
         </div>
         <div>
             <ul class="nav navbar-nav">
@@ -263,7 +263,7 @@
             <h3 id="out">离店登记</h3>
             <div class="table-responsive" style="padding-left: 10%;width: 90%">
                 <div id="toolbar_out" class="btn-group">
-                    <button id="btn_add_out" type="button" class="btn btn-default" data-toggle="modal" data-target="#add">
+                    <button id="btn_add_out" type="button" class="btn btn-default" data-toggle="modal" data-target="#add_out">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
                     </button>
 
@@ -301,8 +301,8 @@
                                         <div class='input-group'>
                                             <input type='date' class="form-control" id="date"/>
                                             <span class="input-group-addon">
-                                                    <span class="glyphicon glyphicon-calendar"></span>
-                                                </span>
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
                                         </div>
 
                                     </div>
