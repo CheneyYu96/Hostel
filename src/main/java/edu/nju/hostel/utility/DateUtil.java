@@ -82,4 +82,11 @@ public class DateUtil {
         }
         return false;
     }
+
+    public static boolean isTimeConflict(LocalDate begin1, LocalDate end1, LocalDate begin2, LocalDate end2){
+        if(end1.isBefore(begin2)||end1.isEqual(begin2)){
+            return false;
+        }
+        return true;
+    }
 }

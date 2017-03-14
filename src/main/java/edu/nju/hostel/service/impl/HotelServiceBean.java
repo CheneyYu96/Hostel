@@ -33,9 +33,18 @@ public class HotelServiceBean implements HotelService{
     private final OutRecordRepository outRecordRepository;
     private final RecordNameRepository recordNameRepository;
     private final OrderRepository orderRepository;
+    private final RoomRecordRepository roomRecordRepository;
 
     @Autowired
-    public HotelServiceBean(HotelRepository hotelRepository, RoomRepository roomRepository, PlanRepository planRepository, InRecordRepository inRecordRepository, OutRecordRepository outRecordRepository, RecordNameRepository recordNameRepository, OrderRepository orderRepository) {
+    public HotelServiceBean(
+            HotelRepository hotelRepository,
+            RoomRepository roomRepository,
+            PlanRepository planRepository,
+            InRecordRepository inRecordRepository,
+            OutRecordRepository outRecordRepository,
+            RecordNameRepository recordNameRepository,
+            OrderRepository orderRepository,
+            RoomRecordRepository roomRecordRepository) {
         this.hotelRepository = hotelRepository;
         this.roomRepository = roomRepository;
         this.planRepository = planRepository;
@@ -43,6 +52,7 @@ public class HotelServiceBean implements HotelService{
         this.outRecordRepository = outRecordRepository;
         this.recordNameRepository = recordNameRepository;
         this.orderRepository = orderRepository;
+        this.roomRecordRepository = roomRecordRepository;
     }
 
     @Override
@@ -166,6 +176,7 @@ public class HotelServiceBean implements HotelService{
     @Override
     public RoomPrize getRoomPrizeInPlan(int hotelId, String roomNumber, LocalDate begin, LocalDate end) {
         Room room = roomRepository.findByHotelAndNumber(hotelId,roomNumber);
+
         if(room==null){
             return new RoomPrize("房间号不存在");
         }
@@ -173,6 +184,16 @@ public class HotelServiceBean implements HotelService{
         if(dayLength<0){
             return new RoomPrize("日期间隔小于1天");
         }
+
+        List<RoomRecord> roomRecords = roomRecordRepository
+                .findByRoomId(room.getId())
+                .stream()
+                .filter( roomRecord -> DateUtil.isTimeConflict(roomRecord.getBegin(),roomRecord.getEnd(),begin,end))
+                .collect(Collectors.toList());
+        if(roomRecords!=null&&roomRecords.size()>0){
+            return new RoomPrize("该时间段此房间有客");
+        }
+
         RoomPrize roomPrize = new RoomPrize(roomNumber,room.getPrize()*dayLength,room.getType());
         List<Plan> planList = getPlan(hotelId)
                 .stream()
@@ -232,9 +253,11 @@ public class HotelServiceBean implements HotelService{
                         recordNameRepository.save(inRecordName);
                     }
             );
-            Room room = roomRepository.findByHotelAndNumber(hotel,roomNumber);
-            room.setAvailable(false);
-            roomRepository.save(room);
+            if(orderId==0) {
+                Room room = roomRepository.findByHotelAndNumber(hotel, roomNumber);
+                RoomRecord roomRecord = new RoomRecord(0,inRecord.getId(),room.getId(), begin, end);
+                roomRecordRepository.save(roomRecord);
+            }
             return new ResultInfo(true);
         }
 
@@ -268,10 +291,6 @@ public class HotelServiceBean implements HotelService{
 
         OutRecord record = outRecordRepository.save(new OutRecord(hotelId,inRecordId, date));
         if(record!=null){
-
-            Room room = roomRepository.findByHotelAndNumber(inRecord.getHotelId(),inRecord.getRoomNumber());
-            room.setAvailable(true);
-            roomRepository.save(room);
 
             return new ResultInfo(true);
         }

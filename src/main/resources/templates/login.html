@@ -18,6 +18,7 @@
     <script src="/js/jquery.backstretch.min.js"></script>
     <script src="/js/bootstrapValidator.min.js"></script>
     <script src="/js/scripts.js"></script>
+    <script src="/js/common.js"></script>
 
 </head>
 <body>
@@ -53,15 +54,10 @@
                 </div>
             </div>
             <div th:if="${success!=null}">
-                <div id="myAlert" class="alert alert-warning row col-sm-6 col-sm-offset-3">
-                    <a href="#" class="close" data-dismiss="alert">&times;</a>
-                    <strong>登录失败，请重新登录。</strong>
-                </div>
+                <div id="tip"></div>
                 <script type="text/javascript">
                     $(function(){
-                        $(".close").click(function(){
-                            $(".alert").alert('close');
-                        });
+                       showFailure("登录失败，请重新登录")
                     });
                 </script>
 
