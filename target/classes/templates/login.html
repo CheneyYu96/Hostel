@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="/css/form-elements.css"/>
     <link rel="stylesheet" href="/css/style.css"/>
 
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <!--<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>-->
+    <!--<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>-->
 
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
@@ -62,6 +62,22 @@
                 </script>
 
             </div>
+
+            <div th:if="${result!=null}">
+                <div id="tip"></div>
+                <script th:if="${result.isSuccess()}" type="text/javascript">
+                    $(function(){
+                        showSuccess("修改成功");
+                    });
+                </script>
+                <script th:if="${!result.isSuccess()}" type="text/javascript">
+                    $(function(){
+                        showFailure("修改失败，"+result.getInfo());
+                    });
+                </script>
+
+            </div>
+
             <div class="row">
                 <div class="col-sm-6 col-sm-offset-3 form-box">
                     <div class="form-top">

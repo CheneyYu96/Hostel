@@ -11,7 +11,7 @@ public enum MemberLevel {
         this.amount = amount;
     }
 
-    public MemberLevel getLevel(int amount){
+    public static MemberLevel getLevel(int amount){
         if(amount >= 3000){
             return 顶级;
         }

@@ -52,7 +52,6 @@ public class HotelController {
     @RequestMapping("/home")
     public String home(HttpSession session, String id, String password, Model model){
         Hotel hotel;
-
         if(session.getAttribute("hotelId")==null){
             if(id == null || password == null){
                 return login(model);
@@ -69,6 +68,7 @@ public class HotelController {
         }
 
         model.addAttribute("hotel", hotel);
+        model.addAttribute("page", "home");
         model.addAttribute("hotelId", FormatHelper.Id2String(hotel.getId()));
         return HOTEL+"home";
     }
@@ -96,6 +96,7 @@ public class HotelController {
         if(session.getAttribute("hotelId")==null){
             return login(model);
         }
+        model.addAttribute("page","plan");
         return HOTEL+"plan";
     }
 
@@ -104,6 +105,7 @@ public class HotelController {
         if(session.getAttribute("hotelId")==null){
             return login(model);
         }
+        model.addAttribute("page","stay");
         return HOTEL+"stay";
     }
 
@@ -112,6 +114,7 @@ public class HotelController {
         if(session.getAttribute("hotelId")==null){
             return login(model);
         }
+        model.addAttribute("page","statistic");
         return HOTEL+"statistic";
     }
 

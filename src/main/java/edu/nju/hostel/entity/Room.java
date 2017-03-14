@@ -29,9 +29,6 @@ public class Room {
     @Column(name = "number")
     private String roomNumber;
 
-    @Column(name = "available")
-    private Boolean isAvailable;
-
     @Column
     @Enumerated(EnumType.STRING)
     private HotelStatus status;
@@ -61,14 +58,6 @@ public class Room {
 
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
-    }
-
-    public Boolean getAvailable() {
-        return isAvailable;
-    }
-
-    public void setAvailable(Boolean available) {
-        isAvailable = available;
     }
 
     public int getPrize() {

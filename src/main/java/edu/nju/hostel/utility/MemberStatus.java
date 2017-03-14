@@ -8,5 +8,5 @@ package edu.nju.hostel.utility;
 public enum  MemberStatus {
     暂停,
     停止,
-    正常
+    已激活
 }

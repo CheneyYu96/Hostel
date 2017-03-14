@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrapValidator.min.css"/>
     <link rel="stylesheet" href="/css/font-awesome.min.css"/>
-    <!--<link rel="stylesheet" href="/css/form-elements.css"/>-->
     <link rel="stylesheet" href="/css/style.css"/>
     <link rel="stylesheet" href="/css/bootstrap-table.css"/>
 
@@ -22,28 +21,29 @@
 
 </head>
 <body data-spy="scroll" data-target="#myScrollspy">
-<nav class="navbar navbar-inverse" role="navigation">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" th:href="@{/hotel/login}">Inn+</a>
+<div th:fragment="header">
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" th:href="@{/hotel/login}">Inn+</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li th:class="${page.equals('home')} ? 'active'"><a th:href="${page.equals('home')} ? '#' : @{/hotel/home}" >店面信息</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li th:class="${page.equals('plan')} ? 'active'"><a th:href="${page.equals('plan')} ? '#' : @{/hotel/plan}" >发布计划</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li th:class="${page.equals('stay')} ? 'active'"><a th:href="${page.equals('stay')} ? '#' : @{/hotel/stay}" >住宿登记</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li th:class="${page.equals('statistic')} ? 'active'"><a th:href="${page.equals('statistic')} ? '#' : @{/hotel/statistic}" >统计分析</a></li>
+                </ul>
+            </div>
         </div>
-        <div>
-            <ul class="nav navbar-nav">
-                <li class='active'><a href="#" >店面信息</a></li>
-            </ul>
-            <ul class="nav navbar-nav">
-                <li><a th:href="@{/hotel/plan}" >发布计划</a></li>
-            </ul>
-            <ul class="nav navbar-nav">
-                <li><a th:href="@{/hotel/stay}" >住宿登记</a></li>
-            </ul>
-            <ul class="nav navbar-nav">
-                <li><a th:href="@{/hotel/statistic}">统计信息</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
+    </nav>
+</div>
 
 <div class="container">
     <div class="blank10"></div>
@@ -84,7 +84,7 @@
                     <h4><span class="label label-default">客栈ID</span></h4>
                 </div>
                 <div class="col-sm-5">
-                    <input type="text" class="form-control" th:value="${hotelId}" disabled="true"/>
+                    <input type="text" class="form-control" th:value="${hotelId}" readonly="readonly"/>
                 </div>
             </div>
             <div class="blank10"></div>
@@ -94,7 +94,7 @@
                     <h4><span class="label label-default">客栈状态</span></h4>
                 </div>
                 <div class="col-sm-5">
-                    <input type="text" class="form-control" th:value="${hotel.getStatus()}" disabled="true"/>
+                    <input type="text" class="form-control" th:value="${hotel.getStatus()}" readonly/>
                 </div>
             </div>
             <div class="blank10"></div>
@@ -215,7 +215,7 @@
                 </div>
                 <div id="tip"></div>
             </div>
-            <table id="table"></table>
+            <table id="table-room"></table>
             <div class="blank30"></div>
 
             <hr/>

@@ -1,5 +1,7 @@
 package edu.nju.hostel.entity;
 
+import edu.nju.hostel.utility.MemberStatus;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -37,6 +39,10 @@ public class MemberCard {
 
     @Column(name = "consume")
     private int consumeAmount;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private MemberStatus status;
 
     public int getBalance() {
         return balance;
@@ -100,5 +106,13 @@ public class MemberCard {
 
     public void setBankCard(String bankCard) {
         this.bankCard = bankCard;
+    }
+
+    public MemberStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(MemberStatus status) {
+        this.status = status;
     }
 }

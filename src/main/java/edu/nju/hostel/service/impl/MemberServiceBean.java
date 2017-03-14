@@ -8,7 +8,10 @@ import edu.nju.hostel.entity.Member;
 import edu.nju.hostel.entity.MemberCard;
 import edu.nju.hostel.entity.Order;
 import edu.nju.hostel.service.MemberService;
+import edu.nju.hostel.utility.MemberStatus;
 import edu.nju.hostel.utility.ResultInfo;
+import edu.nju.hostel.vo.BalanceAndCredit;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,9 +41,7 @@ public class MemberServiceBean implements MemberService {
 
     @Override
     public Member verifyMember(String name, String password) {
-        if(name == null|| password==null){
-            return null;
-        }
+
         List<Member> memberList = memberRepository.findByName(name);
 
         if(memberList!=null && memberList.size()>0){
@@ -64,12 +65,24 @@ public class MemberServiceBean implements MemberService {
     }
 
     @Override
-    public ResultInfo modifyInfo(Member member) {
-        Member member1 = memberRepository.save(member);
-        if(member1.getId()==member.getId()){
+    public ResultInfo editInfo(int id, String name, String phone, String bankCard) {
+        Member member = memberRepository.findOne(id);
+        member.setName(name);
+        member.setPhoneNumber(phone);
+        member.getCard().setBankCard(bankCard);
+        memberRepository.save(member);
+        return new ResultInfo(true);
+    }
+
+    @Override
+    public ResultInfo modifyPassword(int id, String originPass, String newPass) {
+        Member member1 = memberRepository.findOne(id);
+        if(originPass.equals(member1.getPassword())){
+            member1.setPassword(newPass);
+            memberRepository.save(member1);
             return new ResultInfo(true);
         }
-        return new ResultInfo(false);
+        return new ResultInfo(false,"密码不正确");
     }
 
     @Transactional
@@ -108,12 +121,12 @@ public class MemberServiceBean implements MemberService {
                 resultInfo.setResult(true);
                 card.setActivated(true);
             }
-
             card.setBalance(money + card.getBalance());
             card.setBankCard(bankId);
             card.setActivateDate(LocalDate.now());
             card.setConsumeAmount(0);
             card.setCredit(0);
+            card.setStatus(MemberStatus.已激活);
 
             memberCardRepository.save(card);
         }
@@ -167,8 +180,21 @@ public class MemberServiceBean implements MemberService {
     }
 
     @Override
-    public ResultInfo translateCredit(int cardId, int credit) {
-        return null;
+    public BalanceAndCredit translateCredit(int cardId, int credit) {
+        if(credit%10!=0){
+            return new BalanceAndCredit(new ResultInfo(false,"兑换积分为整十数"));
+        }
+        MemberCard card = memberCardRepository.findOne(cardId);
+        if(card.getCredit()<credit){
+            return new BalanceAndCredit(new ResultInfo(false,"积分不足"));
+        }
+        card.setCredit(card.getCredit()-credit);
+        card.setBalance(card.getBalance()+credit/10);
+        BalanceAndCredit result =  new BalanceAndCredit(new ResultInfo(true));
+        result.balance = card.getBalance();
+        result.credit = card.getCredit();
+        memberCardRepository.save(card);
+        return result;
     }
 
     @Override

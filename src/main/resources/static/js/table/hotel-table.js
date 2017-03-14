@@ -3,7 +3,7 @@
  */
 function initTable() {
 
-    $table.bootstrapTable({
+    $table_room.bootstrapTable({
         url: '/hotel/getRooms',
         search: true,//是否搜索
         dataType: "json",//期待返回数据类型
@@ -64,19 +64,9 @@ function initTable() {
                 title: '价格'
             },
             {
-                field: 'available',
-                title: '是否可用',
-                formatter:function(value,row,index){
-                    if(value){
-                        return "是";
-                    }
-                    return "否";
-                }
-            },
-            {
                 field: 'status',
                 title: '审批状态'
-            },
+            }
         ]
     });
 }
@@ -110,7 +100,7 @@ $(document).ready(function () {
 
     $("#editInfo").bind("click",editInfo);
 
-    $table = $('#table');
+    $table_room = $('#table-room');
     //调用函数，初始化表格
     initTable();
     $("#addRoom").bind("click",addRoom);

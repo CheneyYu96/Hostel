@@ -21,27 +21,8 @@
 </head>
 
 <body>
-<nav class="navbar navbar-inverse" role="navigation">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" th:href="@{/hotel/login}">Inn+</a>
-        </div>
-        <div>
-            <ul class="nav navbar-nav">
-                <li><a th:href="@{/hotel/home}" >店面信息</a></li>
-            </ul>
-            <ul class="nav navbar-nav">
-                <li><a th:href="@{/hotel/plan}" >发布计划</a></li>
-            </ul>
-            <ul class="nav navbar-nav">
-                <li><a th:href="@{/hotel/stay}">住宿登记</a></li>
-            </ul>
-            <ul class="nav navbar-nav">
-                <li class='active'><a href="#">统计信息</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<div th:include="hotel/home::header"></div>
+
 <div class="container">
     <div class="blank10"></div>
     <div class="row">

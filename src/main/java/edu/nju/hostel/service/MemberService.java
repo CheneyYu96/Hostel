@@ -4,6 +4,7 @@ import edu.nju.hostel.entity.Member;
 import edu.nju.hostel.entity.MemberCard;
 import edu.nju.hostel.entity.Order;
 import edu.nju.hostel.utility.ResultInfo;
+import edu.nju.hostel.vo.BalanceAndCredit;
 
 import java.time.LocalDate;
 
@@ -27,7 +28,9 @@ public interface MemberService {
 
     MemberCard findCard(int cardId);
 
-    ResultInfo modifyInfo(Member member);
+    ResultInfo editInfo(int id, String name, String phone, String bankCard);
+
+    ResultInfo modifyPassword(int id, String originPass, String newPass);
 
     MemberCard register(String name, String password, String phoneNumber);
 
@@ -39,7 +42,7 @@ public interface MemberService {
 
     ResultInfo stopQualification(String memberId);
 
-    ResultInfo translateCredit(int cardId, int credit);
+    BalanceAndCredit translateCredit(int cardId, int credit);
 
     /**
      * check room booking condition

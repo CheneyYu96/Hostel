@@ -125,7 +125,6 @@ public class HotelServiceBean implements HotelService{
         }
 
         room.setHotelId(hotelId);
-        room.setAvailable(true);
         room.setPrize(prize);
         room.setRoomNumber(roomNumber);
         room.setType(type);
