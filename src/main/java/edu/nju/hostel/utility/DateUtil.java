@@ -68,4 +68,18 @@ public class DateUtil {
         return result;
 
     }
+
+    public static boolean inNextWeek(LocalDate date, LocalDate testDate){
+        if(date.isEqual(testDate)||endMinusBegin(date,testDate)<7){
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean inNextMonth(LocalDate date, LocalDate testDate) {
+        if(date.isEqual(testDate)||endMinusBegin(date,testDate)<30){
+            return true;
+        }
+        return false;
+    }
 }

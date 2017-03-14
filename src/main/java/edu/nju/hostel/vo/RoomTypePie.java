@@ -11,6 +11,13 @@ public class RoomTypePie {
     public int bigRoom;
     public int wholeRoom;
 
+    public RoomTypePie() {
+        this.singleRoom = 0;
+        this.doubleRoom = 0;
+        this.bigRoom = 0;
+        this.wholeRoom = 0;
+    }
+
     public int getDoubleRoom() {
         return doubleRoom;
     }

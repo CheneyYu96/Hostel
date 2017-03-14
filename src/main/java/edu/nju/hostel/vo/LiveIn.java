@@ -12,6 +12,15 @@ public class LiveIn {
     public int money;
     public LocalDate date;
 
+    public LiveIn() {
+    }
+
+    public LiveIn(int amount, int money, LocalDate date) {
+        this.amount = amount;
+        this.money = money;
+        this.date = date;
+    }
+
     public int getAmount() {
         return amount;
     }

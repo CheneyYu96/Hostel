@@ -55,9 +55,9 @@ public interface HotelService {
 
     List<LiveIn> getBookLine(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
 
-    List<LiveIn> getBookPie(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
+    RoomTypePie getBookPie(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
 
     List<LiveIn> getInLine(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
 
-    List<LiveIn> getInPie(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
+    RoomTypePie getInPie(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
 }

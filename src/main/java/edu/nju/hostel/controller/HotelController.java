@@ -230,6 +230,30 @@ public class HotelController {
         return roomPrize;
     }
 
+    @RequestMapping(value = "/getBookLine")
+    @ResponseBody
+    public List<LiveIn> getBookLine(@SessionAttribute int hotelId, StatisticType method,  String begin, String end){
+        return hotelService.getBookLine(hotelId,method,DateUtil.parse(begin),DateUtil.parse(end));
+    }
+
+    @RequestMapping(value = "/getBookPie")
+    @ResponseBody
+    public RoomTypePie getBookPie(@SessionAttribute int hotelId, StatisticType method,  String begin, String end){
+        return hotelService.getBookPie(hotelId,method,DateUtil.parse(begin),DateUtil.parse(end));
+    }
+
+    @RequestMapping(value = "/getInLine")
+    @ResponseBody
+    public List<LiveIn> getInLine(@SessionAttribute int hotelId, StatisticType method,  String begin, String end){
+        return hotelService.getInLine(hotelId,method,DateUtil.parse(begin),DateUtil.parse(end));
+    }
+
+    @RequestMapping(value = "/getInPie")
+    @ResponseBody
+    public RoomTypePie getInPie(@SessionAttribute int hotelId, StatisticType method,  String begin, String end){
+        return hotelService.getInPie(hotelId,method,DateUtil.parse(begin),DateUtil.parse(end));
+    }
+
     /**
      *  if the value of key is 1, the key is member id,
      *  else the key is name
