@@ -10,7 +10,6 @@ $(document).ready(function () {
     $book_line = echarts.init(document.getElementById('book-line'));
     $book_pie = echarts.init(document.getElementById('book-pie'));
     get_book_data();
-
     $("#begin-book").bind('input propertychange', get_book_data);
     $("#end-book").bind('input propertychange', get_book_data);
 
@@ -20,14 +19,92 @@ $(document).ready(function () {
     $in_line = echarts.init(document.getElementById('in-line'));
     $in_pie = echarts.init(document.getElementById('in-pie'));
     get_in_data();
-
     $("#begin-in").bind('input propertychange', get_in_data);
     $("#end-in").bind('input propertychange', get_in_data);
 
-});
+    $("#method-finance").val("日统计");
+    $("#begin-finance").val("2017-03-05");
+    $("#end-finance").val("2017-03-25");
+    $finance_line = echarts.init(document.getElementById('finance-line'));
+    get_finance_data();
+    $("#begin-finance").bind('input propertychange', get_finance_data);
+    $("#end-finance").bind('input propertychange', get_finance_data);
 
+});
+function get_finance_data() {
+    if($("#begin-finance").val().length<7||$("#end-finance").val().length<7){
+        return;
+    }
+    $.ajax({
+        url: '/hotel/getFinance',
+        dataType: "json",
+        method: "post",//请求方式
+        // contentType : "application/x-www-form-urlencoded",
+        data:{
+            "method":$("#method-finance").val(),
+            "begin":$("#begin-finance").val(),
+            "end":$("#end-finance").val()
+        },
+        success:function(result){
+            var date = new Array();
+            var pay = new Array();
+            var y_max = new Array();
+            for(var i = 0; i < result.length; i++){
+                date.push(formatDate(result[i].begin));
+                pay.push(result[i].pay);
+                if(y_max<result[i].pay){
+                    y_max = result[i].pay;
+                }
+            }
+            var option = {
+                tooltip: {
+                    trigger: 'axis'
+                },
+                toolbox: {
+                    feature: {
+                        dataView: {show: true, readOnly: false},
+                        magicType: {show: true, type: ['line', 'bar']},
+                        restore: {show: true},
+                        saveAsImage: {show: true}
+                    }
+                },
+                legend: {
+                    data:['总营销额']
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        data: date
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '总营销额',
+                        min: 0,
+                        max: y_max * 6/5,
+                        interval: y_max/5,
+                        axisLabel: {
+                            formatter: '{value} ￥'
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name:'总营销额',
+                        type:'bar',
+                        data:pay
+                    }
+                ]
+            };
+
+            $finance_line.setOption(option);
+        },error:function(result){
+            showFailure("柱状图失败");
+        }
+    });
+}
 function get_in_data(){
-    // console.log($("#method-book").val());
     if($("#begin-in").val().length<7||$("#end-in").val().length<7){
         return;
     }

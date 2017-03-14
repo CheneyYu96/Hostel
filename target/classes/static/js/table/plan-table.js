@@ -194,7 +194,6 @@ function addPlan() {
             "discount":$("#discount").val()
         },
         success:function(result){
-            console.log(result);
             if(result.success){
                 showSuccess("添加成功");
                 $table.bootstrapTable('refresh', {url: '/hotel/getPlan'});

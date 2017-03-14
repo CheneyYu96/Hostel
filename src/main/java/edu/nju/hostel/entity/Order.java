@@ -28,6 +28,8 @@ public class Order {
     @Column(name = "room_number")
     private String roomNumber;
 
+    @Column
+    @Enumerated(EnumType.STRING)
     private RoomType type;
 
     @Column

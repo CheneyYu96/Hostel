@@ -60,4 +60,6 @@ public interface HotelService {
     List<LiveIn> getInLine(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
 
     RoomTypePie getInPie(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
+
+    List<Translator> getFinance(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
 }

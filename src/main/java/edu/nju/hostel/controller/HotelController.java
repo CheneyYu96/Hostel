@@ -254,6 +254,12 @@ public class HotelController {
         return hotelService.getInPie(hotelId,method,DateUtil.parse(begin),DateUtil.parse(end));
     }
 
+    @RequestMapping(value = "/getFinance")
+    @ResponseBody
+    public List<Translator> getFinance(@SessionAttribute int hotelId, StatisticType method,  String begin, String end){
+        return hotelService.getFinance(hotelId,method,DateUtil.parse(begin),DateUtil.parse(end));
+    }
+
     /**
      *  if the value of key is 1, the key is member id,
      *  else the key is name

@@ -15,4 +15,7 @@ public class Translator {
         this.pay = pay;
         this.begin = begin;
     }
+
+    public Translator() {
+    }
 }

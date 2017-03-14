@@ -274,6 +274,7 @@ function clear_in() {
     $("#end").val("");
     $("#prize").val("");
     $("#isCardPay").val("是");
+    $("#cardLine").show();
     $("#orderId").val("");
     for(var i = 1; i < $guestNumber; i++){
         minus_guest();

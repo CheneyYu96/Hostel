@@ -70,14 +70,14 @@ public class DateUtil {
     }
 
     public static boolean inNextWeek(LocalDate date, LocalDate testDate){
-        if(date.isEqual(testDate)||endMinusBegin(date,testDate)<7){
+        if(date.isEqual(testDate)||(date.isBefore(testDate)&&endMinusBegin(date,testDate)<7)){
             return true;
         }
         return false;
     }
 
     public static boolean inNextMonth(LocalDate date, LocalDate testDate) {
-        if(date.isEqual(testDate)||endMinusBegin(date,testDate)<30){
+        if(date.isEqual(testDate)||(date.isBefore(testDate)&&endMinusBegin(date,testDate)<30)){
             return true;
         }
         return false;

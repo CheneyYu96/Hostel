@@ -12,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -381,10 +383,10 @@ public class HotelServiceBean implements HotelService{
 
         for(Order order : orderList){
             switch (order.getType()){
-                case 单床房:pie.singleRoom++;
-                case 双床房:pie.doubleRoom++;
-                case 大床房:pie.bigRoom++;
-                case 套间:pie.wholeRoom++;
+                case 单床房:pie.singleRoom++; break;
+                case 双床房:pie.doubleRoom++; break;
+                case 大床房:pie.bigRoom++; break;
+                case 套间:pie.wholeRoom++; break;
             }
         }
         return pie;
@@ -414,13 +416,83 @@ public class HotelServiceBean implements HotelService{
 
         for(InRecord inRecord : inRecords){
             switch (inRecord.getType()){
-                case 单床房:pie.singleRoom++;
-                case 双床房:pie.doubleRoom++;
-                case 大床房:pie.bigRoom++;
-                case 套间:pie.wholeRoom++;
+                case 单床房:pie.singleRoom++; break;
+                case 双床房:pie.doubleRoom++; break;
+                case 大床房:pie.bigRoom++; break;
+                case 套间:pie.wholeRoom++; break;
             }
         }
         return pie;
+    }
+
+    @Override
+    public List<Translator> getFinance(int hotelId, StatisticType method, LocalDate begin, LocalDate end) {
+        List<Translator> orderTranslators = orderRepository
+                .findByHotelId(hotelId)
+                .stream()
+                .map( order -> new Translator(order.getPay(),order.getBegin()))
+                .collect(Collectors.toList());
+        List<Translator> inRecordTranslators = inRecordRepository
+                .findByHotelId(hotelId)
+                .stream()
+                .map( inRecord -> new Translator(inRecord.getPay(),inRecord.getBegin()))
+                .collect(Collectors.toList());
+
+        orderTranslators = Stream
+                .of(orderTranslators,inRecordTranslators)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        List<Translator> translators = new ArrayList<>();
+
+        switch (method){
+            case 日统计:
+                for(;begin.isBefore(end);begin = begin.plusDays(1)){
+                    LocalDate finalBegin = begin;
+                    Translator translator = orderTranslators
+                            .stream()
+                            .filter(translator1 -> translator1.begin.isEqual(finalBegin))
+                            .reduce(new Translator(0,finalBegin), (t1, t2) ->
+                            {
+                                t2.pay = t2.pay + t1.pay;
+                                return t2;
+                            });
+                    translators.add(translator);
+                }
+                break;
+
+            case 周统计:
+                for(;begin.isBefore(end);begin = begin.plusWeeks(1)){
+                    LocalDate finalBegin = begin;
+                    Translator translator = orderTranslators
+                            .stream()
+                            .filter(translator1 -> DateUtil.inNextWeek(finalBegin, translator1.begin))
+                            .reduce(new Translator(0,finalBegin), (t1, t2) ->
+                            {
+                                t2.pay = t2.pay + t1.pay;
+                                return t2;
+                            });
+                    translators.add(translator);
+                }
+                break;
+
+            case 月统计:
+                for(;begin.isBefore(end);begin = begin.plusMonths(1)){
+                    LocalDate finalBegin = begin;
+                    Translator translator = orderTranslators
+                            .stream()
+                            .filter(translator1 -> DateUtil.inNextMonth(finalBegin, translator1.begin))
+                            .reduce(new Translator(0,finalBegin), (t1, t2) ->
+                            {
+                                t2.pay = t2.pay + t1.pay;
+                                return t2;
+                            });
+                    translators.add(translator);
+                }
+                break;
+        }
+
+        return translators;
     }
 
 
