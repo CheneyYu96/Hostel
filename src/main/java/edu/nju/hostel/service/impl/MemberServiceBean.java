@@ -5,6 +5,7 @@ import edu.nju.hostel.entity.*;
 import edu.nju.hostel.service.MemberService;
 import edu.nju.hostel.utility.*;
 import edu.nju.hostel.vo.BalanceAndCredit;
+import edu.nju.hostel.vo.HotelVO;
 import edu.nju.hostel.vo.OrderVO;
 import edu.nju.hostel.vo.RoomPrize;
 import org.aspectj.weaver.ast.Or;
@@ -33,10 +34,11 @@ public class MemberServiceBean implements MemberService {
     private final HotelRepository hotelRepository;
     private final RoomRecordRepository roomRecordRepository;
     private final RoomRepository roomRepository;
+    private final PlanRepository planRepository;
 
 
     @Autowired
-    public MemberServiceBean(MemberRepository memberRepository, MemberCardRepository memberCardRepository, BankCardRepository bankCardRepository, OrderRepository orderRepository, HotelRepository hotelRepository, RoomRecordRepository roomRecordRepository, RoomRepository roomRepository) {
+    public MemberServiceBean(MemberRepository memberRepository, MemberCardRepository memberCardRepository, BankCardRepository bankCardRepository, OrderRepository orderRepository, HotelRepository hotelRepository, RoomRecordRepository roomRecordRepository, RoomRepository roomRepository, PlanRepository planRepository) {
         this.memberRepository = memberRepository;
         this.memberCardRepository = memberCardRepository;
         this.bankCardRepository = bankCardRepository;
@@ -44,6 +46,7 @@ public class MemberServiceBean implements MemberService {
         this.hotelRepository = hotelRepository;
         this.roomRecordRepository = roomRecordRepository;
         this.roomRepository = roomRepository;
+        this.planRepository = planRepository;
     }
 
     @Override
@@ -315,5 +318,30 @@ public class MemberServiceBean implements MemberService {
         else {
             return new ResultInfo(false,"卡号不存在");
         }
+    }
+
+    /**
+     * todo :filter hotel which is not passed permission
+     * @return
+     */
+    @Override
+    public List<HotelVO> getHotel() {
+        return hotelRepository
+                .findAll()
+                .stream()
+                .map( hotel ->
+                        {
+                            HotelVO hotelVO = new HotelVO();
+                            BeanUtils.copyProperties(hotel,hotelVO);
+                            List<Integer> planIndex = planRepository
+                                    .findByHotelId(hotel.getId())
+                                    .stream()
+                                    .map( o -> o.getId())
+                                    .collect(Collectors.toList());
+                            hotelVO.plan = planIndex;
+                            return hotelVO;
+                        }
+                )
+                .collect(Collectors.toList());
     }
 }

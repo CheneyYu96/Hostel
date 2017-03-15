@@ -1,11 +1,13 @@
 package edu.nju.hostel.service;
 
+import edu.nju.hostel.entity.Hotel;
 import edu.nju.hostel.entity.Member;
 import edu.nju.hostel.entity.MemberCard;
 import edu.nju.hostel.entity.Order;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.utility.RoomType;
 import edu.nju.hostel.vo.BalanceAndCredit;
+import edu.nju.hostel.vo.HotelVO;
 import edu.nju.hostel.vo.OrderVO;
 
 import java.time.LocalDate;
@@ -56,4 +58,5 @@ public interface MemberService {
     ResultInfo payByCard(int cardId, int pay);
 
 
+    List<HotelVO> getHotel();
 }

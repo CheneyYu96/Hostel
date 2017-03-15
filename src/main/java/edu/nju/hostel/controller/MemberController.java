@@ -1,10 +1,12 @@
 package edu.nju.hostel.controller;
 
+import edu.nju.hostel.entity.Hotel;
 import edu.nju.hostel.entity.Member;
 import edu.nju.hostel.entity.MemberCard;
 import edu.nju.hostel.service.MemberService;
 import edu.nju.hostel.utility.*;
 import edu.nju.hostel.vo.BalanceAndCredit;
+import edu.nju.hostel.vo.HotelVO;
 import edu.nju.hostel.vo.OrderVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -161,6 +163,12 @@ public class MemberController {
     @ResponseBody
     public List<OrderVO> getOrder(@SessionAttribute int cardId){
         return memberService.getOrder(cardId);
+    }
+
+    @RequestMapping(value = "/getHotel")
+    @ResponseBody
+    public List<HotelVO> getHotel(){
+        return memberService.getHotel();
     }
 
     @RequestMapping(value = "/makeOrder")

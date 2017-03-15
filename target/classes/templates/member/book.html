@@ -7,12 +7,14 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrapValidator.min.css"/>
     <link rel="stylesheet" href="/css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="/css/form-elements.css"/>
     <link rel="stylesheet" href="/css/style.css"/>
 
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap-table.js"></script>
+    <script src="/js/bootstrap-table-zh-CN.js"></script>
     <script src="/js/common.js"></script>
+    <script src="/js/table/book-table.js"></script>
     <script src="/js/jquery.backstretch.min.js"></script>
     <script src="/js/bootstrapValidator.min.js"></script>
 
@@ -25,146 +27,164 @@
     <div class="row">
         <div class="col-xs-3" id="myScrollspy">
             <ul class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="125">
-                <li class="active"><a href="#book">预定统计</a></li>
-                <li><a href="#in">入住统计</a></li>
-                <li><a href="#finance">财务统计</a></li>
+                <li class="active"><a href="#mine">我的预定</a></li>
+                <li><a href="#book">预定房间</a></li>
 
             </ul>
         </div>
         <div class="col-xs-9" id="lists">
-            <!--入店登记-->
-            <h3 id="book">预定统计</h3>
+            <!--我的预定-->
+            <h3 id="mine">我的预定</h3>
             <div class="blank10"></div>
-            <div class="row">
-                <div class="col-sm-3 col-sm-offset-1">
-                    <h4><span class="label label-default">统计方式</span></h4>
+            <div class="table-responsive" style="padding-left: 10%;width: 90%">
+                <div id="toolbar_mine" class="btn-group">
+                    <button id="btn_delete" type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消预定
+                    </button>
                 </div>
-                <div class="col-sm-5">
-                    <select class="form-control" id="method-book" onchange="get_book_data()">
-                        <option>日统计</option>
-                        <option>周统计</option>
-                        <option>月统计</option>
-                    </select>
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-sm-3 col-sm-offset-1">
-                    <h4><span class="label label-default">开始日期</span></h4>
+                <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    ×
+                                </button>
+                                <h4 class="modal-title">取消预定</h4>
+                            </div>
+                            <div class="modal-body">
+                                确认要取消吗？
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="deleteOrder">确认</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-sm-5">
-                    <input type="date" class="form-control" id="begin-book"/>
-                </div>
+                <div id="tip"></div>
             </div>
+            <table id="table_order"></table>
 
-            <div class="row">
-                <div class="col-sm-3 col-sm-offset-1">
-                    <h4><span class="label label-default">结束日期</span></h4>
-                </div>
-                <div class="col-sm-5">
-                    <input type="date" class="form-control" id="end-book"/>
-                </div>
-            </div>
-
-            <div class="blank20"></div>
-            <div class="row">
-                <h5>预定数量-营销额走势图</h5>
-                <div id="book-line" style="width: 100%;height:400px;"></div>
-            </div>
-            <div class="blank20"></div>
-
-            <div class="row">
-                <h5>预定房间类型饼图</h5>
-                <div id="book-pie" style="width: 100%;height:400px;"></div>
-            </div>
-
-            <div class="blank30"></div>
-            <div id="tip"></div>
-            <hr/>
-
-            <h3 id="in">入住统计</h3>
-            <div class="blank10"></div>
-            <div class="row">
-                <div class="col-sm-3 col-sm-offset-1">
-                    <h4><span class="label label-default">统计方式</span></h4>
-                </div>
-                <div class="col-sm-5">
-                    <select class="form-control" id="method-in" onchange="get_in_data()">
-                        <option>日统计</option>
-                        <option>周统计</option>
-                        <option>月统计</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-3 col-sm-offset-1">
-                    <h4><span class="label label-default">开始日期</span></h4>
-                </div>
-                <div class="col-sm-5">
-                    <input type="date" class="form-control" id="begin-in"/>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-3 col-sm-offset-1">
-                    <h4><span class="label label-default">结束日期</span></h4>
-                </div>
-                <div class="col-sm-5">
-                    <input type="date" class="form-control" id="end-in"/>
-                </div>
-            </div>
-            <div class="blank20"></div>
-            <div class="row">
-                <h5>入住数量-营销额走势图</h5>
-                <div id="in-line" style="width: 100%;height:400px;"></div>
-            </div>
-            <div class="blank20"></div>
-
-            <div class="row">
-                <h5>入住房间类型饼图</h5>
-                <div id="in-pie" style="width: 100%;height:400px;"></div>
-            </div>
             <div class="blank30"></div>
             <hr/>
 
-            <h3 id="finance">财务统计</h3>
+            <h3 id="book">预定房间</h3>
             <div class="blank10"></div>
-            <div class="row">
-                <div class="col-sm-3 col-sm-offset-1">
-                    <h4><span class="label label-default">统计方式</span></h4>
+            <div class="table-responsive" style="padding-left: 10%;width: 90%">
+                <div id="toolbar_book" class="btn-group">
+                    <button id="btn_show" type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>查看详情
+                    </button>
+                    <button id="btn_book" type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>预定房间
+                    </button>
                 </div>
-                <div class="col-sm-5">
-                    <select class="form-control" id="method-finance" onchange="get_finance_data()">
-                        <option>日统计</option>
-                        <option>周统计</option>
-                        <option>月统计</option>
-                    </select>
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-sm-3 col-sm-offset-1">
-                    <h4><span class="label label-default">开始日期</span></h4>
-                </div>
-                <div class="col-sm-5">
-                    <input type="date" class="form-control" id="begin-finance"/>
-                </div>
-            </div>
+                <div class="modal fade" id="show" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    ×
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">计划详情</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">计划名</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="nameShow"  readonly="readonly"/>
+                                    </div>
+                                </div>
+                                <div class="blank5"></div>
 
-            <div class="row">
-                <div class="col-sm-3 col-sm-offset-1">
-                    <h4><span class="label label-default">结束日期</span></h4>
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">计划描述</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="desShow"  readonly="readonly"/>
+                                    </div>
+                                </div>
+                                <div class="blank5"></div>
+
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">开始日期</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="datetimebegin"  readonly="readonly"/>
+                                    </div>
+                                </div>
+                                <div class="blank5"></div>
+
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">结束日期</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="datetimeend"  readonly="readonly"/>
+                                    </div>
+                                </div>
+                                <div class="blank5"></div>
+
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">计划房间类型</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="typeShow"  readonly="readonly"/>
+                                    </div>
+                                </div>
+                                <div class="blank5"></div>
+
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">折扣</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class='input-group'>
+                                            <input type="text" class="form-control" id="discountShow" readonly="readonly"/>
+                                            <span class="input-group-addon">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="blank10"></div>
+                                <h4><span class="label label-default">折扣房间</span></h4>
+                                <table id="showRoomTable"></table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-sm-5">
-                    <input type="date" class="form-control" id="end-finance"/>
+
+                <div class="modal fade" id="bookRoom" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    ×
+                                </button>
+                                <h4 class="modal-title">预定</h4>
+                            </div>
+                            <div class="modal-body">
+                                确认要取消吗？
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="make-order">确认</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="blank20"></div>
-            <div class="row">
-                <h5>总营销额走势图</h5>
-                <div id="finance-line" style="width: 100%;height:400px;"></div>
-            </div>
+            <table id="table_hotel"></table>
             <div class="blank30"></div>
         </div>
 

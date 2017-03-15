@@ -257,6 +257,11 @@ public class HotelServiceBean implements HotelService{
                 RoomRecord roomRecord = new RoomRecord(0,inRecord.getId(),room.getId(), begin, end);
                 roomRecordRepository.save(roomRecord);
             }
+            else {
+                Order order = orderRepository.findOne(orderId);
+                order.setStatus(OrderStatus.入住);
+                orderRepository.save(order);
+            }
             return new ResultInfo(true);
         }
 
@@ -291,6 +296,11 @@ public class HotelServiceBean implements HotelService{
         OutRecord record = outRecordRepository.save(new OutRecord(hotelId,inRecordId, date));
         if(record!=null){
 
+            if(inRecord.getOrderId()>0){
+                Order order = orderRepository.findOne(inRecord.getOrderId());
+                order.setStatus(OrderStatus.完成);
+                orderRepository.save(order);
+            }
             return new ResultInfo(true);
         }
         return new ResultInfo(false);
