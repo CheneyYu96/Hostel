@@ -324,7 +324,7 @@ public class HotelServiceBean implements HotelService{
                 order.getBegin(),
                 order.getEnd(),
                 order.getPay(),
-                false,
+                true,
                 orderId,
                 0
         );

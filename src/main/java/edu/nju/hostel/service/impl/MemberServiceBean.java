@@ -245,54 +245,34 @@ public class MemberServiceBean implements MemberService {
     }
 
     @Override
-    public OrderVO makeOrder(int cardId, int hotelId, RoomType type, LocalDate beginDate, LocalDate endDate, int pay) {
-        int dayLength = DateUtil.endMinusBegin(beginDate,endDate);
-        if(dayLength<0){
-            return new OrderVO("日期间隔小于1天");
+    public OrderVO makeOrder(int cardId, int hotelId, String roomNumber, RoomType type, LocalDate beginDate, LocalDate endDate, int pay) {
+
+        Room room = roomRepository.findByHotelAndNumber(hotelId,roomNumber);
+
+        Order order = new Order();
+        order.setBegin(beginDate);
+        order.setEnd(endDate);
+        order.setHotelId(hotelId);
+        order.setType(type);
+        order.setRoomNumber(room.getRoomNumber());
+        order.setMemberId(cardId);
+        order.setPay(pay);
+        order.setStatus(OrderStatus.预订);
+
+        ResultInfo resultInfo = payByCard(cardId,pay);
+        if(!resultInfo.isSuccess()){
+            return new OrderVO(resultInfo.getInfo());
         }
-        List<Room> roomList = roomRepository
-                .findByHotelAndType(hotelId,type)
-                .stream()
-                .filter( room ->
-                        {
-                            List<RoomRecord> roomRecordList = roomRecordRepository
-                                    .findByRoomId(room.getId())
-                                    .stream()
-                                    .filter( roomRecord -> DateUtil.isTimeConflict(roomRecord.getBegin(),roomRecord.getEnd(),beginDate,endDate))
-                                    .collect(Collectors.toList());
-                            if(roomRecordList!=null&&roomRecordList.size()>0){
-                               return false;
-                            }
-                            return true;
-                        }
-                )
-                .collect(Collectors.toList());
+        Order result = orderRepository.save(order);
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(result,orderVO);
+        orderVO.hotelName = hotelRepository.findOne(hotelId).getName();
 
-        if(roomList!=null&&roomList.size()>0){
-            Room room = roomList.get(0);
+        RoomRecord roomRecord = new RoomRecord(result.getId(),0,room.getId(),beginDate,endDate);
+        roomRecordRepository.save(roomRecord);
 
-            Order order = new Order();
-            order.setBegin(beginDate);
-            order.setEnd(endDate);
-            order.setHotelId(hotelId);
-            order.setType(type);
-            order.setRoomNumber(room.getRoomNumber());
-            order.setMemberId(cardId);
-            order.setPay(pay);
-            order.setStatus(OrderStatus.预订);
+        return orderVO;
 
-            Order result = orderRepository.save(order);
-            OrderVO orderVO = new OrderVO();
-            BeanUtils.copyProperties(result,orderVO);
-            orderVO.hotelName = hotelRepository.findOne(hotelId).getName();
-
-            RoomRecord roomRecord = new RoomRecord(result.getId(),0,room.getId(),beginDate,endDate);
-            roomRecordRepository.save(roomRecord);
-
-            return orderVO;
-        }
-
-        return new OrderVO("该时间段的此类房间已满");
     }
 
     @Override
@@ -343,5 +323,50 @@ public class MemberServiceBean implements MemberService {
                         }
                 )
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public RoomPrize countPay(int cardId, int hotelId, RoomType type, LocalDate beginDate, LocalDate endDate) {
+        int dayLength = DateUtil.endMinusBegin(beginDate,endDate);
+        if(dayLength<0){
+            return new RoomPrize("日期间隔小于1天");
+        }
+        List<Room> roomList = roomRepository
+                .findByHotelAndType(hotelId,type)
+                .stream()
+                .filter( room ->
+                        {
+                            List<RoomRecord> roomRecordList = roomRecordRepository
+                                    .findByRoomId(room.getId())
+                                    .stream()
+                                    .filter( roomRecord -> DateUtil.isTimeConflict(roomRecord.getBegin(),roomRecord.getEnd(),beginDate,endDate))
+                                    .collect(Collectors.toList());
+                            if(roomRecordList!=null&&roomRecordList.size()>0){
+                                return false;
+                            }
+                            return true;
+                        }
+                )
+                .collect(Collectors.toList());
+
+        if(roomList==null||roomList.size()==0){
+            return new RoomPrize("该时间段的此类房间已满");
+        }
+        Room room = roomList.get(0);
+        RoomPrize roomPrize = new RoomPrize(room.getRoomNumber(),room.getPrize()*dayLength,room.getType());
+        List<Plan> planList = planRepository
+                .findByHotelId(hotelId)
+                .stream()
+                .filter( plan1 -> plan1.getType()==room.getType() )
+                .filter( plan1 -> plan1.getBeginDate().isBefore(beginDate)&&plan1.getEndDate().isAfter(endDate))
+                .collect(Collectors.toList());
+        if(planList!=null&&planList.size()>0){
+            roomPrize.planDiscount = planList.get(0).getDiscount();
+        }
+        MemberCard card = findCard(cardId);
+        roomPrize.memberDiscount = MemberLevel.getDiscount(card.getConsumeAmount());
+        roomPrize.nowPrize = roomPrize.originPrize * roomPrize.memberDiscount * roomPrize.planDiscount/ 10000;
+
+        return roomPrize;
     }
 }

@@ -37,7 +37,10 @@ public class HotelController {
     }
 
     @RequestMapping("/login")
-    public String login(Model model){
+    public String login(HttpSession session, Model model){
+        if(session.getAttribute("hotelId")!=null) {
+            session.removeAttribute("hotelId");
+        }
         model.addAttribute("name","客栈");
         return "login";
     }
@@ -47,12 +50,12 @@ public class HotelController {
         Hotel hotel;
         if(session.getAttribute("hotelId")==null){
             if(id == null || password == null){
-                return login(model);
+                return login(session,model);
             }
             hotel = hotelService.verifyHotel(id,password);
             if(hotel==null){
                 model.addAttribute("success", false);
-                return login(model);
+                return login(session,model);
             }
             session.setAttribute("hotelId",hotel.getId());
         }
@@ -75,7 +78,7 @@ public class HotelController {
     @RequestMapping("/register")
     public String register(HttpSession session, Model model, String hotelname, String password, String address){
         if(hotelname == null|| password == null || address==null){
-            return login(model);
+            return login(session,model);
         }
         Hotel hotel = hotelService.register(hotelname,password,address);
         session.setAttribute("hotelId",hotel.getId());
@@ -87,7 +90,7 @@ public class HotelController {
     @RequestMapping("/plan")
     public String plan(HttpSession session, Model model){
         if(session.getAttribute("hotelId")==null){
-            return login(model);
+            return login(session,model);
         }
         model.addAttribute("page","plan");
         return HOTEL+"plan";
@@ -96,7 +99,7 @@ public class HotelController {
     @RequestMapping("/stay")
     public String stay(HttpSession session, Model model){
         if(session.getAttribute("hotelId")==null){
-            return login(model);
+            return login(session,model);
         }
         model.addAttribute("page","stay");
         return HOTEL+"stay";
@@ -105,7 +108,7 @@ public class HotelController {
     @RequestMapping("/statistic")
     public String statistic(HttpSession session, Model model){
         if(session.getAttribute("hotelId")==null){
-            return login(model);
+            return login(session,model);
         }
         model.addAttribute("page","statistic");
         return HOTEL+"statistic";
@@ -145,6 +148,12 @@ public class HotelController {
     @RequestMapping("/getPlan")
     @ResponseBody
     public List<Plan> getPlan(@SessionAttribute int hotelId){
+        return hotelService.getPlan(hotelId);
+    }
+
+    @RequestMapping("/getPlanByMember")
+    @ResponseBody
+    public List<Plan> getPlanByMember(int hotelId){
         return hotelService.getPlan(hotelId);
     }
 

@@ -8,6 +8,7 @@ import edu.nju.hostel.utility.*;
 import edu.nju.hostel.vo.BalanceAndCredit;
 import edu.nju.hostel.vo.HotelVO;
 import edu.nju.hostel.vo.OrderVO;
+import edu.nju.hostel.vo.RoomPrize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,7 +39,10 @@ public class MemberController {
     }
 
     @RequestMapping("/login")
-    public String login(Model model){
+    public String login(HttpSession session, Model model){
+         if(session.getAttribute("cardId")!=null) {
+             session.removeAttribute("cardId");
+         }
         model.addAttribute("name","会员");
         return "login";
     }
@@ -80,13 +84,13 @@ public class MemberController {
         Member member;
         if(session.getAttribute("cardId")==null){
             if(username==null || password==null){
-                return login(model);
+                return login(session,model);
             }
 
             member = memberService.verifyMember(username,password);
             if(member == null){
                 model.addAttribute("success", false);
-                return login(model);
+                return login(session,model);
             }
             session.setAttribute("cardId",member.getId());
         }
@@ -113,13 +117,13 @@ public class MemberController {
         ResultInfo info = memberService.modifyPassword((Integer) session.getAttribute("cardId"),originPassword,password);
         session.removeAttribute("cardId");
         model.addAttribute("result", info);
-        return login(model);
+        return login(session,model);
     }
 
     @RequestMapping(value = "/book")
     public String book(HttpSession session, Model model){
         if(session.getAttribute("cardId")==null){
-            return login(model);
+            return login(session,model);
         }
         model.addAttribute("page","book");
         return MEMBER + "book";
@@ -129,7 +133,7 @@ public class MemberController {
     @RequestMapping(value = "/statistic")
     public String statistic(HttpSession session, Model model){
         if(session.getAttribute("cardId")==null){
-            return login(model);
+            return login(session,model);
         }
         model.addAttribute("page","statistic");
         return MEMBER + "statistic";
@@ -173,14 +177,20 @@ public class MemberController {
 
     @RequestMapping(value = "/makeOrder")
     @ResponseBody
-    public OrderVO makeOrder(@SessionAttribute int cardId, int hotelId, RoomType type, String begin, String end, int pay){
-        return memberService.makeOrder(cardId,hotelId,type, DateUtil.parse(begin),DateUtil.parse(end),pay);
+    public OrderVO makeOrder(@SessionAttribute int cardId, int hotelId, String roomNumber, RoomType type, String begin, String end, int pay){
+        return memberService.makeOrder(cardId,hotelId,roomNumber,type, DateUtil.parse(begin),DateUtil.parse(end),pay);
     }
 
     @RequestMapping(value = "/cancelOrder")
     @ResponseBody
     public ResultInfo cancelOrder(int orderId){
         return memberService.cancelOrder(orderId);
+    }
+
+    @RequestMapping(value = "/countPay")
+    @ResponseBody
+    public RoomPrize countPay(@SessionAttribute int cardId, int hotelId, RoomType type, String begin, String end){
+        return memberService.countPay(cardId,hotelId,type,DateUtil.parse(begin),DateUtil.parse(end));
     }
 
 }

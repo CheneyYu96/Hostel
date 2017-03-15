@@ -9,6 +9,7 @@ import edu.nju.hostel.utility.RoomType;
 import edu.nju.hostel.vo.BalanceAndCredit;
 import edu.nju.hostel.vo.HotelVO;
 import edu.nju.hostel.vo.OrderVO;
+import edu.nju.hostel.vo.RoomPrize;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -51,12 +52,13 @@ public interface MemberService {
 
     List<OrderVO> getOrder(int cardId);
 
-    OrderVO makeOrder(int cardId, int hotelId, RoomType type, LocalDate beginDate, LocalDate endDate, int pay);
+    OrderVO makeOrder(int cardId, int hotelId, String roomNumber, RoomType type, LocalDate beginDate, LocalDate endDate, int pay);
 
     ResultInfo cancelOrder(int orderId);
 
     ResultInfo payByCard(int cardId, int pay);
 
-
     List<HotelVO> getHotel();
+
+    RoomPrize countPay(int cardId, int hotelId, RoomType type, LocalDate begin, LocalDate end);
 }

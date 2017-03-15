@@ -203,7 +203,7 @@ function add_in() {
         }
         infoList = infoList + ";";
     }
-    if($("#isOrder")=="是"){
+    if($("#isOrder").val()=="是"){
         $.ajax({
             url: '/hotel/addRecordByOrder',
             dataType: "json",
