@@ -340,84 +340,24 @@ public class HotelServiceBean implements HotelService{
                 .collect(Collectors.toList());
 
         switch (method){
-            case 日统计: return getLineD(translators,begin,end);
-            case 周统计: return getLineW(translators,begin,end);
-            case 月统计: return getLineM(translators,begin,end);
+            case 日统计: return Calculator.getLineD(translators,begin,end);
+            case 周统计: return Calculator.getLineW(translators,begin,end);
+            case 月统计: return Calculator.getLineM(translators,begin,end);
         }
         return null;
     }
 
-    private List<LiveIn> getLineW(List<Translator> translators, LocalDate begin, LocalDate end ){
-        List<LiveIn> liveInList = new ArrayList<>();
-        for(;begin.isBefore(end);begin = begin.plusWeeks(1)){
-            LocalDate finalBegin = begin;
-            LiveIn reduce = translators
-                    .stream()
-                    .filter(translator -> DateUtil.inNextWeek(finalBegin, translator.begin))
-                    .map(translator -> new LiveIn(1, translator.pay, finalBegin))
-                    .reduce(new LiveIn(0,0,finalBegin), (in1, in2) ->
-                    {
-                        in2.amount = in1.amount + in2.amount;
-                        in2.money = in1.money + in2.money;
-                        return in2;
-                    });
-            liveInList.add(reduce);
-        }
-        return liveInList;
-    }
-
-    private List<LiveIn> getLineD(List<Translator> translators, LocalDate begin, LocalDate end ){
-        List<LiveIn> liveInList = new ArrayList<>();
-        for(;begin.isBefore(end);begin = begin.plusDays(1)){
-            LocalDate finalBegin = begin;
-            LiveIn reduce = translators
-                    .stream()
-                    .filter(translator -> translator.begin.isEqual(finalBegin))
-                    .map(translator -> new LiveIn(1, translator.pay, finalBegin))
-                    .reduce(new LiveIn(0,0,finalBegin), (in1, in2) ->
-                    {
-                        in2.amount = in1.amount + in2.amount;
-                        in2.money = in1.money + in2.money;
-                        return in2;
-                    });
-            liveInList.add(reduce);
-        }
-        return liveInList;
-    }
-
-    private List<LiveIn> getLineM(List<Translator> translators, LocalDate begin, LocalDate end ){
-        List<LiveIn> liveInList = new ArrayList<>();
-        for(;begin.isBefore(end);begin = begin.plusMonths(1)){
-            LocalDate finalBegin = begin;
-            LiveIn reduce = translators
-                    .stream()
-                    .filter(translator -> DateUtil.inNextMonth(finalBegin, translator.begin))
-                    .map(translator -> new LiveIn(1,translator.pay, finalBegin))
-                    .reduce(new LiveIn(0,0,finalBegin), (in1, in2) ->
-                    {
-                        in2.amount = in1.amount + in2.amount;
-                        in2.money = in1.money + in2.money;
-                        return in2;
-                    });
-            liveInList.add(reduce);
-        }
-        return liveInList;
-    }
 
     @Override
     public RoomTypePie getBookPie(int hotelId, StatisticType method, LocalDate begin, LocalDate end) {
-        List<Order> orderList = orderRepository.findByHotelId(hotelId);
-        RoomTypePie pie = new RoomTypePie();
+        List<Order> orderList = orderRepository
+                .findByHotelId(hotelId)
+                .stream()
+                .filter( order -> order.getBegin().isAfter(begin)&&order.getEnd().isBefore(end))
+                .collect(Collectors.toList());
 
-        for(Order order : orderList){
-            switch (order.getType()){
-                case 单床房:pie.singleRoom++; break;
-                case 双床房:pie.doubleRoom++; break;
-                case 大床房:pie.bigRoom++; break;
-                case 套间:pie.wholeRoom++; break;
-            }
-        }
-        return pie;
+        return Calculator.getBookPie(orderList);
+
     }
 
 
@@ -430,27 +370,21 @@ public class HotelServiceBean implements HotelService{
                 .collect(Collectors.toList());
 
         switch (method){
-            case 日统计: return getLineD(translators,begin,end);
-            case 周统计: return getLineW(translators,begin,end);
-            case 月统计: return getLineM(translators,begin,end);
+            case 日统计: return Calculator.getLineD(translators,begin,end);
+            case 周统计: return Calculator.getLineW(translators,begin,end);
+            case 月统计: return Calculator.getLineM(translators,begin,end);
         }
         return null;
     }
 
     @Override
     public RoomTypePie getInPie(int hotelId, StatisticType method, LocalDate begin, LocalDate end) {
-        List<InRecord> inRecords = inRecordRepository.findByHotelId(hotelId);
-        RoomTypePie pie = new RoomTypePie();
-
-        for(InRecord inRecord : inRecords){
-            switch (inRecord.getType()){
-                case 单床房:pie.singleRoom++; break;
-                case 双床房:pie.doubleRoom++; break;
-                case 大床房:pie.bigRoom++; break;
-                case 套间:pie.wholeRoom++; break;
-            }
-        }
-        return pie;
+        List<InRecord> inRecords = inRecordRepository
+                .findByHotelId(hotelId)
+                .stream()
+                .filter( inRecord -> inRecord.getBegin().isAfter(begin)&&inRecord.getEnd().isBefore(end))
+                .collect(Collectors.toList());
+        return Calculator.getInPie(inRecords);
     }
 
     @Override

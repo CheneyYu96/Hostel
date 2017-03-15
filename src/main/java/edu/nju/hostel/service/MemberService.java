@@ -6,10 +6,8 @@ import edu.nju.hostel.entity.MemberCard;
 import edu.nju.hostel.entity.Order;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.utility.RoomType;
-import edu.nju.hostel.vo.BalanceAndCredit;
-import edu.nju.hostel.vo.HotelVO;
-import edu.nju.hostel.vo.OrderVO;
-import edu.nju.hostel.vo.RoomPrize;
+import edu.nju.hostel.utility.StatisticType;
+import edu.nju.hostel.vo.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -61,4 +59,15 @@ public interface MemberService {
     List<HotelVO> getHotel();
 
     RoomPrize countPay(int cardId, int hotelId, RoomType type, LocalDate begin, LocalDate end);
+
+    List<LiveIn> getBookLine(int cardId, StatisticType method, LocalDate begin, LocalDate end);
+
+    RoomTypePie getBookPie(int cardId, StatisticType method, LocalDate begin, LocalDate end);
+
+    List<LiveIn> getInLine(int cardId, StatisticType method, LocalDate begin, LocalDate end);
+
+    RoomTypePie getInPie(int cardId, StatisticType method, LocalDate begin, LocalDate end);
+
+    List<Translator> getFinance(int cardId, StatisticType method, LocalDate begin, LocalDate end);
+
 }

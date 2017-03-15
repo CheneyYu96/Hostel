@@ -5,10 +5,7 @@ import edu.nju.hostel.entity.Member;
 import edu.nju.hostel.entity.MemberCard;
 import edu.nju.hostel.service.MemberService;
 import edu.nju.hostel.utility.*;
-import edu.nju.hostel.vo.BalanceAndCredit;
-import edu.nju.hostel.vo.HotelVO;
-import edu.nju.hostel.vo.OrderVO;
-import edu.nju.hostel.vo.RoomPrize;
+import edu.nju.hostel.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -191,6 +188,36 @@ public class MemberController {
     @ResponseBody
     public RoomPrize countPay(@SessionAttribute int cardId, int hotelId, RoomType type, String begin, String end){
         return memberService.countPay(cardId,hotelId,type,DateUtil.parse(begin),DateUtil.parse(end));
+    }
+
+    @RequestMapping(value = "/getBookLine")
+    @ResponseBody
+    public List<LiveIn> getBookLine(@SessionAttribute int cardId, StatisticType method, String begin, String end){
+        return memberService.getBookLine(cardId,method,DateUtil.parse(begin),DateUtil.parse(end));
+    }
+
+    @RequestMapping(value = "/getBookPie")
+    @ResponseBody
+    public RoomTypePie getBookPie(@SessionAttribute int cardId, StatisticType method,  String begin, String end){
+        return memberService.getBookPie(cardId,method,DateUtil.parse(begin),DateUtil.parse(end));
+    }
+
+    @RequestMapping(value = "/getInLine")
+    @ResponseBody
+    public List<LiveIn> getInLine(@SessionAttribute int cardId, StatisticType method,  String begin, String end){
+        return memberService.getInLine(cardId,method,DateUtil.parse(begin),DateUtil.parse(end));
+    }
+
+    @RequestMapping(value = "/getInPie")
+    @ResponseBody
+    public RoomTypePie getInPie(@SessionAttribute int cardId, StatisticType method,  String begin, String end){
+        return memberService.getInPie(cardId,method,DateUtil.parse(begin),DateUtil.parse(end));
+    }
+
+    @RequestMapping(value = "/getCost")
+    @ResponseBody
+    public List<Translator> getCost(@SessionAttribute int cardId, StatisticType method,  String begin, String end){
+        return memberService.getFinance(cardId,method,DateUtil.parse(begin),DateUtil.parse(end));
     }
 
 }

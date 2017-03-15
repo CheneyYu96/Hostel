@@ -4,11 +4,7 @@ import edu.nju.hostel.dao.*;
 import edu.nju.hostel.entity.*;
 import edu.nju.hostel.service.MemberService;
 import edu.nju.hostel.utility.*;
-import edu.nju.hostel.vo.BalanceAndCredit;
-import edu.nju.hostel.vo.HotelVO;
-import edu.nju.hostel.vo.OrderVO;
-import edu.nju.hostel.vo.RoomPrize;
-import org.aspectj.weaver.ast.Or;
+import edu.nju.hostel.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,10 +31,11 @@ public class MemberServiceBean implements MemberService {
     private final RoomRecordRepository roomRecordRepository;
     private final RoomRepository roomRepository;
     private final PlanRepository planRepository;
+    private final InRecordRepository inRecordRepository;
 
 
     @Autowired
-    public MemberServiceBean(MemberRepository memberRepository, MemberCardRepository memberCardRepository, BankCardRepository bankCardRepository, OrderRepository orderRepository, HotelRepository hotelRepository, RoomRecordRepository roomRecordRepository, RoomRepository roomRepository, PlanRepository planRepository) {
+    public MemberServiceBean(MemberRepository memberRepository, MemberCardRepository memberCardRepository, BankCardRepository bankCardRepository, OrderRepository orderRepository, HotelRepository hotelRepository, RoomRecordRepository roomRecordRepository, RoomRepository roomRepository, PlanRepository planRepository, InRecordRepository inRecordRepository) {
         this.memberRepository = memberRepository;
         this.memberCardRepository = memberCardRepository;
         this.bankCardRepository = bankCardRepository;
@@ -47,6 +44,7 @@ public class MemberServiceBean implements MemberService {
         this.roomRecordRepository = roomRecordRepository;
         this.roomRepository = roomRepository;
         this.planRepository = planRepository;
+        this.inRecordRepository = inRecordRepository;
     }
 
     @Override
@@ -368,5 +366,60 @@ public class MemberServiceBean implements MemberService {
         roomPrize.nowPrize = roomPrize.originPrize * roomPrize.memberDiscount * roomPrize.planDiscount/ 10000;
 
         return roomPrize;
+    }
+
+    @Override
+    public List<LiveIn> getBookLine(int cardId, StatisticType method, LocalDate begin, LocalDate end) {
+        List<Translator> translators = orderRepository
+                .findByMemberId(cardId)
+                .stream()
+                .map( order -> new Translator(order.getPay(),order.getBegin()))
+                .collect(Collectors.toList());
+
+        switch (method){
+            case 周统计: return Calculator.getLineW(translators,begin,end);
+            case 月统计: return Calculator.getLineM(translators,begin,end);
+            default: return null;
+        }
+    }
+
+    @Override
+    public RoomTypePie getBookPie(int cardId, StatisticType method, LocalDate begin, LocalDate end) {
+        List<Order> orderList = orderRepository
+                .findByMemberId(cardId)
+                .stream()
+                .filter( order -> order.getEnd().isBefore(end)&&order.getBegin().isAfter(begin))
+                .collect(Collectors.toList());
+        return Calculator.getBookPie(orderList);
+    }
+
+    @Override
+    public List<LiveIn> getInLine(int cardId, StatisticType method, LocalDate begin, LocalDate end) {
+        List<Translator> translators = inRecordRepository
+                .findByCardId(cardId)
+                .stream()
+                .map( inRecord -> new Translator(inRecord.getPay(),inRecord.getBegin()))
+                .collect(Collectors.toList());
+
+        switch (method){
+            case 周统计: return Calculator.getLineW(translators,begin,end);
+            case 月统计: return Calculator.getLineM(translators,begin,end);
+            default: return null;
+        }
+    }
+
+    @Override
+    public RoomTypePie getInPie(int cardId, StatisticType method, LocalDate begin, LocalDate end) {
+        List<InRecord> inRecords = inRecordRepository
+                .findByCardId(cardId)
+                .stream()
+                .filter( inRecord -> inRecord.getBegin().isAfter(begin)&&inRecord.getEnd().isBefore(end))
+                .collect(Collectors.toList());
+        return Calculator.getInPie(inRecords);
+    }
+
+    @Override
+    public List<Translator> getFinance(int cardId, StatisticType method, LocalDate begin, LocalDate end) {
+        return null;
     }
 }

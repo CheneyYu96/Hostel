@@ -12,4 +12,6 @@ import java.util.List;
  */
 public interface InRecordRepository extends JpaRepository<InRecord,Integer> {
     List<InRecord> findByHotelId(int hotelId);
+
+    List<InRecord> findByCardId(int cardId);
 }
