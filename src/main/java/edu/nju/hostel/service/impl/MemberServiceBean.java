@@ -1,23 +1,21 @@
 package edu.nju.hostel.service.impl;
 
-import edu.nju.hostel.dao.BankCardRepository;
-import edu.nju.hostel.dao.MemberCardRepository;
-import edu.nju.hostel.dao.MemberRepository;
-import edu.nju.hostel.entity.BankCard;
-import edu.nju.hostel.entity.Member;
-import edu.nju.hostel.entity.MemberCard;
-import edu.nju.hostel.entity.Order;
+import edu.nju.hostel.dao.*;
+import edu.nju.hostel.entity.*;
 import edu.nju.hostel.service.MemberService;
-import edu.nju.hostel.utility.MemberStatus;
-import edu.nju.hostel.utility.ResultInfo;
+import edu.nju.hostel.utility.*;
 import edu.nju.hostel.vo.BalanceAndCredit;
+import edu.nju.hostel.vo.OrderVO;
+import edu.nju.hostel.vo.RoomPrize;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -31,12 +29,21 @@ public class MemberServiceBean implements MemberService {
     private final MemberRepository memberRepository;
     private final MemberCardRepository memberCardRepository;
     private final BankCardRepository bankCardRepository;
+    private final OrderRepository orderRepository;
+    private final HotelRepository hotelRepository;
+    private final RoomRecordRepository roomRecordRepository;
+    private final RoomRepository roomRepository;
+
 
     @Autowired
-    public MemberServiceBean(MemberRepository memberRepository, MemberCardRepository memberCardRepository, BankCardRepository bankCardRepository) {
+    public MemberServiceBean(MemberRepository memberRepository, MemberCardRepository memberCardRepository, BankCardRepository bankCardRepository, OrderRepository orderRepository, HotelRepository hotelRepository, RoomRecordRepository roomRecordRepository, RoomRepository roomRepository) {
         this.memberRepository = memberRepository;
         this.memberCardRepository = memberCardRepository;
         this.bankCardRepository = bankCardRepository;
+        this.orderRepository = orderRepository;
+        this.hotelRepository = hotelRepository;
+        this.roomRecordRepository = roomRecordRepository;
+        this.roomRepository = roomRepository;
     }
 
     @Override
@@ -134,30 +141,40 @@ public class MemberServiceBean implements MemberService {
     }
 
     @Override
-    public ResultInfo payFee(int cardId, String bankId, int money) {
+    public BalanceAndCredit payFee(int cardId, String bankId, int money) {
 
         ResultInfo resultInfo = new ResultInfo(true);
-
         List<BankCard> bankCardList = bankCardRepository.findByCardId(bankId);
         if(bankCardList==null||bankCardList.size()==0){
             resultInfo.setResult(false);
             resultInfo.setInfo("银行卡号不存在");
         }
 
-        MemberCard card = memberCardRepository.findOne(cardId);
-        int origin = card.getBalance();
-        card.setBalance(money+origin);
+        MemberCard card;
+        if(!isInQualification(cardId).isSuccess()){
+             card = memberCardRepository.findOne(cardId);
+            if(card.getStatus()==MemberStatus.暂停&&(card.getBalance()+money)>=1000){
+                card.setStatus(MemberStatus.已激活);
+                card.setActivated(true);
 
-        if(!isInQualification(card).isSuccess() && card.getBalance() >= 1000){
-            card.setActivated(true);
+            }
+            card.setBalance(card.getBalance()+money);
+
         }
+        else {
+            card = memberCardRepository.findOne(cardId);
+            card.setBalance(card.getBalance()+money);
+        }
+        memberCardRepository.save(card);
 
-        return resultInfo;
+        BalanceAndCredit result = new BalanceAndCredit(resultInfo);
+        result.balance = card.getBalance();
+        return result;
     }
 
-
     @Override
-    public ResultInfo isInQualification(MemberCard card) {
+    public ResultInfo isInQualification(int cardId) {
+        MemberCard card = memberCardRepository.findOne(cardId);
         ResultInfo resultInfo = new ResultInfo(false);
 
         if(card.getBalance()>=1000){
@@ -165,7 +182,15 @@ public class MemberServiceBean implements MemberService {
         }
         else {
             if(card.getActivateDate().isBefore(LocalDate.now().minusYears(1))){
-                resultInfo.setInfo("有效期已过，账户余额小于1000.请充值激活");
+                if(card.getActivateDate().isBefore(LocalDate.now().minusYears(2))){
+                    card.setStatus(MemberStatus.停止);
+                    resultInfo.setInfo("会员记录已停止");
+                }
+                else {
+                    card.setStatus(MemberStatus.暂停);
+                    resultInfo.setInfo("有效期已过，账户余额小于1000.请充值激活");
+                }
+                memberCardRepository.save(card);
             }
             else {
                 resultInfo.setResult(true);
@@ -175,8 +200,11 @@ public class MemberServiceBean implements MemberService {
     }
 
     @Override
-    public ResultInfo stopQualification(String memberId) {
-        return null;
+    public ResultInfo stopQualification(int memberId) {
+        MemberCard card = memberRepository.findOne(memberId).getCard();
+        card.setStatus(MemberStatus.停止);
+        memberCardRepository.save(card);
+        return new ResultInfo(true);
     }
 
     @Override
@@ -198,18 +226,78 @@ public class MemberServiceBean implements MemberService {
     }
 
     @Override
-    public ResultInfo checkRoom(int memberId, int roomId, LocalDate beginDate, LocalDate endDate) {
-        return null;
+    public List<OrderVO> getOrder(int cardId) {
+        return orderRepository
+                .findByMemberId(cardId)
+                .stream()
+                .map( order ->
+                        {
+                            OrderVO orderVO = new OrderVO();
+                            orderVO.hotelName = hotelRepository.findOne(order.getHotelId()).getName();
+                            BeanUtils.copyProperties(order,orderVO);
+                            return orderVO;
+                        }
+                )
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Order bookRoom(int memberId, int roomId, LocalDate beginDate, LocalDate endDate) {
-        return null;
+    public OrderVO makeOrder(int cardId, int hotelId, RoomType type, LocalDate beginDate, LocalDate endDate, int pay) {
+        int dayLength = DateUtil.endMinusBegin(beginDate,endDate);
+        if(dayLength<0){
+            return new OrderVO("日期间隔小于1天");
+        }
+        List<Room> roomList = roomRepository
+                .findByHotelAndType(hotelId,type)
+                .stream()
+                .filter( room ->
+                        {
+                            List<RoomRecord> roomRecordList = roomRecordRepository
+                                    .findByRoomId(room.getId())
+                                    .stream()
+                                    .filter( roomRecord -> DateUtil.isTimeConflict(roomRecord.getBegin(),roomRecord.getEnd(),beginDate,endDate))
+                                    .collect(Collectors.toList());
+                            if(roomRecordList!=null&&roomRecordList.size()>0){
+                               return false;
+                            }
+                            return true;
+                        }
+                )
+                .collect(Collectors.toList());
+
+        if(roomList!=null&&roomList.size()>0){
+            Room room = roomList.get(0);
+
+            Order order = new Order();
+            order.setBegin(beginDate);
+            order.setEnd(endDate);
+            order.setHotelId(hotelId);
+            order.setType(type);
+            order.setRoomNumber(room.getRoomNumber());
+            order.setMemberId(cardId);
+            order.setPay(pay);
+            order.setStatus(OrderStatus.预订);
+
+            Order result = orderRepository.save(order);
+            OrderVO orderVO = new OrderVO();
+            BeanUtils.copyProperties(result,orderVO);
+            orderVO.hotelName = hotelRepository.findOne(hotelId).getName();
+
+            RoomRecord roomRecord = new RoomRecord(result.getId(),0,room.getId(),beginDate,endDate);
+            roomRecordRepository.save(roomRecord);
+
+            return orderVO;
+        }
+
+        return new OrderVO("该时间段的此类房间已满");
     }
 
     @Override
-    public ResultInfo cancelRoom(int orderId) {
-        return null;
+    public ResultInfo cancelOrder(int orderId) {
+        orderRepository.delete(orderId);
+        RoomRecord roomRecord = roomRecordRepository.findByOrderId(orderId);
+        roomRecordRepository.delete(roomRecord);
+        return new ResultInfo(true);
     }
 
     @Override

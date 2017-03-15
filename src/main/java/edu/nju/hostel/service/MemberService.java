@@ -4,9 +4,12 @@ import edu.nju.hostel.entity.Member;
 import edu.nju.hostel.entity.MemberCard;
 import edu.nju.hostel.entity.Order;
 import edu.nju.hostel.utility.ResultInfo;
+import edu.nju.hostel.utility.RoomType;
 import edu.nju.hostel.vo.BalanceAndCredit;
+import edu.nju.hostel.vo.OrderVO;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  *
@@ -36,28 +39,19 @@ public interface MemberService {
 
     ResultInfo activate(int cardId, String bankId, int money);
 
-    ResultInfo payFee(int cardId, String bankId, int money);
+    BalanceAndCredit payFee(int cardId, String bankId, int money);
 
-    ResultInfo isInQualification(MemberCard card);
+    ResultInfo isInQualification(int cardId);
 
-    ResultInfo stopQualification(String memberId);
+    ResultInfo stopQualification(int memberId);
 
     BalanceAndCredit translateCredit(int cardId, int credit);
 
-    /**
-     * check room booking condition
-     * and the balance in member card is enough
-     * @param memberId
-     * @param roomId
-     * @param beginDate
-     * @param endDate
-     * @return
-     */
-    ResultInfo checkRoom(int memberId, int roomId, LocalDate beginDate, LocalDate endDate);
+    List<OrderVO> getOrder(int cardId);
 
-    Order bookRoom(int memberId, int roomId, LocalDate beginDate, LocalDate endDate);
+    OrderVO makeOrder(int cardId, int hotelId, RoomType type, LocalDate beginDate, LocalDate endDate, int pay);
 
-    ResultInfo cancelRoom(int orderId);
+    ResultInfo cancelOrder(int orderId);
 
     ResultInfo payByCard(int cardId, int pay);
 

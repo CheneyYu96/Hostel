@@ -5,7 +5,8 @@ $(document).ready(function () {
 
     $("#editInfo").bind("click",edit_info);
     $("#exchange_credit").bind("click",exchange_credit);
-
+    $("#stop").bind("click",stop_qlf);
+    $("#pay_fee").bind("click",pay_fee);
 
 });
 
@@ -58,6 +59,52 @@ function exchange_credit() {
 
         },error:function(result){
             showFailure("兑换失败");
+        }
+
+    });
+}
+function stop_qlf() {
+    $.ajax({
+        url: '/member/stopQlf',
+        success:function(result){
+            if(result.success){
+                showSuccess("资格已取消");
+                $("#status").val("停止");
+            }
+            else {
+                showFailure("失败"+ result.info);
+            }
+
+        },error:function(result){
+            showFailure("失败");
+        }
+
+    });
+}
+
+function pay_fee() {
+    $.ajax({
+        url: '/member/payFee',
+        dataType: "json",
+        method: "post",//请求方式
+        data:{
+            "bank":$("#bank").val(),
+            "money":$("#money").val()
+        },
+        success:function(result){
+            if(result.info.success){
+                showSuccess("充值成功");
+                $("#balance").val(result.balance);
+                $("#bank").val("");
+                $("#money").val("");
+
+            }
+            else {
+                showFailure("充值成功，"+ result.info.info);
+            }
+
+        },error:function(result){
+            showFailure("充值成功");
         }
 
     });

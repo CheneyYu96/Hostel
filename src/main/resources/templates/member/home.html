@@ -47,7 +47,7 @@
                 <li class="active"><a href="#info">基本信息</a></li>
                 <li><a href="#password">修改密码</a></li>
                 <li><a href="#card">会员卡信息</a></li>
-                <li><a href="#exchange">积分兑换</a></li>
+                <li><a href="#exchange">兑换、充值</a></li>
 
             </ul>
         </div>
@@ -90,22 +90,33 @@
                     <h4><span class="label label-default">会员状态</span></h4>
                 </div>
                 <div class="col-sm-5">
-                    <input type="text" class="form-control" th:value="${card.getStatus()}" readonly="readonly"/>
+                    <input type="text" class="form-control" th:value="${card.getStatus()}" id="status" readonly="readonly"/>
                 </div>
             </div>
             <div class="blank10"></div>
             </form>
 
             <div class="row">
-                <div class="col-sm-4 col-sm-offset-6">
-                    <button type="button" class="btn btn-primary" id="editInfo">修改</button>
+                <div class="col-sm-2 col-sm-offset-4">
+                    <button type="button" class="btn btn-primary" id="editInfo">修改信息</button>
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-primary" id="stop">取消资格</button>
                 </div>
             </div>
             <div id="tip"></div>
             <div class="blank30"></div>
+            <div th:if="${tip!=null}">
+                <div id="qualification" th:value="${tip.getInfo()}" hidden="hidden"></div>
+                <script type="text/javascript">
+                    $(function(){
+                        showFailure($("#qualification").val())
+                    });
+                </script>
+
+            </div>
+
             <hr/>
-
-
             <!--修改密码-->
             <h3 id="password">修改密码</h3>
             <div class="blank20"></div>
@@ -222,6 +233,34 @@
             <div class="row">
                 <div class="col-sm-4 col-sm-offset-6">
                     <button type="submit" class="btn btn-primary" id="exchange_credit">确认</button>
+                </div>
+            </div>
+            <div class="blank20"></div>
+
+            <h3>会员卡充值</h3>
+            <div class="blank10"></div>
+            <div class="row">
+                <div class="col-sm-3 col-sm-offset-1">
+                    <h4><span class="label label-default">银行卡号</span></h4>
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" id="bank"/>
+                </div>
+            </div>
+            <div class="blank10"></div>
+            <div class="row">
+                <div class="col-sm-3 col-sm-offset-1">
+                    <h4><span class="label label-default">充值金额</span></h4>
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" id="money"/>
+                </div>
+            </div>
+            <div class="blank10"></div>
+
+            <div class="row">
+                <div class="col-sm-4 col-sm-offset-6">
+                    <button type="submit" class="btn btn-primary" id="pay_fee">确认</button>
                 </div>
             </div>
             <div class="blank30"></div>

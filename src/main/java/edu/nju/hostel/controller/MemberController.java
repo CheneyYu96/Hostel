@@ -3,10 +3,9 @@ package edu.nju.hostel.controller;
 import edu.nju.hostel.entity.Member;
 import edu.nju.hostel.entity.MemberCard;
 import edu.nju.hostel.service.MemberService;
-import edu.nju.hostel.utility.FormatHelper;
-import edu.nju.hostel.utility.MemberLevel;
-import edu.nju.hostel.utility.ResultInfo;
+import edu.nju.hostel.utility.*;
 import edu.nju.hostel.vo.BalanceAndCredit;
+import edu.nju.hostel.vo.OrderVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  *
@@ -92,6 +92,11 @@ public class MemberController {
             member = memberService.findMember((Integer)session.getAttribute("cardId"));
         }
 
+        ResultInfo resultInfo = memberService.isInQualification(member.getCard().getId());
+        if(!resultInfo.isSuccess()){
+            model.addAttribute("tip",resultInfo.getInfo());
+        }
+
         model.addAttribute("member", member);
         model.addAttribute("card", member.getCard());
         model.addAttribute("page", "home");
@@ -124,7 +129,7 @@ public class MemberController {
         if(session.getAttribute("cardId")==null){
             return login(model);
         }
-        model.addAttribute("page","book");
+        model.addAttribute("page","statistic");
         return MEMBER + "statistic";
     }
 
@@ -138,6 +143,36 @@ public class MemberController {
     @ResponseBody
     public BalanceAndCredit translateCredit(@SessionAttribute int cardId, int credit){
         return memberService.translateCredit(cardId,credit);
+    }
+
+    @RequestMapping(value = "/stopQlf")
+    @ResponseBody
+    public ResultInfo stopQlf(@SessionAttribute int cardId){
+        return memberService.stopQualification(cardId);
+    }
+
+    @RequestMapping(value = "/payFee")
+    @ResponseBody
+    public BalanceAndCredit payFee(@SessionAttribute int cardId, String bank, int money){
+        return memberService.payFee(cardId,bank,money);
+    }
+
+    @RequestMapping(value = "/getOrder")
+    @ResponseBody
+    public List<OrderVO> getOrder(@SessionAttribute int cardId){
+        return memberService.getOrder(cardId);
+    }
+
+    @RequestMapping(value = "/makeOrder")
+    @ResponseBody
+    public OrderVO makeOrder(@SessionAttribute int cardId, int hotelId, RoomType type, String begin, String end, int pay){
+        return memberService.makeOrder(cardId,hotelId,type, DateUtil.parse(begin),DateUtil.parse(end),pay);
+    }
+
+    @RequestMapping(value = "/cancelOrder")
+    @ResponseBody
+    public ResultInfo cancelOrder(int orderId){
+        return memberService.cancelOrder(orderId);
     }
 
 }

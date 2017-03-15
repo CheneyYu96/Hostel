@@ -12,4 +12,6 @@ import java.util.List;
  */
 public interface RoomRecordRepository extends JpaRepository<RoomRecord,Integer>{
     List<RoomRecord> findByRoomId(int roomId);
+
+    RoomRecord findByOrderId(int orderId);
 }
