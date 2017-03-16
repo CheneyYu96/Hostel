@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>会员</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrapValidator.min.css"/>
+    <link rel="stylesheet" href="/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="/css/style.css"/>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/info/member.js"></script>
+    <script src="/js/jquery.backstretch.min.js"></script>
+    <script src="/js/bootstrapValidator.min.js"></script>
+
+</head>
+<body data-spy="scroll" data-target="#myScrollspy">
+<div th:fragment="header">
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" th:href="@{/manager/login}">Inn+</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li th:class="${page.equals('home')} ? 'active'"><a th:href="${page.equals('home')} ? '#' : @{/manager/home}" >会员信息</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li th:class="${page.equals('approve')} ? 'active'"><a th:href="${page.equals('approve')} ? '#' : @{/manager/approve}" >审批结算</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li th:class="${page.equals('statistic')} ? 'active'"><a th:href="${page.equals('statistic')} ? '#' : @{/manager/statistic}" >统计分析</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="container">
+    <div class="blank10"></div>
+    <div class="row">
+        <div class="col-xs-3" id="myScrollspy">
+            <ul class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="125">
+                <li class="active"><a href="#info">管理员信息</a></li>
+                <li><a href="#password">修改密码</a></li>
+            </ul>
+        </div>
+        <div class="col-xs-9" id="lists">
+            <!--管理员信息-->
+            <h3 id="info">管理员信息</h3>
+            <div class="blank20"></div>
+            <div class="row">
+                <div class="col-sm-3 col-sm-offset-1">
+                    <h4><span class="label label-default">姓名</span></h4>
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" th:value="${manager.getName()}"/>
+                </div>
+            </div>
+            <div class="blank10"></div>
+
+            <div class="row">
+                <div class="col-sm-3 col-sm-offset-1">
+                    <h4><span class="label label-default">管理员ID</span></h4>
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" th:value="${managerId}" readonly="readonly"/>
+                </div>
+            </div>
+            <div class="blank30"></div>
+
+            <hr/>
+            <!--修改密码-->
+            <h3 id="password">修改密码</h3>
+            <div class="blank20"></div>
+            <form role="form" method="post" th:action="@{/manager/changepwd}">
+                <div class="row" >
+                    <div class="col-sm-3 col-sm-offset-1">
+                        <h4><span class="label label-default">请输入原始密码</span></h4>
+                    </div>
+                    <div class="col-sm-5">
+                        <input type="password" class="form-control" name="originPassword"/>
+                    </div>
+                </div>
+                <div class="blank10"></div>
+                <div class="row">
+                    <div class="col-sm-3 col-sm-offset-1">
+                        <h4><span class="label label-default">请输入新密码</span></h4>
+                    </div>
+                    <div class="col-sm-5">
+                        <input type="password" class="form-control" name="password"/>
+                    </div>
+                </div>
+                <div class="blank10"></div>
+
+                <div class="row">
+                    <div class="col-sm-3 col-sm-offset-1">
+                        <h4><span class="label label-default">再次输入新密码</span></h4>
+                    </div>
+                    <div class="col-sm-5">
+                        <input type="password" class="form-control" name="passwordTwice"/>
+                    </div>
+                </div>
+                <div class="blank10"></div>
+
+                <div class="row">
+                    <div class="col-sm-4 col-sm-offset-6">
+                        <button type="submit" class="btn btn-primary">确认</button>
+                    </div>
+                </div>
+            </form>
+            <div class="blank30"></div>
+        </div>
+    </div>
+</div>
+
+
+<div th:include="login::copy"></div>
+
+</body>
+</html>

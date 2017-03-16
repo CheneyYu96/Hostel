@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -388,7 +389,7 @@ public class MemberServiceBean implements MemberService {
         List<Order> orderList = orderRepository
                 .findByMemberId(cardId)
                 .stream()
-                .filter( order -> order.getEnd().isBefore(end)&&order.getBegin().isAfter(begin))
+                .filter( order -> order.getBegin().isBefore(end)&&order.getBegin().isAfter(begin))
                 .collect(Collectors.toList());
         return Calculator.getBookPie(orderList);
     }
@@ -413,13 +414,62 @@ public class MemberServiceBean implements MemberService {
         List<InRecord> inRecords = inRecordRepository
                 .findByCardId(cardId)
                 .stream()
-                .filter( inRecord -> inRecord.getBegin().isAfter(begin)&&inRecord.getEnd().isBefore(end))
+                .filter( inRecord -> inRecord.getBegin().isAfter(begin)&&inRecord.getBegin().isBefore(end))
                 .collect(Collectors.toList());
         return Calculator.getInPie(inRecords);
     }
 
     @Override
     public List<Translator> getFinance(int cardId, StatisticType method, LocalDate begin, LocalDate end) {
-        return null;
-    }
+        List<Translator> orderTranslators = orderRepository
+                .findByMemberId(cardId)
+                .stream()
+                .map( order -> new Translator(order.getPay(),order.getBegin()))
+                .collect(Collectors.toList());
+        List<Translator> inRecordTranslators = inRecordRepository
+                .findByCardId(cardId)
+                .stream()
+                .map( inRecord -> new Translator(inRecord.getPay(),inRecord.getBegin()))
+                .collect(Collectors.toList());
+
+        orderTranslators = Stream
+                .of(orderTranslators,inRecordTranslators)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        List<Translator> translators = new ArrayList<>();
+
+        switch (method){
+            case 周统计:
+                for(;begin.isBefore(end);begin = begin.plusWeeks(1)){
+                    LocalDate finalBegin = begin;
+                    Translator translator = orderTranslators
+                            .stream()
+                            .filter(translator1 -> DateUtil.inNextWeek(finalBegin, translator1.begin))
+                            .reduce(new Translator(0,finalBegin), (t1, t2) ->
+                            {
+                                t2.pay = t2.pay + t1.pay;
+                                return t2;
+                            });
+                    translators.add(translator);
+                }
+                break;
+
+            case 月统计:
+                for(;begin.isBefore(end);begin = begin.plusMonths(1)){
+                    LocalDate finalBegin = begin;
+                    Translator translator = orderTranslators
+                            .stream()
+                            .filter(translator1 -> DateUtil.inNextMonth(finalBegin, translator1.begin))
+                            .reduce(new Translator(0,finalBegin), (t1, t2) ->
+                            {
+                                t2.pay = t2.pay + t1.pay;
+                                return t2;
+                            });
+                    translators.add(translator);
+                }
+                break;
+        }
+
+        return translators;    }
 }

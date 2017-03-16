@@ -353,7 +353,7 @@ public class HotelServiceBean implements HotelService{
         List<Order> orderList = orderRepository
                 .findByHotelId(hotelId)
                 .stream()
-                .filter( order -> order.getBegin().isAfter(begin)&&order.getEnd().isBefore(end))
+                .filter( order -> order.getBegin().isAfter(begin)&&order.getBegin().isBefore(end))
                 .collect(Collectors.toList());
 
         return Calculator.getBookPie(orderList);
@@ -382,7 +382,7 @@ public class HotelServiceBean implements HotelService{
         List<InRecord> inRecords = inRecordRepository
                 .findByHotelId(hotelId)
                 .stream()
-                .filter( inRecord -> inRecord.getBegin().isAfter(begin)&&inRecord.getEnd().isBefore(end))
+                .filter( inRecord -> inRecord.getBegin().isAfter(begin)&&inRecord.getBegin().isBefore(end))
                 .collect(Collectors.toList());
         return Calculator.getInPie(inRecords);
     }
@@ -455,6 +455,17 @@ public class HotelServiceBean implements HotelService{
         }
 
         return translators;
+    }
+
+    @Override
+    public ResultInfo modifyPassword(Integer hotelId, String originPassword, String password) {
+        Hotel hotel = hotelRepository.findOne(hotelId);
+        if(originPassword.equals(hotel.getPassword())){
+            hotel.setPassword(password);
+            hotelRepository.save(hotel);
+            return new ResultInfo(true);
+        }
+        return new ResultInfo(false,"密码不正确");
     }
 
 

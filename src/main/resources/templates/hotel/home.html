@@ -218,18 +218,18 @@
             </div>
             <table id="table-room"></table>
             <div class="blank30"></div>
-
             <hr/>
 
             <!--修改密码-->
             <h3 id="password">修改密码</h3>
             <div class="blank20"></div>
+            <form role="form" method="post" th:action="@{/hotel/changepwd}">
             <div class="row">
                 <div class="col-sm-3 col-sm-offset-1">
                     <h4><span class="label label-default">请输入原始密码</span></h4>
                 </div>
                 <div class="col-sm-5">
-                    <input type="text" class="form-control"/>
+                    <input type="password" class="form-control" name="originPassword"/>
                 </div>
             </div>
             <div class="blank10"></div>
@@ -238,7 +238,7 @@
                     <h4><span class="label label-default">请输入新密码</span></h4>
                 </div>
                 <div class="col-sm-5">
-                    <input type="text" class="form-control"/>
+                    <input type="password" class="form-control" name="password"/>
                 </div>
             </div>
             <div class="blank10"></div>
@@ -248,16 +248,17 @@
                     <h4><span class="label label-default">再次输入新密码</span></h4>
                 </div>
                 <div class="col-sm-5">
-                    <input type="text" class="form-control"/>
+                    <input type="password" class="form-control" name="passwordTwice"/>
                 </div>
             </div>
             <div class="blank10"></div>
 
             <div class="row">
                 <div class="col-sm-4 col-sm-offset-6">
-                    <button type="button" class="btn btn-primary">确认</button>
+                    <button type="submit" class="btn btn-primary">确认</button>
                 </div>
             </div>
+            </form>
             <div class="blank30"></div>
         </div>
     </div>

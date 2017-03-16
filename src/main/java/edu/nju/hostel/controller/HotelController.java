@@ -87,6 +87,14 @@ public class HotelController {
         return HOTEL + "home";
     }
 
+    @RequestMapping(value = "/changepwd")
+    public String changePassword(HttpSession session,  Model model, String originPassword, String password){
+        ResultInfo info = hotelService.modifyPassword((Integer) session.getAttribute("hotelId"),originPassword,password);
+        session.removeAttribute("hotelId");
+        model.addAttribute("result", info);
+        return login(session,model);
+    }
+
     @RequestMapping("/plan")
     public String plan(HttpSession session, Model model){
         if(session.getAttribute("hotelId")==null){

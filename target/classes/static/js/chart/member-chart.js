@@ -36,7 +36,7 @@ function get_finance_data() {
         return;
     }
     $.ajax({
-        url: '/Member/getFinance',
+        url: '/member/getCost',
         dataType: "json",
         method: "post",//请求方式
         // contentType : "application/x-www-form-urlencoded",
@@ -109,7 +109,7 @@ function get_in_data(){
         return;
     }
     $.ajax({
-        url: '/hotel/getInLine',
+        url: '/member/getInLine',
         dataType: "json",
         method: "post",//请求方式
         // contentType : "application/x-www-form-urlencoded",
@@ -143,7 +143,7 @@ function get_in_data(){
     });
 
     $.ajax({
-        url: '/hotel/getInPie',
+        url: '/member/getInPie',
         dataType: "json",
         method: "post",//请求方式
         // contentType : "application/x-www-form-urlencoded",
@@ -188,7 +188,7 @@ function get_book_data(){
         return;
     }
     $.ajax({
-        url: '/hotel/getBookLine',
+        url: '/member/getBookLine',
         dataType: "json",
         method: "post",//请求方式
         // contentType : "application/x-www-form-urlencoded",
@@ -222,7 +222,7 @@ function get_book_data(){
     });
 
     $.ajax({
-        url: '/hotel/getBookPie',
+        url: '/member/getBookPie',
         dataType: "json",
         method: "post",//请求方式
         // contentType : "application/x-www-form-urlencoded",

@@ -62,4 +62,6 @@ public interface HotelService {
     RoomTypePie getInPie(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
 
     List<Translator> getFinance(int hotelId, StatisticType method, LocalDate begin, LocalDate end);
+
+    ResultInfo modifyPassword(Integer hotelId, String originPassword, String password);
 }
