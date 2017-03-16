@@ -71,7 +71,7 @@ public class MemberController {
             model.addAttribute("first", false);
             model.addAttribute("id", FormatHelper.Id2String(cardId));
             model.addAttribute("result", resultInfo);
-
+            model.addAttribute("page", "home");
             return MEMBER + "activate";
         }
     }

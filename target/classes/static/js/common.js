@@ -26,6 +26,12 @@ function formatDate(value) {
     return value.year+'/'+value.monthValue+'/'+value.dayOfMonth;
 }
 
+function formatId(id) {
+    var idstr = ""+id;
+    for(; idstr.length<7;idstr = "0"+idstr);
+    return idstr;
+}
+
 $(function () {
     $('form').bootstrapValidator({
         message: 'This value is not valid',

@@ -34,6 +34,8 @@ public class HotelServiceBean implements HotelService{
     private final RecordNameRepository recordNameRepository;
     private final OrderRepository orderRepository;
     private final RoomRecordRepository roomRecordRepository;
+    private final ApproveItemRepository approveItemRepository;
+    private final PayItemRepository payItemRepository;
 
     @Autowired
     public HotelServiceBean(
@@ -44,7 +46,9 @@ public class HotelServiceBean implements HotelService{
             OutRecordRepository outRecordRepository,
             RecordNameRepository recordNameRepository,
             OrderRepository orderRepository,
-            RoomRecordRepository roomRecordRepository) {
+            RoomRecordRepository roomRecordRepository,
+            ApproveItemRepository approveItemRepository,
+            PayItemRepository payItemRepository) {
         this.hotelRepository = hotelRepository;
         this.roomRepository = roomRepository;
         this.planRepository = planRepository;
@@ -53,6 +57,8 @@ public class HotelServiceBean implements HotelService{
         this.recordNameRepository = recordNameRepository;
         this.orderRepository = orderRepository;
         this.roomRecordRepository = roomRecordRepository;
+        this.approveItemRepository = approveItemRepository;
+        this.payItemRepository = payItemRepository;
     }
 
     @Override
@@ -82,6 +88,8 @@ public class HotelServiceBean implements HotelService{
 
         Hotel result = hotelRepository.save(hotel1);
         if(result!=null){
+            ApproveItem approveItem = new ApproveItem(result.getId(),0,false);
+            approveItemRepository.save(approveItem);
             return new ResultInfo(true);
         }
         return new ResultInfo(false);
@@ -90,8 +98,21 @@ public class HotelServiceBean implements HotelService{
     @Override
     public Hotel verifyHotel(String id, String password) {
         Hotel hotel = hotelRepository.findOne(FormatHelper.String2Id(id));
+
         if(hotel!=null&&password.equals(hotel.getPassword())){
-            return hotel;
+            if(hotel.getStatus()==HotelStatus.待审批) {
+                List<ApproveItem> approveItems = approveItemRepository
+                        .findByHotelId(hotel.getId())
+                        .stream()
+                        .filter(approveItem -> !approveItem.getHasApproved())
+                        .collect(Collectors.toList());
+
+                if (approveItems == null || approveItems.size() == 0) {
+                    hotel.setStatus(HotelStatus.已批准);
+                }
+            }
+            Hotel result = hotelRepository.save(hotel);
+            return result;
         }
         return null;
     }
@@ -103,9 +124,12 @@ public class HotelServiceBean implements HotelService{
         room1.setPrize(room.getPrize());
         room1.setRoomNumber(room.getRoomNumber());
         room1.setType(room.getType());
+        room1.setStatus(HotelStatus.待审批);
 
         Room result = roomRepository.save(room1);
         if(result!=null){
+            ApproveItem approveItem = new ApproveItem(0,result.getId(),false);
+            approveItemRepository.save(approveItem);
             return new ResultInfo(true);
         }
         return new ResultInfo(false);
@@ -129,10 +153,16 @@ public class HotelServiceBean implements HotelService{
         room.setRoomNumber(roomNumber);
         room.setType(type);
         room.setStatus(HotelStatus.待审批);
-        hotel.setStatus(HotelStatus.待审批);
+        Room room1 = roomRepository.save(room);
+        ApproveItem approveItem = new ApproveItem(0,room1.getId(),false);
 
+        if(hotel.getStatus()==HotelStatus.未申请){
+            approveItem.setHotelId(hotel.getId());
+        }
+        approveItemRepository.save(approveItem);
+        hotel.setStatus(HotelStatus.待审批);
         hotelRepository.save(hotel);
-        roomRepository.save(room);
+
         return resultInfo;
     }
 

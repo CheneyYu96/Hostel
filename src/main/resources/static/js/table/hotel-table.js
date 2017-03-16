@@ -84,6 +84,7 @@ function editInfo() {
             console.log(result);
             if(result.success){
                 showSuccess("修改成功");
+                $("#status").val("待审批");
             }
             else {
                 showFailure("修改失败");
@@ -142,10 +143,10 @@ function addRoom() {
             "prize":$("#prize").val()
         },
         success:function(result){
-            console.log(result);
             if(result.success){
                 showSuccess("添加成功");
-                $table.bootstrapTable('refresh', {url: '/hotel/getRooms'});
+                $("#status").val("待审批");
+                $table_room.bootstrapTable('refresh', {url: '/hotel/getRooms'});
             }
             else {
                 showFailure("添加失败, " + result.info);
@@ -159,7 +160,7 @@ function addRoom() {
 }
 
 function modifyRoom() {
-    var selections = $table.bootstrapTable('getSelections');
+    var selections = $table_room.bootstrapTable('getSelections');
     console.log("id" + selections[0].id);
     console.log($("#prize").val());
     $.ajax({
@@ -177,7 +178,8 @@ function modifyRoom() {
 
             if(result.success){
                 showSuccess("修改成功");
-                $table.bootstrapTable('refresh', {url: '/hotel/getRooms'});
+                $("#status").val("待审批");
+                $table_room.bootstrapTable('refresh', {url: '/hotel/getRooms'});
             }
             else {
                 showFailure("修改失败, "+result.info);
@@ -191,7 +193,7 @@ function modifyRoom() {
 }
 
 function delRoom(){
-    var selections = $table.bootstrapTable('getSelections');
+    var selections = $table_room.bootstrapTable('getSelections');
     var isSuccess = true;
     for(var i = 0; i<selections.length&&isSuccess;i++){
         $.ajax({
@@ -203,7 +205,7 @@ function delRoom(){
             },
             success:function(result){
                 // console.log(result);
-                $table.bootstrapTable('refresh', {url: '/hotel/getRooms'});
+                $table_room.bootstrapTable('refresh', {url: '/hotel/getRooms'});
                 if(!result.success) {
                     isSuccess=false;
                 }
@@ -219,7 +221,7 @@ function delRoom(){
 }
 
 function editValue() {
-    var selections = $table.bootstrapTable('getSelections');
+    var selections = $table_room.bootstrapTable('getSelections');
     if(selections.length != 1){
         // $("#closeModal").click();
         showInfo("请选择一行");
@@ -234,7 +236,7 @@ function editValue() {
 }
 
 function delValue() {
-    var selections = $table.bootstrapTable('getSelections');
+    var selections = $table_room.bootstrapTable('getSelections');
     if(selections.length==0){
         showInfo("请选择要删除的行");
     }

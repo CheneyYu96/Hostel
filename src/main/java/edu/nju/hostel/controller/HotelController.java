@@ -84,6 +84,7 @@ public class HotelController {
         session.setAttribute("hotelId",hotel.getId());
         model.addAttribute("hotelId", FormatHelper.Id2String(hotel.getId()));
         model.addAttribute("hotel", hotel);
+        model.addAttribute("page", "home");
         return HOTEL + "home";
     }
 

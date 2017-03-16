@@ -16,6 +16,7 @@
     <script src="/js/bootstrap-table.js"></script>
     <script src="/js/bootstrap-table-zh-CN.js"></script>
     <script src="/js/common.js"></script>
+    <script src="/js/table/approve-table.js"></script>
     <script src="/js/jquery.backstretch.min.js"></script>
     <script src="/js/bootstrapValidator.min.js"></script>
 
@@ -38,39 +39,130 @@
             <h3 id="approve">审批申请</h3>
             <div class="blank10"></div>
             <div class="table-responsive" style="padding-left: 10%;width: 90%">
-                <div id="toolbar_mine" class="btn-group">
-                    <button id="btn_delete" type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消预定
+                <div id="toolbar_approve" class="btn-group">
+                    <button id="btn_show_approve" type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>查看详情
+                    </button>
+                    <button id="btn_pass_approve" type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>审批通过
                     </button>
                 </div>
 
-                <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal fade" id="show_approve" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                                     ×
                                 </button>
-                                <h4 class="modal-title">取消预定</h4>
+                                <h4 class="modal-title">查看详情</h4>
                             </div>
                             <div class="modal-body">
-                                确认要取消吗？
+
+                                <!--店面信息-->
+                                <div id="info" hidden="hidden">
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">客栈ID</span></h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="hotelId"  readonly="readonly"/>
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
+
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">客栈名</span></h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="hotelName"  readonly="readonly"/>
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
+
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">客栈地址</span></h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="hotelAddress"  readonly="readonly"/>
+                                        </div>
+                                    </div>
+                                    <div class="blank10"></div>
+                                </div>
+
+                                <!--开店-->
+                                <div id="open" hidden="hidden">
+                                    <h4><span class="label label-default">待审批房间</span></h4>
+                                    <table id="table_room"></table>
+                                </div>
+
+                                <!--房间信息-->
+                                <div id="room" hidden="hidden">
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">房间ID</span></h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="roomId"  readonly="readonly"/>
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">客栈名</span></h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="hotel_name"  readonly="readonly"/>
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">房间号码</span></h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="roomNumber"  readonly="readonly"/>
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">房间类型</span></h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="type" readonly="readonly"/>
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-1">
+                                            <h4><span class="label label-default">价格</span></h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="prize" readonly="readonly"/>
+                                        </div>
+                                    </div>
+                                    <div class="blank5"></div>
+                                </div>
+
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="deleteOrder">确认</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div id="tip"></div>
             </div>
-            <table id="table_order"></table>
+            <table id="table_approve"></table>
 
             <div class="blank30"></div>
             <hr/>
 
-            <h3 id="book">预定房间</h3>
+            <h3 id="pay">支付结算</h3>
             <div class="blank10"></div>
             <div class="table-responsive" style="padding-left: 10%;width: 90%">
                 <div id="toolbar_book" class="btn-group">
@@ -92,15 +184,15 @@
                                 <h4 class="modal-title" id="myModalLabel">计划详情</h4>
                             </div>
                             <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-sm-3 col-sm-offset-1">
-                                        <h4><span class="label label-default">客栈名</span></h4>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control" id="hotel_name"  readonly="readonly"/>
-                                    </div>
-                                </div>
-                                <div class="blank5"></div>
+                                <!--<div class="row">-->
+                                    <!--<div class="col-sm-3 col-sm-offset-1">-->
+                                        <!--<h4><span class="label label-default">客栈名</span></h4>-->
+                                    <!--</div>-->
+                                    <!--<div class="col-sm-6">-->
+                                        <!--<input type="text" class="form-control" id="hotel_name"  readonly="readonly"/>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="blank5"></div>-->
 
                                 <div class="row">
                                     <div class="col-sm-3 col-sm-offset-1">
@@ -132,81 +224,7 @@
                                 <h4 class="modal-title">预定房间</h4>
                             </div>
                             <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-sm-3 col-sm-offset-1">
-                                        <h4><span class="label label-default">客栈名</span></h4>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control" id="name"  readonly="readonly"/>
-                                    </div>
-                                </div>
-                                <div class="blank5"></div>
 
-                                <div class="row">
-                                    <div class="col-sm-3 col-sm-offset-1">
-                                        <h4><span class="label label-default">房间类型</span></h4>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <select class="form-control" id="type" onchange="count_pay()">
-                                            <option>单床房</option>
-                                            <option>双床房</option>
-                                            <option>大床房</option>
-                                            <option>套间</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="blank5"></div>
-
-                                <div class="row">
-                                    <div class="col-sm-3 col-sm-offset-1">
-                                        <h4><span class="label label-default">开始日期</span></h4>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <div class='input-group'>
-                                            <input type='date' class="form-control" id="begin"/>
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div class="blank5"></div>
-
-                                <div class="row">
-                                    <div class="col-sm-3 col-sm-offset-1">
-                                        <h4><span class="label label-default">结束日期</span></h4>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <div class='input-group'>
-                                            <input type='date' class="form-control" id="end"/>
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="blank5"></div>
-
-                                <div class="row" id="roomLine" >
-                                    <div class="col-sm-3 col-sm-offset-1">
-                                        <h4><span class="label label-default">房间号</span></h4>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control" id="roomNumber" readonly="readonly"/>
-                                    </div>
-                                </div>
-                                <div class="blank5"></div>
-
-                                <div class="row">
-                                    <div class="col-sm-3 col-sm-offset-1">
-                                        <h4><span class="label label-default">价格</span></h4>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control" id="prize" readonly="readonly"/>
-                                    </div>
-                                </div>
-                                <div class="blank5"></div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>

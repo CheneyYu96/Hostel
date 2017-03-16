@@ -5,6 +5,10 @@ import edu.nju.hostel.utility.HotelStatus;
 import javax.persistence.*;
 
 /**
+ * if hotelId is 0, roomId is not 0, means modify room info
+ * if hotelId is not 0, roomId is 0, means modify hotel info
+ * if hotelId is not 0, roomId is not 0 neither, means open the hotel
+ *
  * @author yuminchen
  * @version V1.0
  * @date 2017/3/16
@@ -54,6 +58,15 @@ public class ApproveItem {
     }
 
     public void setHasApproved(Boolean hasApproved) {
+        this.hasApproved = hasApproved;
+    }
+
+    public ApproveItem() {
+    }
+
+    public ApproveItem(int hotelId, int roomId, Boolean hasApproved) {
+        this.hotelId = hotelId;
+        this.roomId = roomId;
         this.hasApproved = hasApproved;
     }
 }

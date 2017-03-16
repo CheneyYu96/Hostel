@@ -1,7 +1,12 @@
 package edu.nju.hostel.service;
 
+import edu.nju.hostel.entity.Hotel;
 import edu.nju.hostel.entity.Manager;
+import edu.nju.hostel.entity.Room;
 import edu.nju.hostel.utility.ResultInfo;
+import edu.nju.hostel.vo.ApproveVO;
+
+import java.util.List;
 
 /**
  *
@@ -15,4 +20,14 @@ public interface ManagerService {
     Manager findManager(Integer managerId);
 
     ResultInfo modifyPassword(Integer managerId, String originPassword, String password);
+
+    List<ApproveVO> getApprove();
+
+    Room getRoomInApprove(int id);
+
+    Hotel getHotelInfoInApprove(int id);
+
+    List<Room> getHotelRoomInApprove(int id);
+
+    ResultInfo approveItem(Integer approveId);
 }

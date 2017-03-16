@@ -1,15 +1,20 @@
 package edu.nju.hostel.controller;
 
+import edu.nju.hostel.entity.Hotel;
 import edu.nju.hostel.entity.Manager;
+import edu.nju.hostel.entity.Room;
 import edu.nju.hostel.service.ManagerService;
 import edu.nju.hostel.utility.FormatHelper;
 import edu.nju.hostel.utility.ResultInfo;
+import edu.nju.hostel.vo.ApproveVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  *
@@ -89,6 +94,34 @@ public class ManagerController {
         return MANAGER + "statistic";
     }
 
+    @RequestMapping("/getApprove")
+    @ResponseBody
+    public List<ApproveVO> getApprove(){
+        return managerService.getApprove();
+    }
+
+    @RequestMapping("/getRoomInApprove")
+    @ResponseBody
+    public Room getRoomInApprove(int approveId){
+        return managerService.getRoomInApprove(approveId);
+    }
+
+    @RequestMapping("/getHotelInfoInApprove")
+    @ResponseBody
+    public Hotel getHotelInfoInApprove(int approveId){
+        return managerService.getHotelInfoInApprove(approveId);
+    }
+
+    @RequestMapping("/getHotelRoomInApprove")
+    @ResponseBody
+    public List<Room> getHotelRoomInApprove(int hotelId){
+        return managerService.getHotelRoomInApprove(hotelId);
+    }
+    @RequestMapping("/approveItem")
+    @ResponseBody
+    public ResultInfo approveItem(int approveId){
+        return managerService.approveItem(approveId);
+    }
 
 
 }
