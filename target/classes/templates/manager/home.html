@@ -12,7 +12,6 @@
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/common.js"></script>
-    <script src="/js/info/member.js"></script>
     <script src="/js/jquery.backstretch.min.js"></script>
     <script src="/js/bootstrapValidator.min.js"></script>
 
@@ -26,7 +25,7 @@
             </div>
             <div>
                 <ul class="nav navbar-nav">
-                    <li th:class="${page.equals('home')} ? 'active'"><a th:href="${page.equals('home')} ? '#' : @{/manager/home}" >会员信息</a></li>
+                    <li th:class="${page.equals('home')} ? 'active'"><a th:href="${page.equals('home')} ? '#' : @{/manager/home}" >账号信息</a></li>
                 </ul>
                 <ul class="nav navbar-nav">
                     <li th:class="${page.equals('approve')} ? 'active'"><a th:href="${page.equals('approve')} ? '#' : @{/manager/approve}" >审批结算</a></li>

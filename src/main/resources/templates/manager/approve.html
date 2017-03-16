@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>预定</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrapValidator.min.css"/>
+    <link rel="stylesheet" href="/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <link rel="stylesheet" href="/css/bootstrap-table.css"/>
+
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap-table.js"></script>
+    <script src="/js/bootstrap-table-zh-CN.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/jquery.backstretch.min.js"></script>
+    <script src="/js/bootstrapValidator.min.js"></script>
+
+</head>
+<body data-spy="scroll" data-target="#myScrollspy">
+<div th:include="manager/home::header"></div>
+
+<div class="container">
+    <div class="blank10"></div>
+    <div class="row">
+        <div class="col-xs-3" id="myScrollspy">
+            <ul class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="125">
+                <li class="active"><a href="#approve">审批申请</a></li>
+                <li><a href="#pay">支付结算</a></li>
+
+            </ul>
+        </div>
+        <div class="col-xs-9" id="lists">
+            <!--审批申请-->
+            <h3 id="approve">审批申请</h3>
+            <div class="blank10"></div>
+            <div class="table-responsive" style="padding-left: 10%;width: 90%">
+                <div id="toolbar_mine" class="btn-group">
+                    <button id="btn_delete" type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消预定
+                    </button>
+                </div>
+
+                <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    ×
+                                </button>
+                                <h4 class="modal-title">取消预定</h4>
+                            </div>
+                            <div class="modal-body">
+                                确认要取消吗？
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="deleteOrder">确认</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tip"></div>
+            </div>
+            <table id="table_order"></table>
+
+            <div class="blank30"></div>
+            <hr/>
+
+            <h3 id="book">预定房间</h3>
+            <div class="blank10"></div>
+            <div class="table-responsive" style="padding-left: 10%;width: 90%">
+                <div id="toolbar_book" class="btn-group">
+                    <button id="btn_show" type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>查看详情
+                    </button>
+                    <button id="btn_book" type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>预定房间
+                    </button>
+                </div>
+
+                <div class="modal fade" id="show" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    ×
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">计划详情</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">客栈名</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="hotel_name"  readonly="readonly"/>
+                                    </div>
+                                </div>
+                                <div class="blank5"></div>
+
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">客栈地址</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="hotel_address"  readonly="readonly"/>
+                                    </div>
+                                </div>
+
+                                <div class="blank10"></div>
+                                <h4><span class="label label-default">客栈活动</span></h4>
+                                <table id="table_plan"></table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="bookRoom" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    ×
+                                </button>
+                                <h4 class="modal-title">预定房间</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">客栈名</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="name"  readonly="readonly"/>
+                                    </div>
+                                </div>
+                                <div class="blank5"></div>
+
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">房间类型</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <select class="form-control" id="type" onchange="count_pay()">
+                                            <option>单床房</option>
+                                            <option>双床房</option>
+                                            <option>大床房</option>
+                                            <option>套间</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="blank5"></div>
+
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">开始日期</span></h4>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <div class='input-group'>
+                                            <input type='date' class="form-control" id="begin"/>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="blank5"></div>
+
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">结束日期</span></h4>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <div class='input-group'>
+                                            <input type='date' class="form-control" id="end"/>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="blank5"></div>
+
+                                <div class="row" id="roomLine" >
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">房间号</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="roomNumber" readonly="readonly"/>
+                                    </div>
+                                </div>
+                                <div class="blank5"></div>
+
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">价格</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="prize" readonly="readonly"/>
+                                    </div>
+                                </div>
+                                <div class="blank5"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="make-order">确认</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table id="table_hotel"></table>
+            <div class="blank30"></div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<div th:include="login::copy"></div>
+
+</body>
+</html>

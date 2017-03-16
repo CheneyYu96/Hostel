@@ -71,4 +71,24 @@ public class ManagerController {
         return login(session,model);
     }
 
+    @RequestMapping(value = "/approve")
+    public String approve(HttpSession session,  Model model){
+        if(session.getAttribute("managerId")==null){
+            return login(session,model);
+        }
+        model.addAttribute("page","approve");
+        return MANAGER + "approve";
+    }
+
+    @RequestMapping(value = "/statistic")
+    public String statistic(HttpSession session,  Model model){
+        if(session.getAttribute("managerId")==null){
+            return login(session,model);
+        }
+        model.addAttribute("page","statistic");
+        return MANAGER + "statistic";
+    }
+
+
+
 }
