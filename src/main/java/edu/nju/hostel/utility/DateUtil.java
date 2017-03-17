@@ -70,23 +70,18 @@ public class DateUtil {
     }
 
     public static boolean inNextWeek(LocalDate date, LocalDate testDate){
-        if(date.isEqual(testDate)||(date.isBefore(testDate)&&endMinusBegin(date,testDate)<7)){
-            return true;
-        }
-        return false;
+        return date.isEqual(testDate) || (date.isBefore(testDate) && endMinusBegin(date, testDate) < 7);
     }
 
     public static boolean inNextMonth(LocalDate date, LocalDate testDate) {
-        if(date.isEqual(testDate)||(date.isBefore(testDate)&&endMinusBegin(date,testDate)<30)){
-            return true;
-        }
-        return false;
+        return date.isEqual(testDate) || (date.isBefore(testDate) && endMinusBegin(date, testDate) < 30);
     }
 
     public static boolean isTimeConflict(LocalDate begin1, LocalDate end1, LocalDate begin2, LocalDate end2){
-        if(end1.isBefore(begin2)||end1.isEqual(begin2)){
-            return false;
-        }
-        return true;
+        return !(end1.isBefore(begin2) || end1.isEqual(begin2));
+    }
+
+    public static boolean isBetween(LocalDate begin, LocalDate end, LocalDate testDate){
+        return testDate.isBefore(end) && testDate.isAfter(begin);
     }
 }

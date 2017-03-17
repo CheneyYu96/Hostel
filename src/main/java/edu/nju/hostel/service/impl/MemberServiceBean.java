@@ -398,7 +398,7 @@ public class MemberServiceBean implements MemberService {
         List<Order> orderList = orderRepository
                 .findByMemberId(cardId)
                 .stream()
-                .filter( order -> order.getBegin().isBefore(end)&&order.getBegin().isAfter(begin))
+                .filter( order -> DateUtil.isBetween(begin,end,order.getBegin()))
                 .collect(Collectors.toList());
         return Calculator.getBookPie(orderList);
     }
@@ -423,13 +423,14 @@ public class MemberServiceBean implements MemberService {
         List<InRecord> inRecords = inRecordRepository
                 .findByCardId(cardId)
                 .stream()
-                .filter( inRecord -> inRecord.getBegin().isAfter(begin)&&inRecord.getBegin().isBefore(end))
+                .filter( inRecord -> DateUtil.isBetween(begin,end,inRecord.getBegin()))
                 .collect(Collectors.toList());
         return Calculator.getInPie(inRecords);
     }
 
     @Override
     public List<Translator> getFinance(int cardId, StatisticType method, LocalDate begin, LocalDate end) {
+
         List<Translator> orderTranslators = orderRepository
                 .findByMemberId(cardId)
                 .stream()
@@ -445,40 +446,38 @@ public class MemberServiceBean implements MemberService {
                 .of(orderTranslators,inRecordTranslators)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-
         List<Translator> translators = new ArrayList<>();
 
         switch (method){
             case 周统计:
                 for(;begin.isBefore(end);begin = begin.plusWeeks(1)){
-                    LocalDate finalBegin = begin;
-                    Translator translator = orderTranslators
-                            .stream()
-                            .filter(translator1 -> DateUtil.inNextWeek(finalBegin, translator1.begin))
-                            .reduce(new Translator(0,finalBegin), (t1, t2) ->
-                            {
-                                t2.pay = t2.pay + t1.pay;
-                                return t2;
-                            });
-                    translators.add(translator);
+                    translators.add(calculateTranslator(begin,orderTranslators,DateUtil::inNextWeek));
                 }
                 break;
 
             case 月统计:
                 for(;begin.isBefore(end);begin = begin.plusMonths(1)){
-                    LocalDate finalBegin = begin;
-                    Translator translator = orderTranslators
-                            .stream()
-                            .filter(translator1 -> DateUtil.inNextMonth(finalBegin, translator1.begin))
-                            .reduce(new Translator(0,finalBegin), (t1, t2) ->
-                            {
-                                t2.pay = t2.pay + t1.pay;
-                                return t2;
-                            });
-                    translators.add(translator);
+                    translators.add(calculateTranslator(begin,orderTranslators,DateUtil::inNextMonth));
                 }
                 break;
         }
 
-        return translators;    }
+        return translators;
+    }
+
+    private Translator calculateTranslator(LocalDate finalBegin, List<Translator> orderTranslators, JudgeDate judgeDate){
+        return orderTranslators
+                .stream()
+                .filter(translator1 -> judgeDate.isInDate(finalBegin, translator1.begin))
+                .reduce(new Translator(0,finalBegin), (t1, t2) ->
+                {
+                    t2.pay = t2.pay + t1.pay;
+                    return t2;
+                });
+
+    }
+
+    interface JudgeDate{
+        boolean isInDate(LocalDate begin, LocalDate testDate);
+    }
 }

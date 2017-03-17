@@ -3,18 +3,17 @@ package edu.nju.hostel.service.impl;
 import edu.nju.hostel.dao.*;
 import edu.nju.hostel.entity.*;
 import edu.nju.hostel.service.ManagerService;
-import edu.nju.hostel.utility.ApproveType;
-import edu.nju.hostel.utility.FormatHelper;
-import edu.nju.hostel.utility.HotelStatus;
-import edu.nju.hostel.utility.ResultInfo;
-import edu.nju.hostel.vo.ApproveVO;
-import edu.nju.hostel.vo.PayVO;
-import edu.nju.hostel.vo.PayWithMember;
+import edu.nju.hostel.utility.*;
+import edu.nju.hostel.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -33,6 +32,7 @@ public class ManagerServiceBean implements ManagerService{
     private final InRecordRepository inRecordRepository;
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
+    private final RechargeItemRepository rechargeItemRepository;
 
     @Autowired
     public ManagerServiceBean(HotelRepository hotelRepository,
@@ -42,7 +42,7 @@ public class ManagerServiceBean implements ManagerService{
                               PayItemRepository payItemRepository,
                               InRecordRepository inRecordRepository,
                               OrderRepository orderRepository,
-                              MemberRepository memberRepository) {
+                              MemberRepository memberRepository, RechargeItemRepository rechargeItemRepository) {
         this.hotelRepository = hotelRepository;
         this.roomRepository = roomRepository;
         this.managerRepository = managerRepository;
@@ -51,6 +51,7 @@ public class ManagerServiceBean implements ManagerService{
         this.inRecordRepository = inRecordRepository;
         this.orderRepository = orderRepository;
         this.memberRepository = memberRepository;
+        this.rechargeItemRepository = rechargeItemRepository;
     }
 
     @Override
@@ -236,4 +237,170 @@ public class ManagerServiceBean implements ManagerService{
                 .collect(Collectors.toList());
 
     }
+
+    @Override
+    public List<HotelStatistic> getHotelStatistic(LocalDate begin, LocalDate end) {
+        return hotelRepository
+                .findAll()
+                .stream()
+                .map( hotel ->
+                        {
+                            HotelStatistic hotelStatistic = new HotelStatistic();
+                            hotelStatistic.hotelId = FormatHelper.Id2String(hotel.getId());
+                            hotelStatistic.hotelName = hotel.getName();
+
+                            List<Integer> payList = inRecordRepository
+                                    .findByHotelId(hotel.getId())
+                                    .stream()
+                                    .filter( inRecord -> inRecord.getBegin().isAfter(begin)&&inRecord.getEnd().isBefore(end))
+                                    .map(InRecord::getPay)
+                                    .collect(Collectors.toList());
+
+                            hotelStatistic.number = payList.size();
+                            hotelStatistic.money = payList
+                                    .stream()
+                                    .reduce(0,Integer::sum);
+
+                            return hotelStatistic;
+                        }
+                )
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<LiveIn> getAllMemberBookLine(StatisticType method, LocalDate begin, LocalDate end) {
+        List<Translator> translators = orderRepository
+                .findAll()
+                .stream()
+                .map( order -> new Translator(order.getPay(),order.getBegin()))
+                .collect(Collectors.toList());
+
+        return Calculator.getLineByMethod(method,begin,end,translators);
+    }
+
+    @Override
+    public RoomTypePie getAllMemberBookPie(StatisticType method, LocalDate begin, LocalDate end) {
+        List<Order> orderList = orderRepository
+                .findAll()
+                .stream()
+                .filter( order -> DateUtil.isBetween(begin,end,order.getBegin()))
+                .collect(Collectors.toList());
+        return Calculator.getBookPie(orderList);
+    }
+
+    @Override
+    public List<LiveIn> getAllMemberInLine(StatisticType method, LocalDate begin, LocalDate end) {
+        List<Translator> translators = inRecordRepository
+                .findAll()
+                .stream()
+                .map( inRecord -> new Translator(inRecord.getPay(),inRecord.getBegin()))
+                .collect(Collectors.toList());
+        return Calculator.getLineByMethod(method,begin,end,translators);
+    }
+
+    @Override
+    public RoomTypePie getAllMemberInPie(StatisticType method, LocalDate begin, LocalDate end) {
+        List<InRecord> inRecords = inRecordRepository
+                .findAll()
+                .stream()
+                .filter( inRecord -> DateUtil.isBetween(begin,end,inRecord.getBegin()))
+                .collect(Collectors.toList());
+        return Calculator.getInPie(inRecords);
+    }
+
+    @Override
+    public List<HostelFinance> getHostelFinance(StatisticType method, LocalDate begin, LocalDate end) {
+        List<Translator> orderTranslators = orderRepository
+               .findAll()
+               .stream()
+               .map( order -> new Translator(order.getPay(),order.getBegin()))
+               .collect(Collectors.toList());
+
+        List<Translator> inRecordTranslators = inRecordRepository
+                .findAll()
+                .stream()
+                .filter( inRecord -> inRecord.getOrderId()<=0&&inRecord.getCardId()>0) //avoid count repeatedly
+                .map( inRecord -> new Translator(inRecord.getPay(),inRecord.getBegin()))
+                .collect(Collectors.toList());
+
+        orderTranslators = Stream
+                .of(orderTranslators,inRecordTranslators)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        List<PayTranslator> payTranslators = payItemRepository
+                .findAll()
+                .stream()
+                .filter( PayItem::getHasPay)
+                .map( payItem ->
+                        {
+                            if(payItem.getInRecordId()>0){
+                                InRecord inRecord = inRecordRepository.findOne(payItem.getInRecordId());
+                                return new PayTranslator(payItem.getId(),inRecord.getPay(),inRecord.getBegin());
+                            }
+                            else {
+                                Order order = orderRepository.findOne(payItem.getOrderId());
+                                return new PayTranslator(payItem.getId(),order.getPay(),order.getBegin());
+                            }
+                        }
+                )
+                .collect(Collectors.toList());
+
+        List<HostelFinance> financeList = new ArrayList<>();
+
+        switch (method){
+            case 日统计:
+                for(;begin.isBefore(end);begin = begin.plusDays(1)){
+                    financeList.add(calculateHostelFinance(begin,orderTranslators,payTranslators,LocalDate::isEqual));
+                }
+                break;
+
+            case 周统计:
+                for(;begin.isBefore(end);begin = begin.plusWeeks(1)){
+                    financeList.add(calculateHostelFinance(begin,orderTranslators,payTranslators,DateUtil::inNextWeek));
+                }
+                break;
+
+            case 月统计:
+                for(;begin.isBefore(end);begin = begin.plusMonths(1)){
+                    financeList.add(calculateHostelFinance(begin,orderTranslators,payTranslators,DateUtil::inNextMonth));
+                }
+                break;
+        }
+        return financeList;
+    }
+
+    private HostelFinance calculateHostelFinance(LocalDate finalBegin, List<Translator> orderTranslators,List<PayTranslator> payTranslators,JudgeInDate judgeInDate){
+        List<RechargeItem> rechargeItems = rechargeItemRepository
+                .findAll()
+                .stream()
+                .filter(rechargeItem -> judgeInDate.isInDate(finalBegin, rechargeItem.getDate()))
+                .collect(Collectors.toList());
+
+        HostelFinance hostelFinance = new HostelFinance(finalBegin);
+        hostelFinance.rechargeNumber = rechargeItems.size();
+        hostelFinance.rechargeAmount = rechargeItems
+                .stream()
+                .map(RechargeItem::getAmount)
+                .reduce(0, Integer::sum);
+
+        hostelFinance.consume = orderTranslators
+                .stream()
+                .filter(translator -> judgeInDate.isInDate(finalBegin,translator.begin))
+                .map(Translator::getPay)
+                .reduce(0, Integer::sum);
+
+        hostelFinance.pay = payTranslators
+                .stream()
+                .filter( payTranslator -> judgeInDate.isInDate(finalBegin,payTranslator.date))
+                .map(PayTranslator::getMoney)
+                .reduce(0, Integer::sum);
+
+        return hostelFinance;
+    }
+
+    interface JudgeInDate{
+        boolean isInDate(LocalDate begin, LocalDate testDate);
+    }
+
 }

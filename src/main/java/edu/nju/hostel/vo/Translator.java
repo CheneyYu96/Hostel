@@ -16,6 +16,22 @@ public class Translator {
         this.begin = begin;
     }
 
+    public int getPay() {
+        return pay;
+    }
+
+    public void setPay(int pay) {
+        this.pay = pay;
+    }
+
+    public LocalDate getBegin() {
+        return begin;
+    }
+
+    public void setBegin(LocalDate begin) {
+        this.begin = begin;
+    }
+
     public Translator() {
     }
 }

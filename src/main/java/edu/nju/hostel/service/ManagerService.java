@@ -4,10 +4,10 @@ import edu.nju.hostel.entity.Hotel;
 import edu.nju.hostel.entity.Manager;
 import edu.nju.hostel.entity.Room;
 import edu.nju.hostel.utility.ResultInfo;
-import edu.nju.hostel.vo.ApproveVO;
-import edu.nju.hostel.vo.PayVO;
-import edu.nju.hostel.vo.PayWithMember;
+import edu.nju.hostel.utility.StatisticType;
+import edu.nju.hostel.vo.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -38,5 +38,17 @@ public interface ManagerService {
     ResultInfo payItem(int payId);
 
     List<PayWithMember> getPayWithMember(int hotelId);
+
+    List<HotelStatistic> getHotelStatistic(LocalDate begin, LocalDate end);
+
+    List<LiveIn> getAllMemberBookLine(StatisticType method, LocalDate begin, LocalDate end);
+
+    RoomTypePie getAllMemberBookPie(StatisticType method, LocalDate begin, LocalDate end);
+
+    List<LiveIn> getAllMemberInLine(StatisticType method, LocalDate begin, LocalDate end);
+
+    RoomTypePie getAllMemberInPie(StatisticType method, LocalDate begin, LocalDate end);
+
+    List<HostelFinance> getHostelFinance(StatisticType method, LocalDate begin, LocalDate end);
 
 }

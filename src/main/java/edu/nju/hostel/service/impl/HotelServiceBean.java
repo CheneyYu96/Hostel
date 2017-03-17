@@ -377,12 +377,7 @@ public class HotelServiceBean implements HotelService{
                 .map( order -> new Translator(order.getPay(),order.getBegin()))
                 .collect(Collectors.toList());
 
-        switch (method){
-            case 日统计: return Calculator.getLineD(translators,begin,end);
-            case 周统计: return Calculator.getLineW(translators,begin,end);
-            case 月统计: return Calculator.getLineM(translators,begin,end);
-        }
-        return null;
+       return Calculator.getLineByMethod(method,begin,end,translators);
     }
 
 
@@ -407,12 +402,8 @@ public class HotelServiceBean implements HotelService{
                 .map( inRecord -> new Translator(inRecord.getPay(),inRecord.getBegin()))
                 .collect(Collectors.toList());
 
-        switch (method){
-            case 日统计: return Calculator.getLineD(translators,begin,end);
-            case 周统计: return Calculator.getLineW(translators,begin,end);
-            case 月统计: return Calculator.getLineM(translators,begin,end);
-        }
-        return null;
+        return Calculator.getLineByMethod(method,begin,end,translators);
+
     }
 
     @Override

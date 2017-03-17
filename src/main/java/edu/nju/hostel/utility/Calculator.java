@@ -118,4 +118,13 @@ public class Calculator {
         return pie;
     }
 
+    public static List<LiveIn> getLineByMethod(StatisticType method, LocalDate begin, LocalDate end, List<Translator> translators){
+        switch (method){
+            case 日统计: return Calculator.getLineD(translators,begin,end);
+            case 周统计: return Calculator.getLineW(translators,begin,end);
+            case 月统计: return Calculator.getLineM(translators,begin,end);
+        }
+        return null;
+    }
+
 }
