@@ -111,8 +111,7 @@ public class HotelServiceBean implements HotelService{
                     hotel.setStatus(HotelStatus.已批准);
                 }
             }
-            Hotel result = hotelRepository.save(hotel);
-            return result;
+            return hotelRepository.save(hotel);
         }
         return null;
     }
@@ -258,7 +257,7 @@ public class HotelServiceBean implements HotelService{
                             List<String> nameList = recordNameRepository
                                     .findByInRecordId(inRecord.getId())
                                     .stream()
-                                    .map(o -> o.getName())
+                                    .map(InRecordName::getName)
                                     .collect(Collectors.toList());
                             InRecordWithName inRecordWithName = new InRecordWithName();
                             BeanUtils.copyProperties(inRecord,inRecordWithName);
@@ -291,6 +290,15 @@ public class HotelServiceBean implements HotelService{
                 Order order = orderRepository.findOne(orderId);
                 order.setStatus(OrderStatus.入住);
                 orderRepository.save(order);
+            }
+
+            if(cardId>0){
+                PayItem payItem = new PayItem();
+                payItem.setHasPay(false);
+                payItem.setHotelId(hotel);
+                payItem.setInRecordId(inRecord.getId());
+                payItem.setOrderId(0);
+                payItemRepository.save(payItem);
             }
             return new ResultInfo(true);
         }

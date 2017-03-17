@@ -37,6 +37,6 @@ public interface ManagerService {
 
     ResultInfo payItem(int payId);
 
-    PayWithMember getPayWithMember(int payId);
+    List<PayWithMember> getPayWithMember(int hotelId);
 
 }

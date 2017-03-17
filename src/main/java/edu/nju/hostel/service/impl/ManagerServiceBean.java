@@ -1,12 +1,10 @@
 package edu.nju.hostel.service.impl;
 
 import edu.nju.hostel.dao.*;
-import edu.nju.hostel.entity.ApproveItem;
-import edu.nju.hostel.entity.Hotel;
-import edu.nju.hostel.entity.Manager;
-import edu.nju.hostel.entity.Room;
+import edu.nju.hostel.entity.*;
 import edu.nju.hostel.service.ManagerService;
 import edu.nju.hostel.utility.ApproveType;
+import edu.nju.hostel.utility.FormatHelper;
 import edu.nju.hostel.utility.HotelStatus;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.vo.ApproveVO;
@@ -32,18 +30,27 @@ public class ManagerServiceBean implements ManagerService{
     private final ManagerRepository managerRepository;
     private final ApproveItemRepository approveItemRepository;
     private final PayItemRepository payItemRepository;
+    private final InRecordRepository inRecordRepository;
+    private final OrderRepository orderRepository;
+    private final MemberRepository memberRepository;
 
     @Autowired
     public ManagerServiceBean(HotelRepository hotelRepository,
                               RoomRepository roomRepository,
                               ManagerRepository managerRepository,
                               ApproveItemRepository approveItemRepository,
-                              PayItemRepository payItemRepository) {
+                              PayItemRepository payItemRepository,
+                              InRecordRepository inRecordRepository,
+                              OrderRepository orderRepository,
+                              MemberRepository memberRepository) {
         this.hotelRepository = hotelRepository;
         this.roomRepository = roomRepository;
         this.managerRepository = managerRepository;
         this.approveItemRepository = approveItemRepository;
         this.payItemRepository = payItemRepository;
+        this.inRecordRepository = inRecordRepository;
+        this.orderRepository = orderRepository;
+        this.memberRepository = memberRepository;
     }
 
     @Override
@@ -152,16 +159,81 @@ public class ManagerServiceBean implements ManagerService{
 
     @Override
     public List<PayVO> getPay() {
-        return null;
+        return hotelRepository
+                .findAll()
+                .stream()
+                .filter( hotel ->
+                        {
+                            List<PayItem> payItems = payItemRepository
+                                    .findByHotelId(hotel.getId())
+                                    .stream()
+                                    .filter( payItem -> !payItem.getHasPay())
+                                    .collect(Collectors.toList());
+                            return payItems != null && payItems.size() > 0;
+                        }
+                )
+                .map( hotel ->
+                        {
+                            PayVO payVO = new PayVO();
+                            payVO.hotelId = FormatHelper.Id2String(hotel.getId());
+                            payVO.name = hotel.getName();
+
+                            payVO.payIndex = payItemRepository
+                                    .findByHotelId(hotel.getId())
+                                    .stream()
+                                    .filter( payItem -> !payItem.getHasPay())
+                                    .map(PayItem::getId)
+                                    .collect(Collectors.toList());
+                            return payVO;
+                        }
+                )
+                .collect(Collectors.toList());
     }
 
     @Override
     public ResultInfo payItem(int payId) {
-        return null;
+        PayItem payItem = payItemRepository.findOne(payId);
+        payItem.setHasPay(true);
+
+        payItemRepository.save(payItem);
+        return new ResultInfo(true);
     }
 
     @Override
-    public PayWithMember getPayWithMember(int payId) {
-        return null;
+    public List<PayWithMember> getPayWithMember(int hotelId) {
+        return payItemRepository
+                .findByHotelId(hotelId)
+                .stream()
+                .filter( payItem -> !payItem.getHasPay())
+                .map( payItem ->
+                        {
+                            PayWithMember payWithMember = new PayWithMember(payItem.getId());
+                            if(payItem.getInRecordId()>0){
+
+                                payWithMember.isOrder = false;
+                                InRecord inRecord = inRecordRepository.findOne(payItem.getInRecordId());
+                                if(inRecord.getCardId()>0){
+                                    payWithMember.memberId = FormatHelper.Id2String(inRecord.getCardId());
+                                    payWithMember.name = memberRepository.findOne(inRecord.getCardId()).getName();
+                                }
+                                else {
+                                    return new PayWithMember(0);
+                                }
+                                payWithMember.pay = inRecord.getPay();
+                            }
+                            else {
+                                payWithMember.isOrder = true;
+                                Order order = orderRepository.findOne(payItem.getOrderId());
+                                payWithMember.memberId = FormatHelper.Id2String(order.getMemberId());
+                                payWithMember.name = memberRepository.findOne(order.getMemberId()).getName();
+                                payWithMember.pay = order.getPay();
+
+                            }
+                            return payWithMember;
+                        }
+                )
+                .filter(payWithMember -> payWithMember.id>0)
+                .collect(Collectors.toList());
+
     }
 }

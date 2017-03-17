@@ -15,4 +15,6 @@ public interface PayItemRepository extends JpaRepository<PayItem, Integer>{
     List<PayItem> findByInRecordId(int inRecordId);
 
     List<PayItem> findByOrderId(int orderId);
+
+    List<PayItem> findByHotelId(int hotelId);
 }

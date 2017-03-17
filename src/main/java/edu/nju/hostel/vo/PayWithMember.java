@@ -9,5 +9,12 @@ public class PayWithMember {
     public int id;
     public String memberId;
     public String name;
+    public boolean isOrder;
     public int pay;
+
+    public PayWithMember(int id) {
+        this.id = id;
+    }
+
+
 }

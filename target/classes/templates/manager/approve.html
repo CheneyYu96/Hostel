@@ -158,54 +158,54 @@
                 <div id="tip"></div>
             </div>
             <table id="table_approve"></table>
-
             <div class="blank30"></div>
             <hr/>
 
             <h3 id="pay">支付结算</h3>
             <div class="blank10"></div>
             <div class="table-responsive" style="padding-left: 10%;width: 90%">
-                <div id="toolbar_book" class="btn-group">
-                    <button id="btn_show" type="button" class="btn btn-default">
+                <div id="toolbar_pay" class="btn-group">
+                    <button id="btn_show_pay" type="button" class="btn btn-default">
                         <span class="glyphicon glyphicon-search" aria-hidden="true"></span>查看详情
                     </button>
-                    <button id="btn_book" type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>预定房间
+                    <button id="btn_pay" type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>结算支付
                     </button>
                 </div>
 
-                <div class="modal fade" id="show" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal fade" id="show_pay" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                                     ×
                                 </button>
-                                <h4 class="modal-title" id="myModalLabel">计划详情</h4>
+                                <h4 class="modal-title" id="myModalLabel">结算详情</h4>
                             </div>
                             <div class="modal-body">
-                                <!--<div class="row">-->
-                                    <!--<div class="col-sm-3 col-sm-offset-1">-->
-                                        <!--<h4><span class="label label-default">客栈名</span></h4>-->
-                                    <!--</div>-->
-                                    <!--<div class="col-sm-6">-->
-                                        <!--<input type="text" class="form-control" id="hotel_name"  readonly="readonly"/>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="blank5"></div>-->
 
                                 <div class="row">
                                     <div class="col-sm-3 col-sm-offset-1">
-                                        <h4><span class="label label-default">客栈地址</span></h4>
+                                        <h4><span class="label label-default">客栈ID</span></h4>
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control" id="hotel_address"  readonly="readonly"/>
+                                        <input type="text" class="form-control" id="hotel_id_pay"  readonly="readonly"/>
                                     </div>
                                 </div>
+                                <div class="blank5"></div>
+                                <div class="row">
+                                    <div class="col-sm-3 col-sm-offset-1">
+                                        <h4><span class="label label-default">客栈名</span></h4>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="hotel_name_pay"  readonly="readonly"/>
+                                    </div>
+                                </div>
+                                <div class="blank5"></div>
 
                                 <div class="blank10"></div>
-                                <h4><span class="label label-default">客栈活动</span></h4>
-                                <table id="table_plan"></table>
+                                <h4><span class="label label-default">待结算记录</span></h4>
+                                <table id="table_pay_member"></table>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
@@ -214,28 +214,9 @@
                     </div>
                 </div>
 
-                <div class="modal fade" id="bookRoom" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                    ×
-                                </button>
-                                <h4 class="modal-title">预定房间</h4>
-                            </div>
-                            <div class="modal-body">
-
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="make-order">确认</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-            <table id="table_hotel"></table>
-            <div class="blank30"></div>
+            <table id="table_pay"></table>
+            <div class="blank40"></div>
         </div>
 
     </div>

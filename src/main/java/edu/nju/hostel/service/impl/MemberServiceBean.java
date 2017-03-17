@@ -33,10 +33,10 @@ public class MemberServiceBean implements MemberService {
     private final RoomRepository roomRepository;
     private final PlanRepository planRepository;
     private final InRecordRepository inRecordRepository;
-
+    private final PayItemRepository payItemRepository;
 
     @Autowired
-    public MemberServiceBean(MemberRepository memberRepository, MemberCardRepository memberCardRepository, BankCardRepository bankCardRepository, OrderRepository orderRepository, HotelRepository hotelRepository, RoomRecordRepository roomRecordRepository, RoomRepository roomRepository, PlanRepository planRepository, InRecordRepository inRecordRepository) {
+    public MemberServiceBean(MemberRepository memberRepository, MemberCardRepository memberCardRepository, BankCardRepository bankCardRepository, OrderRepository orderRepository, HotelRepository hotelRepository, RoomRecordRepository roomRecordRepository, RoomRepository roomRepository, PlanRepository planRepository, InRecordRepository inRecordRepository, PayItemRepository payItemRepository) {
         this.memberRepository = memberRepository;
         this.memberCardRepository = memberCardRepository;
         this.bankCardRepository = bankCardRepository;
@@ -46,6 +46,7 @@ public class MemberServiceBean implements MemberService {
         this.roomRepository = roomRepository;
         this.planRepository = planRepository;
         this.inRecordRepository = inRecordRepository;
+        this.payItemRepository = payItemRepository;
     }
 
     @Override
@@ -269,6 +270,14 @@ public class MemberServiceBean implements MemberService {
 
         RoomRecord roomRecord = new RoomRecord(result.getId(),0,room.getId(),beginDate,endDate);
         roomRecordRepository.save(roomRecord);
+
+        PayItem payItem = new PayItem();
+        payItem.setHasPay(false);
+        payItem.setOrderId(result.getId());
+        payItem.setInRecordId(0);
+        payItem.setHotelId(hotelId);
+
+        payItemRepository.save(payItem);
 
         return orderVO;
 

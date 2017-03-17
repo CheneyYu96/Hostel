@@ -7,6 +7,8 @@ import edu.nju.hostel.service.ManagerService;
 import edu.nju.hostel.utility.FormatHelper;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.vo.ApproveVO;
+import edu.nju.hostel.vo.PayVO;
+import edu.nju.hostel.vo.PayWithMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -117,10 +119,29 @@ public class ManagerController {
     public List<Room> getHotelRoomInApprove(int hotelId){
         return managerService.getHotelRoomInApprove(hotelId);
     }
+
     @RequestMapping("/approveItem")
     @ResponseBody
     public ResultInfo approveItem(int approveId){
         return managerService.approveItem(approveId);
+    }
+
+    @RequestMapping("/getPay")
+    @ResponseBody
+    public List<PayVO> getPay(){
+        return managerService.getPay();
+    }
+
+    @RequestMapping("/payItem")
+    @ResponseBody
+    public ResultInfo payItem(int payId){
+        return managerService.payItem(payId);
+    }
+
+    @RequestMapping("/getPayWithMember")
+    @ResponseBody
+    public List<PayWithMember> getPayWithMember(String hotelId){
+        return managerService.getPayWithMember(FormatHelper.String2Id(hotelId));
     }
 
 

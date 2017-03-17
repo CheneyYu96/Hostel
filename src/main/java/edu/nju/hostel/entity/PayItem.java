@@ -14,6 +14,9 @@ public class PayItem {
     @GeneratedValue
     private int id;
 
+    @Column(name = "hotel_id")
+    private int hotelId;
+
     @Column(name = "order_id")
     private int orderId;
 
@@ -53,5 +56,13 @@ public class PayItem {
 
     public void setHasPay(Boolean hasPay) {
         this.hasPay = hasPay;
+    }
+
+    public int getHotelId() {
+        return hotelId;
+    }
+
+    public void setHotelId(int hotelId) {
+        this.hotelId = hotelId;
     }
 }
