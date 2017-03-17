@@ -5,6 +5,8 @@ import edu.nju.hostel.entity.Manager;
 import edu.nju.hostel.entity.Room;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.vo.ApproveVO;
+import edu.nju.hostel.vo.PayVO;
+import edu.nju.hostel.vo.PayWithMember;
 
 import java.util.List;
 
@@ -30,4 +32,11 @@ public interface ManagerService {
     List<Room> getHotelRoomInApprove(int id);
 
     ResultInfo approveItem(Integer approveId);
+
+    List<PayVO> getPay();
+
+    ResultInfo payItem(int payId);
+
+    PayWithMember getPayWithMember(int payId);
+
 }

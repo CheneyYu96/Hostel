@@ -10,6 +10,8 @@ import edu.nju.hostel.utility.ApproveType;
 import edu.nju.hostel.utility.HotelStatus;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.vo.ApproveVO;
+import edu.nju.hostel.vo.PayVO;
+import edu.nju.hostel.vo.PayWithMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -146,5 +148,20 @@ public class ManagerServiceBean implements ManagerService{
         }
         approveItemRepository.save(approveItem);
         return new ResultInfo(true);
+    }
+
+    @Override
+    public List<PayVO> getPay() {
+        return null;
+    }
+
+    @Override
+    public ResultInfo payItem(int payId) {
+        return null;
+    }
+
+    @Override
+    public PayWithMember getPayWithMember(int payId) {
+        return null;
     }
 }
