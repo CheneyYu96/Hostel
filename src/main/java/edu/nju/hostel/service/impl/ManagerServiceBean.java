@@ -246,7 +246,7 @@ public class ManagerServiceBean implements ManagerService{
                 .map( hotel ->
                         {
                             HotelStatistic hotelStatistic = new HotelStatistic();
-                            hotelStatistic.hotelId = FormatHelper.Id2String(hotel.getId());
+                            hotelStatistic.hotelId = hotel.getId();
                             hotelStatistic.hotelName = hotel.getName();
 
                             List<Integer> payList = inRecordRepository

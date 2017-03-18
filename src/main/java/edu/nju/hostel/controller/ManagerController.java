@@ -3,12 +3,12 @@ package edu.nju.hostel.controller;
 import edu.nju.hostel.entity.Hotel;
 import edu.nju.hostel.entity.Manager;
 import edu.nju.hostel.entity.Room;
+import edu.nju.hostel.service.HotelService;
 import edu.nju.hostel.service.ManagerService;
 import edu.nju.hostel.utility.FormatHelper;
 import edu.nju.hostel.utility.ResultInfo;
-import edu.nju.hostel.vo.ApproveVO;
-import edu.nju.hostel.vo.PayVO;
-import edu.nju.hostel.vo.PayWithMember;
+import edu.nju.hostel.utility.StatisticType;
+import edu.nju.hostel.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -30,10 +31,12 @@ public class ManagerController {
     private final String MANAGER = "manager/";
 
     private final ManagerService managerService;
+    private final HotelService hotelService;
 
     @Autowired
-    public ManagerController(ManagerService managerService) {
+    public ManagerController(ManagerService managerService, HotelService hotelService) {
         this.managerService = managerService;
+        this.hotelService = hotelService;
     }
 
     @RequestMapping("/login")
@@ -143,6 +146,55 @@ public class ManagerController {
     public List<PayWithMember> getPayWithMember(String hotelId){
         return managerService.getPayWithMember(FormatHelper.String2Id(hotelId));
     }
+
+    @RequestMapping("/getHotelStatistic")
+    @ResponseBody
+    public List<HotelStatistic> getHotelStatistic(LocalDate begin, LocalDate end){
+        return managerService.getHotelStatistic(begin,end);
+    }
+
+    @RequestMapping("/getAllMemberBookLine")
+    @ResponseBody
+    public List<LiveIn> getAllMemberBookLine(StatisticType method, LocalDate begin, LocalDate end){
+        return managerService.getAllMemberBookLine(method,begin,end);
+    }
+
+    @RequestMapping("/getAllMemberBookPie")
+    @ResponseBody
+    public RoomTypePie getAllMemberBookPie(StatisticType method, LocalDate begin, LocalDate end){
+        return managerService.getAllMemberBookPie(method,begin,end);
+    }
+
+    @RequestMapping("/getAllMemberInLine")
+    @ResponseBody
+    public List<LiveIn> getAllMemberInLine(StatisticType method, LocalDate begin, LocalDate end){
+        return managerService.getAllMemberInLine(method,begin,end);
+    }
+
+    @RequestMapping("/getAllMemberInPie")
+    @ResponseBody
+    public RoomTypePie getAllMemberInPie(StatisticType method, LocalDate begin, LocalDate end){
+        return managerService.getAllMemberInPie(method,begin,end);
+    }
+
+    @RequestMapping("/getHostelFinance")
+    @ResponseBody
+    public List<HostelFinance> getHostelFinance(StatisticType method, LocalDate begin, LocalDate end){
+        return managerService.getHostelFinance(method,begin,end);
+    }
+
+    @RequestMapping("/getHotelInLine")
+    @ResponseBody
+    public List<LiveIn> getHotelInLine(String hotelId, StatisticType method, LocalDate begin, LocalDate end){
+        return hotelService.getInLine(FormatHelper.String2Id(hotelId),method,begin,end);
+    }
+
+    @RequestMapping("/getHotelInPie")
+    @ResponseBody
+    public RoomTypePie getHotelInPie(String hotelId, StatisticType method, LocalDate begin, LocalDate end){
+        return hotelService.getInPie(FormatHelper.String2Id(hotelId),method,begin,end);
+    }
+
 
 
 }
