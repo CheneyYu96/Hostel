@@ -5,6 +5,7 @@ import edu.nju.hostel.entity.Manager;
 import edu.nju.hostel.entity.Room;
 import edu.nju.hostel.service.HotelService;
 import edu.nju.hostel.service.ManagerService;
+import edu.nju.hostel.utility.DateUtil;
 import edu.nju.hostel.utility.FormatHelper;
 import edu.nju.hostel.utility.ResultInfo;
 import edu.nju.hostel.utility.StatisticType;
@@ -149,50 +150,50 @@ public class ManagerController {
 
     @RequestMapping("/getHotelStatistic")
     @ResponseBody
-    public List<HotelStatistic> getHotelStatistic(LocalDate begin, LocalDate end){
-        return managerService.getHotelStatistic(begin,end);
+    public List<HotelStatistic> getHotelStatistic(String begin, String end){
+        return managerService.getHotelStatistic(DateUtil.parse(begin),DateUtil.parse(end));
     }
 
     @RequestMapping("/getAllMemberBookLine")
     @ResponseBody
-    public List<LiveIn> getAllMemberBookLine(StatisticType method, LocalDate begin, LocalDate end){
-        return managerService.getAllMemberBookLine(method,begin,end);
+    public List<LiveIn> getAllMemberBookLine(StatisticType method, String begin, String end){
+        return managerService.getAllMemberBookLine(method,DateUtil.parse(begin),DateUtil.parse(end));
     }
 
     @RequestMapping("/getAllMemberBookPie")
     @ResponseBody
-    public RoomTypePie getAllMemberBookPie(StatisticType method, LocalDate begin, LocalDate end){
-        return managerService.getAllMemberBookPie(method,begin,end);
+    public RoomTypePie getAllMemberBookPie(StatisticType method, String begin, String end){
+        return managerService.getAllMemberBookPie(method,DateUtil.parse(begin),DateUtil.parse(end));
     }
 
     @RequestMapping("/getAllMemberInLine")
     @ResponseBody
-    public List<LiveIn> getAllMemberInLine(StatisticType method, LocalDate begin, LocalDate end){
-        return managerService.getAllMemberInLine(method,begin,end);
+    public List<LiveIn> getAllMemberInLine(StatisticType method, String begin, String end){
+        return managerService.getAllMemberInLine(method,DateUtil.parse(begin),DateUtil.parse(end));
     }
 
     @RequestMapping("/getAllMemberInPie")
     @ResponseBody
-    public RoomTypePie getAllMemberInPie(StatisticType method, LocalDate begin, LocalDate end){
-        return managerService.getAllMemberInPie(method,begin,end);
+    public RoomTypePie getAllMemberInPie(StatisticType method, String begin, String end){
+        return managerService.getAllMemberInPie(method,DateUtil.parse(begin),DateUtil.parse(end));
     }
 
     @RequestMapping("/getHostelFinance")
     @ResponseBody
-    public List<HostelFinance> getHostelFinance(StatisticType method, LocalDate begin, LocalDate end){
-        return managerService.getHostelFinance(method,begin,end);
+    public List<HostelFinance> getHostelFinance(StatisticType method, String begin, String end){
+        return managerService.getHostelFinance(method,DateUtil.parse(begin),DateUtil.parse(end));
     }
 
     @RequestMapping("/getHotelInLine")
     @ResponseBody
-    public List<LiveIn> getHotelInLine(String hotelId, StatisticType method, LocalDate begin, LocalDate end){
-        return hotelService.getInLine(FormatHelper.String2Id(hotelId),method,begin,end);
+    public List<LiveIn> getHotelInLine(String hotelId, StatisticType method, String begin, String end){
+        return hotelService.getInLine(FormatHelper.String2Id(hotelId),method,DateUtil.parse(begin),DateUtil.parse(end));
     }
 
     @RequestMapping("/getHotelInPie")
     @ResponseBody
-    public RoomTypePie getHotelInPie(String hotelId, StatisticType method, LocalDate begin, LocalDate end){
-        return hotelService.getInPie(FormatHelper.String2Id(hotelId),method,begin,end);
+    public RoomTypePie getHotelInPie(String hotelId, StatisticType method, String begin, String end){
+        return hotelService.getInPie(FormatHelper.String2Id(hotelId),method,DateUtil.parse(begin),DateUtil.parse(end));
     }
 
 

@@ -6,9 +6,9 @@ package edu.nju.hostel.vo;
  * @date 2017/3/17
  */
 public class HotelStatistic {
-    public int hotelId;
+    public String hotelId;
     public String hotelName;
-    public int number;
-    public int money;
+    public int number;  // 入住总量
+    public int money;   // 入住金额
 
 }

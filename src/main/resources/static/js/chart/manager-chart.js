@@ -1,17 +1,78 @@
 /**
  * Created by yuminchen on 2017/3/13.
  */
+function initHotelTable(begin, end) {
+    $table_hotel.bootstrapTable('destroy');
+    $table_hotel.bootstrapTable({
+        url: '/manager/getHotelStatistic',
+        search: true,//是否搜索
+        dataType: "json",//期待返回数据类型
+        method: "post",//请求方式
+        toolbar: '#toolbar_hotel', //工具按钮用哪个容器
+        contentType : "application/x-www-form-urlencoded",
+        striped: true, //是否显示行间隔色
+        cache: false, //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+        pagination: true, //是否显示分页（*）
+        sortable: false, //是否启用排序
+        sortOrder: "asc", //排序方式
+        pageNumber: 1, //初始化加载第一页，默认第一页
+        pageSize: 10, //每页的记录行数（*）
+        pageList: [10, 25, 50, 100], //可供选择的每页的行数（*）
+        strictSearch: true,
+        sidePagination: "client", //分页方式：client客户端分页，server服务端分页（*）
+        showColumns: true, //是否显示所有的列
+        showRefresh: true, //是否显示刷新按钮
+        minimumCountColumns: 2, //最少允许的列数
+        clickToSelect: true, //是否启用点击选中行
+        uniqueId: "ID", //每一行的唯一标识，一般为主键列
+        cardView: false, //是否显示详细视图
+        detailView: false, //是否显示父子表
+        queryParams: function () {
+            return {
+                begin: begin,
+                end:end
+            };
+        },
+        queryParamsType: "limit", //参数格式,发送标准的RESTFul类型的参数请求
+
+
+        columns: [
+
+            {
+                title: "全选",
+                field: "select",
+                checkbox: true
+            },
+            {
+                field: 'hotelId',
+                title: '客栈ID'
+            },
+            {
+                field: 'number',
+                title: '入住总量'
+            },
+            {
+                field: 'money',
+                title: '入住金额'
+            }
+        ]
+    });
+}
 
 $(document).ready(function () {
+
+    $table_hotel = $('#table_hotel');
+    initHotelTable("2017-03-05","2017-03-25");
+
+    $("#btn_show_chart").bind('click',show_hotel_chart);
 
     $("#method-hotel").val("周统计");
     $("#begin-hotel").val("2017-03-05");
     $("#end-hotel").val("2017-03-25");
     $line_hotel = echarts.init(document.getElementById('line-hotel'));
     $pie_hotel = echarts.init(document.getElementById('pie-hotel'));
-    get_book_data();
-    $("#begin-book").bind('input propertychange', get_hotel_data);
-    $("#end-book").bind('input propertychange', get_hotel_data);
+    $("#begin-hotel").bind('input propertychange', get_hotel_data);
+    $("#end-hotel").bind('input propertychange', get_hotel_data);
 
     $("#method-member").val("周统计");
     $("#begin-member").val("2017-03-05");
@@ -34,10 +95,104 @@ $(document).ready(function () {
     $("#end-finance").bind('input propertychange', get_finance_data);
 
 });
+
+function show_hotel_chart() {
+    var selections = $table_hotel.bootstrapTable('getSelections');
+    if(selections.length!=1){
+        showInfo("请选择查看的客栈");
+        return;
+    }
+
+    if($("#begin-hotel").val().length<7||$("#end-hotel").val().length<7){
+        showInfo("选择类型以及时间段");
+        return;
+    }
+
+    var hotelId = selections[0].hotelId;
+
+    $.ajax({
+        url: '/manager/getHotelInLine',
+        dataType: "json",
+        method: "post",//请求方式
+        // contentType : "application/x-www-form-urlencoded",
+        data:{
+            "hotelId":hotelId,
+            "method":$("#method-hotel").val(),
+            "begin":$("#begin-hotel").val(),
+            "end":$("#end-hotel").val()
+        },
+        success:function(result){
+            var x_data = new Array();
+            var s1_data = new Array();
+            var s2_data = new Array();
+            var y1_max = 0;
+            var y2_max = 0;
+            for(var i = 0; i < result.length; i++){
+                x_data.push(formatDate(result[i].date));
+                if(y1_max<result[i].amount){
+                    y1_max = result[i].amount;
+                }
+                if(y2_max<result[i].money){
+                    y2_max = result[i].money;
+                }
+
+                s1_data.push(result[i].amount);
+                s2_data.push(result[i].money);
+            }
+            line_chart($line_hotel,x_data,y1_max,y2_max,s1_data,s2_data);
+        },error:function(result){
+            showFailure("柱状图失败");
+        }
+    });
+
+    $.ajax({
+        url: '/manager/getHotelInPie',
+        dataType: "json",
+        method: "post",//请求方式
+        // contentType : "application/x-www-form-urlencoded",
+        data:{
+            "hotelId":hotelId,
+            "method":$("#method-hotel").val(),
+            "begin":$("#begin-hotel").val(),
+            "end":$("#end-hotel").val()
+        },
+        success:function(result){
+            var data = new Array();
+
+            var map_single = {};
+            map_single['value'] = result.singleRoom;
+            map_single['name'] = '单床房';
+            data.push(map_single);
+
+            var map_double = {};
+            map_double['value'] = result.doubleRoom;
+            map_double['name'] = '双床房';
+            data.push(map_double);
+
+            var map_big = {};
+            map_big['value'] = result.bigRoom;
+            map_big['name'] = '大床房';
+            data.push(map_big);
+
+            var map_whole = {};
+            map_whole['value'] = result.wholeRoom;
+            map_whole['name'] = '套间';
+            data.push(map_whole);
+
+            pie_chart($pie_hotel,data);
+        },error:function(result){
+            showFailure("饼图失败");
+        }
+    });
+
+
+
+}
 function get_finance_data() {
     if($("#begin-finance").val().length<7||$("#end-finance").val().length<7){
         return;
     }
+
     $.ajax({
         url: '/manager/getHostelFinance',
         dataType: "json",
@@ -52,7 +207,6 @@ function get_finance_data() {
             var date = new Array();
             var pay = new Array();
             var consume = new Array();
-            var pay_max = 0;
             var consume_max = 0;
 
             var number = new Array();
@@ -66,9 +220,7 @@ function get_finance_data() {
                 consume.push(result[i].consume);
                 number.push(result[i].rechargeNumber);
                 amount.push(result[i].rechargeAmount);
-                if(pay_max<result[i].pay){
-                    pay_max = result[i].pay;
-                }
+
                 if(consume_max<result[i].consume){
                     consume_max = result[i].consume;
                 }
@@ -175,8 +327,8 @@ function get_finance_data() {
                         type: 'value',
                         name: '已结算金额',
                         min: 0,
-                        max: pay_max * 6/5,
-                        interval: pay_max/5,
+                        max: consume_max * 6/5,
+                        interval: consume_max/5,
                         axisLabel: {
                             formatter: '{value} ￥'
                         }
@@ -357,83 +509,17 @@ function get_member_data(){
 }
 
 function get_hotel_data(){
+    var selections = $table_hotel.bootstrapTable('getSelections');
+    if(selections.length!=1){
+        return;
+    }
     if($("#begin-hotel").val().length<7||$("#end-hotel").val().length<7){
         return;
     }
-    $.ajax({
-        url: '/manager/getHotelInLine',
-        dataType: "json",
-        method: "post",//请求方式
-        // contentType : "application/x-www-form-urlencoded",
-        data:{
-            "hotelId":hotelId,
-            "method":$("#method-hotel").val(),
-            "begin":$("#begin-hotel").val(),
-            "end":$("#end-hotel").val()
-        },
-        success:function(result){
-            var x_data = new Array();
-            var s1_data = new Array();
-            var s2_data = new Array();
-            var y1_max = 0;
-            var y2_max = 0;
-            for(var i = 0; i < result.length; i++){
-                x_data.push(formatDate(result[i].date));
-                if(y1_max<result[i].amount){
-                    y1_max = result[i].amount;
-                }
-                if(y2_max<result[i].money){
-                    y2_max = result[i].money;
-                }
+    show_hotel_chart();
 
-                s1_data.push(result[i].amount);
-                s2_data.push(result[i].money);
-            }
-            line_chart($line_hotel,x_data,y1_max,y2_max,s1_data,s2_data);
-        },error:function(result){
-            showFailure("柱状图失败");
-        }
-    });
+    initHotelTable($("#begin-hotel").val(),$("#end-hotel").val());
 
-    $.ajax({
-        url: '/manager/getHotelInPie',
-        dataType: "json",
-        method: "post",//请求方式
-        // contentType : "application/x-www-form-urlencoded",
-        data:{
-            "hotelId":hotelId,
-            "method":$("#method-hotel").val(),
-            "begin":$("#begin-hotel").val(),
-            "end":$("#end-hotel").val()
-        },
-        success:function(result){
-            var data = new Array();
-
-            var map_single = {};
-            map_single['value'] = result.singleRoom;
-            map_single['name'] = '单床房';
-            data.push(map_single);
-
-            var map_double = {};
-            map_double['value'] = result.doubleRoom;
-            map_double['name'] = '双床房';
-            data.push(map_double);
-
-            var map_big = {};
-            map_big['value'] = result.bigRoom;
-            map_big['name'] = '大床房';
-            data.push(map_big);
-
-            var map_whole = {};
-            map_whole['value'] = result.wholeRoom;
-            map_whole['name'] = '套间';
-            data.push(map_whole);
-
-            pie_chart($pie_hotel,data);
-        },error:function(result){
-            showFailure("饼图失败");
-        }
-    });
 
 }
 

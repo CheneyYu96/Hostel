@@ -48,7 +48,7 @@ function get_finance_data() {
         success:function(result){
             var date = new Array();
             var pay = new Array();
-            var y_max = new Array();
+            var y_max = 0;
             for(var i = 0; i < result.length; i++){
                 date.push(formatDate(result[i].begin));
                 pay.push(result[i].pay);
