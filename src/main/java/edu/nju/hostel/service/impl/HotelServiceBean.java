@@ -168,6 +168,8 @@ public class HotelServiceBean implements HotelService{
     @Override
     public ResultInfo delRoom(int roomId) {
        roomRepository.delete(roomId);
+       List<ApproveItem> approveItems = approveItemRepository.findByRoomId(roomId);
+       approveItems.forEach(approveItemRepository::delete);
        return new ResultInfo(true);
     }
 

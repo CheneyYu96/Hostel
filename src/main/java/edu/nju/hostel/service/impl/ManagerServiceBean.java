@@ -105,6 +105,7 @@ public class ManagerServiceBean implements ManagerService{
                             }
                             else {
                                 approveVO.type = ApproveType.房间修改;
+
                                 approveVO.hotelName = hotelRepository
                                         .findOne(roomRepository
                                                 .findOne(roomId)

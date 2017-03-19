@@ -34,9 +34,10 @@ public class MemberServiceBean implements MemberService {
     private final PlanRepository planRepository;
     private final InRecordRepository inRecordRepository;
     private final PayItemRepository payItemRepository;
+    private final RechargeItemRepository rechargeItemRepository;
 
     @Autowired
-    public MemberServiceBean(MemberRepository memberRepository, MemberCardRepository memberCardRepository, BankCardRepository bankCardRepository, OrderRepository orderRepository, HotelRepository hotelRepository, RoomRecordRepository roomRecordRepository, RoomRepository roomRepository, PlanRepository planRepository, InRecordRepository inRecordRepository, PayItemRepository payItemRepository) {
+    public MemberServiceBean(MemberRepository memberRepository, MemberCardRepository memberCardRepository, BankCardRepository bankCardRepository, OrderRepository orderRepository, HotelRepository hotelRepository, RoomRecordRepository roomRecordRepository, RoomRepository roomRepository, PlanRepository planRepository, InRecordRepository inRecordRepository, PayItemRepository payItemRepository, RechargeItemRepository rechargeItemRepository) {
         this.memberRepository = memberRepository;
         this.memberCardRepository = memberCardRepository;
         this.bankCardRepository = bankCardRepository;
@@ -47,6 +48,11 @@ public class MemberServiceBean implements MemberService {
         this.planRepository = planRepository;
         this.inRecordRepository = inRecordRepository;
         this.payItemRepository = payItemRepository;
+        this.rechargeItemRepository = rechargeItemRepository;
+    }
+
+    private boolean isStoped(int cardId){
+        return memberCardRepository.findOne(cardId).getStatus()==MemberStatus.停止;
     }
 
     @Override
@@ -55,9 +61,14 @@ public class MemberServiceBean implements MemberService {
         List<Member> memberList = memberRepository.findByName(name);
 
         if(memberList!=null && memberList.size()>0){
-            Member member = memberList.get(0);
-            if(password.equals(member.getPassword())){
-                return member;
+            for (Member member : memberList) {
+                if (password.equals(member.getPassword())) {
+                    ResultInfo resultInfo = isInQualification(member.getId());
+                    if(!resultInfo.isSuccess()&&resultInfo.getInfo().equals("会员记录已停止")){
+                        stopQualification(member.getId());
+                    }
+                    return member;
+                }
             }
         }
 
@@ -138,6 +149,12 @@ public class MemberServiceBean implements MemberService {
             card.setCredit(0);
             card.setStatus(MemberStatus.已激活);
 
+            RechargeItem rechargeItem = new RechargeItem();
+            rechargeItem.setAmount(money);
+            rechargeItem.setDate(LocalDate.now());
+            rechargeItem.setCardId(cardId);
+            rechargeItemRepository.save(rechargeItem);
+
             memberCardRepository.save(card);
         }
         return resultInfo;
@@ -162,7 +179,6 @@ public class MemberServiceBean implements MemberService {
 
             }
             card.setBalance(card.getBalance()+money);
-
         }
         else {
             card = memberCardRepository.findOne(cardId);
@@ -172,6 +188,12 @@ public class MemberServiceBean implements MemberService {
 
         BalanceAndCredit result = new BalanceAndCredit(resultInfo);
         result.balance = card.getBalance();
+        RechargeItem rechargeItem = new RechargeItem();
+        rechargeItem.setCardId(cardId);
+        rechargeItem.setDate(LocalDate.now());
+        rechargeItem.setAmount(money);
+        rechargeItemRepository.save(rechargeItem);
+
         return result;
     }
 
@@ -212,6 +234,9 @@ public class MemberServiceBean implements MemberService {
 
     @Override
     public BalanceAndCredit translateCredit(int cardId, int credit) {
+        if(isStoped(cardId)){
+            return new BalanceAndCredit(new ResultInfo(false,"该账号已停止"));
+        }
         if(credit%10!=0){
             return new BalanceAndCredit(new ResultInfo(false,"兑换积分为整十数"));
         }
@@ -247,6 +272,9 @@ public class MemberServiceBean implements MemberService {
     @Override
     public OrderVO makeOrder(int cardId, int hotelId, String roomNumber, RoomType type, LocalDate beginDate, LocalDate endDate, int pay) {
 
+        if(isStoped(cardId)){
+            return new OrderVO("该账号已停止");
+        }
         Room room = roomRepository.findByHotelAndNumber(hotelId,roomNumber);
 
         Order order = new Order();
@@ -285,6 +313,7 @@ public class MemberServiceBean implements MemberService {
 
     @Override
     public ResultInfo cancelOrder(int orderId) {
+
         orderRepository.delete(orderId);
         RoomRecord roomRecord = roomRecordRepository.findByOrderId(orderId);
         roomRecordRepository.delete(roomRecord);
@@ -309,24 +338,23 @@ public class MemberServiceBean implements MemberService {
     }
 
     /**
-     * todo :filter hotel which is not passed permission
-     * @return
+     *
      */
     @Override
     public List<HotelVO> getHotel() {
         return hotelRepository
                 .findAll()
                 .stream()
+                .filter(hotel -> hotel.getStatus()==HotelStatus.已批准)
                 .map( hotel ->
                         {
                             HotelVO hotelVO = new HotelVO();
                             BeanUtils.copyProperties(hotel,hotelVO);
-                            List<Integer> planIndex = planRepository
+                            hotelVO.plan = planRepository
                                     .findByHotelId(hotel.getId())
                                     .stream()
-                                    .map( o -> o.getId())
+                                    .map(Plan::getId)
                                     .collect(Collectors.toList());
-                            hotelVO.plan = planIndex;
                             return hotelVO;
                         }
                 )
@@ -349,10 +377,7 @@ public class MemberServiceBean implements MemberService {
                                     .stream()
                                     .filter( roomRecord -> DateUtil.isTimeConflict(roomRecord.getBegin(),roomRecord.getEnd(),beginDate,endDate))
                                     .collect(Collectors.toList());
-                            if(roomRecordList!=null&&roomRecordList.size()>0){
-                                return false;
-                            }
-                            return true;
+                            return !(roomRecordList != null && roomRecordList.size() > 0);
                         }
                 )
                 .collect(Collectors.toList());
